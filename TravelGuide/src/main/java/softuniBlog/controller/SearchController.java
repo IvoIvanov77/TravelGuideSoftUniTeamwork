@@ -27,6 +27,7 @@ public class SearchController {
         return "base-layout";
     }
 
+    //TODO :)
     @PostMapping("/search")
     public String postSearch(SearchBindingModel searchBindingModel){
         Article article = null;
