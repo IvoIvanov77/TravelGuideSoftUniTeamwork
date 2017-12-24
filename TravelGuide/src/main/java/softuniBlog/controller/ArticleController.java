@@ -20,10 +20,8 @@ import softuniBlog.repository.UserRepository;
 @Controller
 public class ArticleController {
 
-    private final
-    ArticleRepository articleRepository;
-    private final
-    UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public ArticleController(ArticleRepository articleRepository, UserRepository userRepository) {
