@@ -19,6 +19,7 @@ import softuniBlog.repository.RoleRepository;
 import softuniBlog.repository.UserRepository;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -97,6 +98,14 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("view", "user/profile");
 
+        return "base-layout";
+    }
+
+    @GetMapping("/all_users")
+    public String index(Model model) {
+        List<User> allUsers = this.userRepository.findAll();
+        model.addAttribute("view", "user/all_users");
+        model.addAttribute("users", allUsers);
         return "base-layout";
     }
 
