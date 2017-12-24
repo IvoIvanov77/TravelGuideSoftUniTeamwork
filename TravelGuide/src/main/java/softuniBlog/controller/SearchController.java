@@ -22,26 +22,14 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public String getSearch(Model model){
+    public String getSearch(Model model) {
         model.addAttribute("view", "search/search");
         return "base-layout";
     }
 
-    //TODO :)
     @PostMapping("/search")
-    public String postSearch(SearchBindingModel searchBindingModel){
-        Article article = null;
-        List<Article> articles = this.repository.findAll();
-        for (Article currentArticle : articles) {
-            if (searchBindingModel.getTitle().trim().equals(currentArticle.getTitle().trim())){
-                article = currentArticle;
-            }
-        }
-
-        if (article == null){
-            return "redirect:/";
-        }
-
-        return String.format("redirect:/article/%s", article.getId());
+    public String postSearch(SearchBindingModel searchBindingModel) {
+        Article article = this.repository.findByTitle(searchBindingModel.getTitle());
+        return article == null ? "redirect:/" : String.format("redirect:/article/%s", article.getId());
     }
 }
