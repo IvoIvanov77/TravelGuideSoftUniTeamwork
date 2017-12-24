@@ -90,4 +90,17 @@ public class User {
     public void setArticles(Set<Article> articles) {
         this.articles = articles;
     }
+
+    @Transient
+    public boolean isAdmin(){
+        return this.getRoles().stream()
+                .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+    }
+
+    @Transient
+    public boolean isAuthor(Article article){
+        return this.getId().equals(article.getAuthor().getId());
+    }
+
+
 }
