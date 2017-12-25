@@ -10,9 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import softuniBlog.bindingModel.UserBindingModel;
-import softuniBlog.entity.Article;
 import softuniBlog.entity.Role;
 import softuniBlog.entity.User;
 import softuniBlog.repository.RoleRepository;
@@ -23,10 +25,10 @@ import java.util.List;
 
 @Controller
 public class UserController {
+    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-
-    private final
-    RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     private final
     UserRepository userRepository;
@@ -40,14 +42,24 @@ public class UserController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("view", "user/register");
-
         return "base-layout";
     }
 
-    @PostMapping("/register")
-    public String registerProcess(UserBindingModel userBindingModel){
+    private void createRoles() {
+        if (this.roleRepository.findByName(ROLE_USER) == null && this.roleRepository.findByName(ROLE_ADMIN) == null) {
+            Role userRole = new Role();
+            userRole.setName("ROLE_USER");
+            Role userAdmin = new Role();
+            userAdmin.setName("ROLE_ADMIN");
+            this.roleRepository.saveAndFlush(userRole);
+            this.roleRepository.saveAndFlush(userAdmin);
+        }
+    }
 
-        if(!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())){
+    @PostMapping("/register")
+    public String registerProcess(UserBindingModel userBindingModel) {
+
+        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
             return "redirect:/register";
         }
 
@@ -59,7 +71,15 @@ public class UserController {
                 bCryptPasswordEncoder.encode(userBindingModel.getPassword())
         );
 
+        createRoles();
+
         Role userRole = this.roleRepository.findByName("ROLE_USER");
+
+        // add role admin if the user is the first registered
+        if (this.userRepository.findOne(1) == null) {
+            Role adminRole = this.roleRepository.findByName("ROLE_ADMIN");
+            user.addRole(adminRole);
+        }
 
         user.addRole(userRole);
 
@@ -69,14 +89,14 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String login(Model model){
+    public String login(Model model) {
         model.addAttribute("view", "user/login");
 
         return "base-layout";
     }
 
-    @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {
@@ -88,7 +108,7 @@ public class UserController {
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public String profilePage(Model model){
+    public String profilePage(Model model) {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
@@ -102,11 +122,23 @@ public class UserController {
     }
 
     @GetMapping("/all_users")
+    @PreAuthorize("isAuthenticated()")
     public String index(Model model) {
-        List<User> allUsers = this.userRepository.findAll();
-        model.addAttribute("view", "user/all_users");
-        model.addAttribute("users", allUsers);
-        return "base-layout";
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        User user = this.userRepository.findByEmail(principal.getUsername());
+        model.addAttribute("user", user);
+        if(user.isAdmin()){
+            List<User> allUsers = this.userRepository.findAll();
+            model.addAttribute("view", "user/admin");
+            model.addAttribute("users", allUsers);
+            return "base-layout";
+        }
+
+
+        return "redirect:/login";
     }
 
 

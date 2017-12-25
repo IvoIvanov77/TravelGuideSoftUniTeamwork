@@ -1,16 +1,10 @@
 package softuniBlog.bindingModel;
 
+import javax.validation.constraints.NotNull;
+
 public class SearchBindingModel {
-
-    public SearchBindingModel(){
-
-    }
-
+    @NotNull
     private String title;
-
-    public SearchBindingModel(String title) {
-        this.title = title;
-    }
 
     public String getTitle() {
         return this.title;
