@@ -1,6 +1,7 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity(name = "articles")
 public class Article {
@@ -13,6 +14,8 @@ public class Article {
 
     private User author;
 
+    private Destination destination;
+
     public Article(String title, String content, User author) {
         this.title = title;
         this.content = content;
@@ -21,6 +24,17 @@ public class Article {
 
 
     public Article() {
+    }
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false, name = "destinationId")
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 
     @Id
@@ -62,7 +76,7 @@ public class Article {
     }
 
     @Transient
-    public String getSummary(){
+    public String getSummary() {
         return this.getContent().substring(0, this.getContent().length() / 2) + "...";
     }
 

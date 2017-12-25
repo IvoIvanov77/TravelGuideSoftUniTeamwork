@@ -37,9 +37,7 @@ public class Category {
         this.name = name;
     }
 
-    // TODO add the relationship
-//    @OneToMany
-//    @JoinColumn(nullable = false, name = "id")
+    @OneToMany(mappedBy = "category")
     public Set<Destination> getDestinations() {
         return this.destinations;
     }

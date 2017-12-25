@@ -1,6 +1,7 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity(name = "destinations")
@@ -18,12 +19,25 @@ public class Destination {
 
     private Set<Article> articles;
 
+    private Category category;
+
     public Destination(String name, String review, Double starRating, User author, Set<Article> articles) {
         this.name = name;
         this.review = review;
         this.starRating = starRating;
         this.author = author;
         this.articles = articles;
+    }
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false, name = "categoryId")
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category destination) {
+        this.category = destination;
     }
 
     @Id
@@ -73,9 +87,7 @@ public class Destination {
         this.author = author;
     }
 
-//    TODO add the relationship between article and destination
-//    @OneToMany
-//    @JoinColumn(nullable = false, name = "id")
+    @OneToMany(mappedBy = "destination")
     public Set<Article> getArticles() {
         return this.articles;
     }
