@@ -21,7 +21,6 @@ import softuniBlog.repository.RoleRepository;
 import softuniBlog.repository.UserRepository;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @Controller
 public class UserController {
@@ -30,8 +29,7 @@ public class UserController {
 
     private final RoleRepository roleRepository;
 
-    private final
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserController(RoleRepository roleRepository, UserRepository userRepository) {
@@ -121,25 +119,6 @@ public class UserController {
         return "base-layout";
     }
 
-    @GetMapping("/all_users")
-    @PreAuthorize("isAuthenticated()")
-    public String index(Model model) {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        User user = this.userRepository.findByEmail(principal.getUsername());
-        model.addAttribute("user", user);
-        if(user.isAdmin()){
-            List<User> allUsers = this.userRepository.findAll();
-            model.addAttribute("view", "user/admin");
-            model.addAttribute("users", allUsers);
-            return "base-layout";
-        }
-
-
-        return "redirect:/login";
-    }
 
 
 }

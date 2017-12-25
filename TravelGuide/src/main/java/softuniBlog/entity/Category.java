@@ -1,6 +1,7 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "categories")
@@ -12,10 +13,9 @@ public class Category {
 
     private Set<Destination> destinations;
 
-    public Category(Integer id, String name, Set<Destination> destinations) {
-        this.id = id;
+    public Category(String name) {
         this.name = name;
-        this.destinations = destinations;
+        this.destinations = new HashSet<>();
     }
 
     @Id

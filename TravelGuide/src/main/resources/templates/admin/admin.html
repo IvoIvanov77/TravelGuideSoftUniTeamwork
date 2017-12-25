@@ -11,6 +11,9 @@
                     </div>
                     <div class="col col-xs-6 text-right">
                         <button type="button" class="btn btn-sm btn-primary btn-create">Create New</button>
+                        <a class="btn btn-default btn-xs"
+                           th:href="@{/all_users/addCategory}">Add Category
+                        </a>
                     </div>
                 </div>
             </div>
@@ -33,7 +36,7 @@
                                 <a class="btn btn-default">Edit</a>
                                 <a class="btn btn-danger">Remove</a>
                             </td>
-                            <td  th:text="${user.getId()}"></td>
+                            <td th:text="${user.getId()}"></td>
                             <td th:text="${user.getFullName()}"></td>
                             <td th:text="${user.getEmail()}"></td>
                             <td th:text="${user.getRoles()}"></td>
