@@ -10,6 +10,7 @@ import softuniBlog.entity.Article;
 import softuniBlog.repository.ArticleRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class SearchController {
@@ -31,5 +32,24 @@ public class SearchController {
     public String postSearch(SearchBindingModel searchBindingModel) {
         Article article = this.repository.findByTitle(searchBindingModel.getTitle());
         return article == null ? "redirect:/" : String.format("redirect:/article/%s", article.getId());
+    }
+
+    @GetMapping("/search_keyword")
+    public String getSearchByKeyword(Model model) {
+        model.addAttribute("view", "search/search_keyword");
+        return "base-layout";
+    }
+
+
+    @PostMapping("/search_keyword")
+    public String searchByTitleKeyword(SearchBindingModel searchBindingModel,Model model) {
+        List<Article> article = this.repository.findAll();
+        List<Article> result = article.stream()
+                .filter(a -> a.getTitle().toLowerCase().contains(searchBindingModel.getTitle().toLowerCase()))
+                .collect(Collectors.toList());
+        model.addAttribute("results", result);
+        model.addAttribute("view", "search/search_keyword_results");
+
+        return "base-layout";
     }
 }
