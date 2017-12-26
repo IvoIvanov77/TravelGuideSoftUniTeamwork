@@ -7,20 +7,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.bindingModel.UserBindingModel;
+import softuniBlog.entity.Article;
 import softuniBlog.entity.Role;
 import softuniBlog.entity.User;
 import softuniBlog.repository.RoleRepository;
 import softuniBlog.repository.UserRepository;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 @Controller
 public class UserController {
@@ -31,12 +32,14 @@ public class UserController {
 
     private final UserRepository userRepository;
     private CategoryController categoryController;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserController(RoleRepository roleRepository, UserRepository userRepository, CategoryController categoryController) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.categoryController = categoryController;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @GetMapping("/register")
@@ -68,7 +71,7 @@ public class UserController {
         User user = new User(
                 userBindingModel.getEmail(),
                 userBindingModel.getFullName(),
-                bCryptPasswordEncoder.encode(userBindingModel.getPassword())
+                this.passwordEncoder.encode(userBindingModel.getPassword())
         );
 
         createRoles();
@@ -121,6 +124,104 @@ public class UserController {
 
         return "base-layout";
     }
+
+    @GetMapping("/user/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String edit(Model model, @PathVariable Integer id) {
+
+        if(!this.isCurrentUserAdmin()){
+            return "redirect:/login?logout";
+        }
+
+        if (!this.userRepository.exists(id)) {
+            return "redirect:/";
+        }
+        User user = this.userRepository.findOne(id);
+
+        model.addAttribute("view", "user/edit")
+                .addAttribute("user", user);
+        return "base-layout";
+    }
+
+    @PostMapping("/user/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editAction(UserBindingModel userBindingModel, @PathVariable Integer id) {
+
+        if (!this.userRepository.exists(id)) {
+            return "redirect:/all_users";
+        }
+        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
+            return "redirect:/user/edit/" + id;
+        }
+        User user = this.userRepository.findOne(id);
+
+        //can't change admin profile
+        if(user.isAdmin()){
+            return "redirect:/user/edit/" + id;
+        }
+
+        user.setEmail(userBindingModel.getEmail());
+        user.setFullName(userBindingModel.getFullName());
+        if(userBindingModel.getPassword() != null){
+            user.setPassword(this.passwordEncoder.encode(userBindingModel.getPassword()));
+        }
+        this.userRepository.saveAndFlush(user);
+        return "redirect:/all_users";
+    }
+
+    @GetMapping("/user/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Model model, @PathVariable Integer id) {
+
+        if(!this.isCurrentUserAdmin()){
+            return "redirect:/login?logout";
+        }
+
+        if (!this.userRepository.exists(id)) {
+            return "redirect:/";
+        }
+        User user = this.userRepository.findOne(id);
+
+        model.addAttribute("view", "user/delete")
+                .addAttribute("user", user);
+        return "base-layout";
+    }
+
+    @PostMapping("/user/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteAction(@PathVariable Integer id) {
+
+        if (!this.userRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        User user = this.userRepository.findOne(id);
+
+        //can't delete admin profile
+        if(user.isAdmin()){
+            return "redirect:/user/delete/" + id;
+        }
+
+
+        this.userRepository.delete(id);
+        return "redirect:/all_users";
+
+    }
+
+    private boolean isCurrentUserAdmin(){
+
+
+       return this.getCurrentUser().isAdmin();
+    }
+
+    private User getCurrentUser(){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        return this.userRepository.findByEmail(principal.getUsername());
+    }
+
 
 
 }

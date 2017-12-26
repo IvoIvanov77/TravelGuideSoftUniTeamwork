@@ -6,8 +6,22 @@
                     <span th:text="${user.email}"></span>
                     <br/>
                     <span th:text="${user.fullName}"></span>
+
+                    <footer>
+
+                        <div class="pull-right">
+
+                            <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin()}">
+                                <a class="btn btn-success btn-xs" th:href="@{/user/edit/{id}(id = ${user.id})}">Edit profile</a>
+                                <a class="btn btn-danger btn-xs" th:href="@{/user/delete/{id}(id = ${user.id})}">Delete profile</a>
+                            </th:block>
+
+
+                        </div>
+                    </footer>
                 </div>
             </div>
         </div>
     </div>
+
 </main>

@@ -33,9 +33,15 @@
                     <th:block th:each="user : ${users}">
                         <tr>
                             <td align="center">
-                                <a class="btn btn-default">Details</a>
-                                <a class="btn btn-default">Edit</a>
-                                <a class="btn btn-danger">Remove</a>
+                                <a class="btn btn-default">
+                                    Details
+                                </a>
+                                <a class="btn btn-default" th:href="@{/user/edit/{id}(id=${user.id})}">
+                                    Edit
+                                </a>
+                                <a class="btn btn-danger" th:href="@{/user/delete/{id}(id=${user.id})}">
+                                    Remove
+                                </a>
                             </td>
                             <td th:text="${user.getId()}"></td>
                             <td th:text="${user.getFullName()}"></td>
