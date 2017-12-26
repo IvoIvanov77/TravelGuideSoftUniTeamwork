@@ -23,11 +23,4 @@ public class HomeController {
         return "base-layout";
     }
 
-    @GetMapping("/newHome")
-    public String newIndex(Model model) {
-        List<Article> articles = this.articleRepository.findAll();
-        model.addAttribute("view", "home/newIndex");
-        model.addAttribute("articles", articles);
-        return "base-layout";
-    }
 }

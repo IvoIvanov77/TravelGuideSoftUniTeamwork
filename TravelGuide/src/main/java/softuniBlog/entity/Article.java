@@ -16,12 +16,12 @@ public class Article {
 
     private Destination destination;
 
-    public Article(String title, String content, User author) {
+    public Article(String title, String content, User author, Destination destination) {
         this.title = title;
         this.content = content;
         this.author = author;
+        this.destination = destination;
     }
-
 
     public Article() {
     }

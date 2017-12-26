@@ -2,6 +2,7 @@ package softuniBlog.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "destinations")
@@ -21,12 +22,13 @@ public class Destination {
 
     private Category category;
 
-    public Destination(String name, String review, Double starRating, User author, Set<Article> articles) {
+    public Destination(String name, String review, User author, Category category) {
         this.name = name;
         this.review = review;
-        this.starRating = starRating;
+        this.starRating = 0D;
         this.author = author;
-        this.articles = articles;
+        this.articles = new HashSet<>();
+        this.category = category;
     }
 
     @ManyToOne

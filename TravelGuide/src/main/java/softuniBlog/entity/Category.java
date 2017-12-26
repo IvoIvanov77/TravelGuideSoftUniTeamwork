@@ -13,6 +13,9 @@ public class Category {
 
     private Set<Destination> destinations;
 
+    public Category() {
+    }
+
     public Category(String name) {
         this.name = name;
         this.destinations = new HashSet<>();
