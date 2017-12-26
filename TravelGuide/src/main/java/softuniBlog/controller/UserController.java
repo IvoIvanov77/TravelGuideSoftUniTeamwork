@@ -30,11 +30,13 @@ public class UserController {
     private final RoleRepository roleRepository;
 
     private final UserRepository userRepository;
+    private CategoryController categoryController;
 
     @Autowired
-    public UserController(RoleRepository roleRepository, UserRepository userRepository) {
+    public UserController(RoleRepository roleRepository, UserRepository userRepository, CategoryController categoryController) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.categoryController = categoryController;
     }
 
     @GetMapping("/register")
@@ -75,6 +77,7 @@ public class UserController {
 
         // add role admin if the user is the first registered
         if (this.userRepository.findOne(1) == null) {
+            this.categoryController.initializeData();
             Role adminRole = this.roleRepository.findByName("ROLE_ADMIN");
             user.addRole(adminRole);
         }
@@ -118,7 +121,6 @@ public class UserController {
 
         return "base-layout";
     }
-
 
 
 }
