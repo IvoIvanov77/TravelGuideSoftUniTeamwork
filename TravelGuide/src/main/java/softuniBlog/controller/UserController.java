@@ -21,7 +21,6 @@ import softuniBlog.repository.RoleRepository;
 import softuniBlog.repository.UserRepository;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @Controller
 public class UserController {
@@ -30,13 +29,14 @@ public class UserController {
 
     private final RoleRepository roleRepository;
 
-    private final
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private CategoryController categoryController;
 
     @Autowired
-    public UserController(RoleRepository roleRepository, UserRepository userRepository) {
+    public UserController(RoleRepository roleRepository, UserRepository userRepository, CategoryController categoryController) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.categoryController = categoryController;
     }
 
     @GetMapping("/register")
@@ -77,6 +77,7 @@ public class UserController {
 
         // add role admin if the user is the first registered
         if (this.userRepository.findOne(1) == null) {
+            this.categoryController.initializeData();
             Role adminRole = this.roleRepository.findByName("ROLE_ADMIN");
             user.addRole(adminRole);
         }
@@ -119,26 +120,6 @@ public class UserController {
         model.addAttribute("view", "user/profile");
 
         return "base-layout";
-    }
-
-    @GetMapping("/all_users")
-    @PreAuthorize("isAuthenticated()")
-    public String index(Model model) {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        User user = this.userRepository.findByEmail(principal.getUsername());
-        model.addAttribute("user", user);
-        if(user.isAdmin()){
-            List<User> allUsers = this.userRepository.findAll();
-            model.addAttribute("view", "user/admin");
-            model.addAttribute("users", allUsers);
-            return "base-layout";
-        }
-
-
-        return "redirect:/login";
     }
 
 

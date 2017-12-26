@@ -1,6 +1,7 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "categories")
@@ -12,10 +13,12 @@ public class Category {
 
     private Set<Destination> destinations;
 
-    public Category(Integer id, String name, Set<Destination> destinations) {
-        this.id = id;
+    public Category() {
+    }
+
+    public Category(String name) {
         this.name = name;
-        this.destinations = destinations;
+        this.destinations = new HashSet<>();
     }
 
     @Id
@@ -37,9 +40,7 @@ public class Category {
         this.name = name;
     }
 
-    // TODO add the relationship
-//    @OneToMany
-//    @JoinColumn(nullable = false, name = "id")
+    @OneToMany(mappedBy = "category")
     public Set<Destination> getDestinations() {
         return this.destinations;
     }
