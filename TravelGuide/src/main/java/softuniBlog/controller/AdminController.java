@@ -39,7 +39,7 @@ public class AdminController {
     @PostMapping("/all_users/addCategory")
     public String addCategoryProcess(Model model, CategoryBindingModel categoryBindingModel) {
         this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName()));
-        return "redirect:/all_users";
+        return "redirect:/all_categories";
     }
 
     @GetMapping("/all_users")
@@ -55,6 +55,25 @@ public class AdminController {
             List<User> allUsers = this.userRepository.findAll();
             model.addAttribute("view", "admin/admin");
             model.addAttribute("users", allUsers);
+            return "base-layout";
+        }
+
+        return "redirect:/login";
+    }
+
+    @GetMapping("/all_categories")
+    @PreAuthorize("isAuthenticated()")
+    public String categories(Model model) {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        User user = this.userRepository.findByEmail(principal.getUsername());
+        model.addAttribute("user", user);
+        if (user.isAdmin()) {
+            List<Category> allCategories = this.categoryRepository.findAll();
+            model.addAttribute("view", "category/all_categories");
+            model.addAttribute("categories", allCategories);
             return "base-layout";
         }
 
