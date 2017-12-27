@@ -2,13 +2,17 @@ package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.bindingModel.CategoryBindingModel;
+import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.User;
 import softuniBlog.repository.CategoryRepository;
@@ -78,5 +82,103 @@ public class AdminController {
         }
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/category/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editCategory(Model model, @PathVariable Integer id) {
+
+        if (!this.categoryRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        if (!this.isCurrentUserAdmin()) {
+            return "redirect:/login";
+        }
+
+        Category category = this.categoryRepository.findOne(id);
+
+        model.addAttribute("view", "category/edit")
+                .addAttribute("category", category);
+        return "base-layout";
+    }
+
+    @PostMapping("/category/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editCategoryAction(CategoryBindingModel categoryBindingModel, @PathVariable Integer id) {
+
+        if (!this.categoryRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        if (!this.isCurrentUserAdmin()) {
+            return "redirect:/login";
+        }
+
+        Category category = this.categoryRepository.findOne(id);
+
+        category.setName(categoryBindingModel.getName());
+
+
+        this.categoryRepository.saveAndFlush(category);
+        return "redirect:/all_categories";
+
+    }
+
+    @GetMapping("/category/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteCategory(Model model, @PathVariable Integer id) {
+
+        if (!this.categoryRepository.exists(id)) {
+            return "redirect:/";
+        }
+        if (!this.isCurrentUserAdmin()) {
+            return "redirect:/login";
+        }
+
+        Category category = this.categoryRepository.findOne(id);
+
+        model.addAttribute("view", "category/delete")
+                .addAttribute("category", category);
+        return "base-layout";
+    }
+
+    @PostMapping("/category/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteCategoryAction(@PathVariable Integer id) {
+
+        if (!this.categoryRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        if (!this.isCurrentUserAdmin()) {
+            return "redirect:/login";
+        }
+
+        Category category = this.categoryRepository.findOne(id);
+
+
+        this.categoryRepository.delete(id);
+        return "redirect:/all_categories";
+
+    }
+
+    private boolean isCurrentUserAdmin(){
+        return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
+    }
+
+    private User getCurrentUser(){
+
+        if (!(SecurityContextHolder.getContext().getAuthentication()
+                instanceof AnonymousAuthenticationToken)) {
+            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            return this.userRepository.findByEmail(principal.getUsername());
+
+        }
+
+        return null;
     }
 }
