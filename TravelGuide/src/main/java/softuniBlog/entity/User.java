@@ -82,6 +82,10 @@ public class User {
         this.roles.add(role);
     }
 
+    public void deleteRole(Role role){this.roles.remove(role);}
+
+    public boolean hasRole(Role role){return this.roles.contains(role);}
+
     @OneToMany(mappedBy = "author")
     public Set<Article> getArticles() {
         return articles;

@@ -3,6 +3,7 @@ package softuniBlog.controller;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,9 +61,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerProcess(UserBindingModel userBindingModel) {
+    public String registerProcess(UserBindingModel userBindingModel,
+                                  @RequestParam(defaultValue = "false") boolean checkbox) {
+
+        // TODO: check email for duplicates
 
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
+            String error = "";
+            /// TODO: send error message
             return "redirect:/register";
         }
 
@@ -77,17 +83,27 @@ public class UserController {
         createRoles();
 
         Role userRole = this.roleRepository.findByName("ROLE_USER");
+        Role adminRole = this.roleRepository.findByName("ROLE_ADMIN");
 
         // add role admin if the user is the first registered
         if (this.userRepository.findOne(1) == null) {
             this.categoryController.initializeData();
-            Role adminRole = this.roleRepository.findByName("ROLE_ADMIN");
+            user.addRole(adminRole);
+        }
+
+        if(checkbox){
             user.addRole(adminRole);
         }
 
         user.addRole(userRole);
 
         this.userRepository.saveAndFlush(user);
+        String success = "";
+        /// TODO: send  message
+
+        if(this.isCurrentUserAdmin()){
+            return "redirect:/all_users";
+        }
 
         return "redirect:/login";
     }
@@ -132,11 +148,12 @@ public class UserController {
         if(!this.isCurrentUserAdmin()){
             return "redirect:/login?logout";
         }
-
         if (!this.userRepository.exists(id)) {
             return "redirect:/";
         }
         User user = this.userRepository.findOne(id);
+        boolean isAdmin = user.isAdmin();
+        model.addAttribute("isAdmin", isAdmin);
 
         model.addAttribute("view", "user/edit")
                 .addAttribute("user", user);
@@ -145,7 +162,8 @@ public class UserController {
 
     @PostMapping("/user/edit/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String editAction(UserBindingModel userBindingModel, @PathVariable Integer id) {
+    public String editAction(UserBindingModel userBindingModel, @PathVariable Integer id,
+                             @RequestParam(defaultValue = "false") boolean checkbox) {
 
         if (!this.userRepository.exists(id)) {
             return "redirect:/all_users";
@@ -156,7 +174,16 @@ public class UserController {
         User user = this.userRepository.findOne(id);
 
         //can't change admin profile
-        if(user.isAdmin()){
+        if(user.isAdmin() && this.getCurrentUser().getId() != 1){
+            String error = "";
+            /// TODO: send error message
+            return "redirect:/user/edit/" + id;
+        }
+
+        //can't change own profile
+        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
+            String error = "";
+            /// TODO: send error message
             return "redirect:/user/edit/" + id;
         }
 
@@ -165,6 +192,14 @@ public class UserController {
         if(userBindingModel.getPassword() != null){
             user.setPassword(this.passwordEncoder.encode(userBindingModel.getPassword()));
         }
+
+        if(checkbox && !user.isAdmin()){
+            user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
+
+        }else if(!checkbox && user.isAdmin()){
+            user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
+        }
+
         this.userRepository.saveAndFlush(user);
         return "redirect:/all_users";
     }
@@ -198,7 +233,16 @@ public class UserController {
         User user = this.userRepository.findOne(id);
 
         //can't delete admin profile
-        if(user.isAdmin()){
+        if(user.isAdmin() && this.getCurrentUser().getId() != 1){
+            String error = "";
+            /// TODO: send error message
+            return "redirect:/user/delete/" + id;
+        }
+
+        //can't delete own profile
+        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
+            String error = "";
+            /// TODO: send error message
             return "redirect:/user/delete/" + id;
         }
 
@@ -209,17 +253,22 @@ public class UserController {
     }
 
     private boolean isCurrentUserAdmin(){
-
-
-       return this.getCurrentUser().isAdmin();
+       return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 
     private User getCurrentUser(){
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
 
-        return this.userRepository.findByEmail(principal.getUsername());
+        if (!(SecurityContextHolder.getContext().getAuthentication()
+                instanceof AnonymousAuthenticationToken)) {
+            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            return this.userRepository.findByEmail(principal.getUsername());
+
+        }
+
+        return null;
     }
 
 
