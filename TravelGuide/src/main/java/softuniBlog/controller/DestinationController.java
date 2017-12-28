@@ -56,7 +56,7 @@ public class DestinationController {
     }
 
     @GetMapping("/destination/{id}")
-    public String createDestination(Model model, @PathVariable Integer id) {
+    public String destinationDetails(Model model, @PathVariable Integer id) {
         if (!this.destinationRepository.exists(id)) {
             return "redirect:/";
         }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import softuniBlog.entity.Category;
 import softuniBlog.repository.CategoryRepository;
 
+import java.util.List;
+
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
@@ -21,13 +23,13 @@ public class CategoryController {
         this.categoryRepository = categoryRepository;
     }
 
-    @GetMapping("/newHome/category/{id}")
+    @GetMapping("/category/{id}")
     public String details(Model model, @PathVariable Integer id) {
         Category category = this.categoryRepository.findOne(id);
-        model.addAttribute("view", "category/details");
-        model.addAttribute("category", category);
+        List<Category> categories = this.categoryRepository.findAll();
+        model.addAttribute("view", "home/index");
+        model.addAttribute("categories", categories);
+        model.addAttribute("destinations", category.getDestinations());
         return "base-layout";
     }
-
-
 }
