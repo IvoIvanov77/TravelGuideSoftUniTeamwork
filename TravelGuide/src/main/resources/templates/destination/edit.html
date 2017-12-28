@@ -1,22 +1,21 @@
 <main>
     <div class="container body-content span=8 offset=2">
         <div class="well">
-            <form class="form-horizontal" th:action="@{/destination/add}" method="POST">
+            <form class="form-horizontal" th:action="@{/destination/edit/{id}(id=${destination.id})}" method="POST">
                 <fieldset>
-                    <legend>New Destination</legend>
+                    <legend>Edit Destination</legend>
 
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="name">Destination Name</label>
+                        <label class="col-sm-4 control-label" for="destination_name">Destination name</label>
                         <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="name" placeholder="Destination Name"
-                                   name="name"/>
+                            <input type="text" class="form-control" id="destination_name" placeholder="Destination name" name="name" th:value="${destination.name}"/>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="review">Review</label>
+                        <label class="col-sm-4 control-label" for="destination_review">Review</label>
                         <div class="col-sm-6">
-                            <textarea class="form-control" rows="6" id="review" name="review"></textarea>
+                            <textarea class="form-control" rows="6" id="destination_review" name="review" th:field="${destination.review}"></textarea>
                         </div>
                     </div>
 
@@ -33,10 +32,11 @@
 
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" th:href="@{/}">Cancel</a>
-                            <input type="submit" class="btn btn-primary" value="Submit"/>
+                            <a class="btn btn-default" th:href="@{/destination/{id}(id = ${destination.id})}">Cancel</a>
+                            <input type="submit" class="btn btn-success" value="Edit"/>
                         </div>
                     </div>
+
                 </fieldset>
             </form>
         </div>

@@ -50,7 +50,7 @@ public class DestinationController {
 
         User currentUser = this.userRepository.findByEmail(principal.getUsername());
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
-        this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getDestinationName(),
+        this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getName(),
                 destinationBindingModel.getReview(), currentUser, category));
         return "redirect:/";
     }
@@ -74,4 +74,50 @@ public class DestinationController {
         return "base-layout";
     }
 
+    @GetMapping("/destination/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String edit(Model model, @PathVariable Integer id) {
+
+        if (!this.destinationRepository.exists(id)) {
+            return "redirect:/";
+        }
+        Destination destination = this.destinationRepository.findOne(id);
+
+        if (!this.isUserAuthorOrAdmin(destination)) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("view", "destination/edit")
+                .addAttribute("destination", destination);
+        model.addAttribute("categories", this.categoryRepository.findAll());
+        return "base-layout";
+    }
+
+    @PostMapping("/destination/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id){
+        if (!this.destinationRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        Destination destination = this.destinationRepository.findOne(id);
+
+        if (!this.isUserAuthorOrAdmin(destination)) {
+            return "redirect:/";
+        }
+
+        destination.setName(bindingModel.getName());
+        destination.setReview(bindingModel.getReview());
+        destination.setCategory(this.categoryRepository.findOne(bindingModel.getCategoryId()));
+        this.destinationRepository.saveAndFlush(destination);
+
+        return "redirect:/";
+    }
+
+    private boolean isUserAuthorOrAdmin(Destination destination) {
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userEntity = this.userRepository.findByEmail(user.getUsername());
+
+        return userEntity.isAuthor(destination) || userEntity.isAdmin();
+    }
 }
