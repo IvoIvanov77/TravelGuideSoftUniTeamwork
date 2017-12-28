@@ -106,5 +106,8 @@ public class User {
         return this.getId().equals(article.getAuthor().getId());
     }
 
-
+    @Transient
+    public boolean isAuthor(Destination destination){
+        return this.getId().equals(destination.getAuthor().getId());
+    }
 }

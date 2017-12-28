@@ -1,6 +1,4 @@
 <main>
-
-
     <div class="col-md-10 col-md-offset-1">
 
         <div class="panel panel-default panel-table">
@@ -12,6 +10,9 @@
                     <div class="col col-xs-6 text-right">
                         <a class="btn btn-sm btn-primary btn-create" th:href="@{/register}">
                             Create New User
+                        </a>
+                        <a class="btn btn-sm btn-primary btn-create" th:href="@{/all_users}">
+                            Users
                         </a>
                         <a class="btn btn-sm btn-primary btn-create" th:href="@{/all_categories}">
                             Categories
@@ -26,37 +27,30 @@
                         <th><em class="fa fa-cog"></em></th>
                         <th class="hidden-xs">ID</th>
                         <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <th:block th:each="user : ${users}">
+                    <th:block th:each="category : ${categories}">
                         <tr>
                             <td align="center">
-                                <a class="btn btn-default">
-                                    Details
+                                <a class="btn btn-default" th:href="@{/category/addCategory}">
+                                    Add
                                 </a>
-                                <a class="btn btn-default" th:href="@{/user/edit/{id}(id=${user.id})}">
+                                <a class="btn btn-default" th:href="@{/category/edit/{id}(id=${user.id})}">
                                     Edit
                                 </a>
-                                <a class="btn btn-danger" th:href="@{/user/delete/{id}(id=${user.id})}">
+                                <a class="btn btn-danger" th:href="@{/category/delete/{id}(id=${user.id})}">
                                     Remove
                                 </a>
                             </td>
-                            <td th:text="${user.getId()}"></td>
-                            <td th:text="${user.getFullName()}"></td>
-                            <td th:text="${user.getEmail()}"></td>
-                            <td th:text="${user.getRoles()}"></td>
+                            <td th:text="${category.getId()}"></td>
+                            <td th:text="${category.getName()}"></td>
                         </tr>
                     </th:block>
                     </tbody>
                 </table>
             </div>
-
-
         </div>
-
     </div>
 </main>

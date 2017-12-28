@@ -22,6 +22,9 @@ public class Destination {
 
     private Category category;
 
+    public Destination() {
+    }
+
     public Destination(String name, String review, User author, Category category) {
         this.name = name;
         this.review = review;

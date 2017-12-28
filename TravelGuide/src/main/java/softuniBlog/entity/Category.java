@@ -13,6 +13,8 @@ public class Category {
 
     private Set<Destination> destinations;
 
+    public static boolean isDataInitialized = false;
+
     public Category() {
     }
 

@@ -12,10 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.bindingModel.UserBindingModel;
-import softuniBlog.entity.Article;
 import softuniBlog.entity.Role;
 import softuniBlog.entity.User;
 import softuniBlog.repository.RoleRepository;
@@ -25,6 +24,7 @@ import softuniBlog.utils.Messages;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -93,7 +93,7 @@ public class UserController {
 
         // add role admin if the user is the first registered
         if (this.userRepository.findOne(1) == null) {
-            this.categoryController.initializeData();
+//            this.categoryController.initializeData();
             user.addRole(adminRole);
         }
 
@@ -185,6 +185,7 @@ public class UserController {
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/all_users";
         }
+<<<<<<< HEAD
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
@@ -204,26 +205,88 @@ public class UserController {
             /// TODO: send error message
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
+=======
+
+        User user = this.userRepository.findOne(id);
+        if (!hasRights(user)) {
+            return "redirect:/all_users";
+>>>>>>> 845b966e3556d24b6625b5dffa79ac1f90bab0fd
         }
 
-        user.setEmail(userBindingModel.getEmail());
+        if (!StringUtils.isEmpty(userBindingModel.getPassword())
+                && !StringUtils.isEmpty(userBindingModel.getConfirmPassword())) {
+
+            if (userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
+                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+                user.setPassword(bCryptPasswordEncoder.encode(userBindingModel.getPassword()));
+            }
+        }
+
         user.setFullName(userBindingModel.getFullName());
-        if(userBindingModel.getPassword() != null){
-            user.setPassword(this.passwordEncoder.encode(userBindingModel.getPassword()));
-        }
-
-        if(checkbox && !user.isAdmin()){
-            user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
-
-        }else if(!checkbox && user.isAdmin()){
-            user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
-        }
 
         this.userRepository.saveAndFlush(user);
+<<<<<<< HEAD
         notifyService.addInfoMessage(Messages.SUCCESS);
+=======
+
+>>>>>>> 845b966e3556d24b6625b5dffa79ac1f90bab0fd
         return "redirect:/all_users";
+
+//        if (!this.userRepository.exists(id)) {
+//            return "redirect:/all_users";
+//        }
+//        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
+//            return "redirect:/user/edit/" + id;
+//        }
+//        User user = this.userRepository.findOne(id);
+//
+//        //can't change admin profile
+//        if(user.isAdmin() && this.getCurrentUser().getId() != 1){
+//            String error = "";
+//            /// TODO: send error message
+//            return "redirect:/user/edit/" + id;
+//        }
+//
+//        //can't change own profile
+//        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
+//            String error = "";
+//            /// TODO: send error message
+//            return "redirect:/user/edit/" + id;
+//        }
+//
+//        user.setEmail(userBindingModel.getEmail());
+//        user.setFullName(userBindingModel.getFullName());
+//        if(userBindingModel.getPassword() != null){
+//            user.setPassword(this.passwordEncoder.encode(userBindingModel.getPassword()));
+//        }
+//
+//        if(checkbox && !user.isAdmin()){
+//            user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
+//
+//        }else if(!checkbox && user.isAdmin()){
+//            user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
+//        }
+//
+//        this.userRepository.saveAndFlush(user);
+//        return "redirect:/all_users";
     }
 
+    private boolean hasRights(User browsingUser) {
+        User currentLoggedInUser = getUser();
+        if (browsingUser != null && (browsingUser.getEmail().equals(currentLoggedInUser.getEmail()) || currentLoggedInUser.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN"))) {
+            return true;
+        }
+
+        return false;
+    }
+    private User getUser() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return this.userRepository.findByEmail(principal.getUsername());
+    }
     @GetMapping("/user/delete/{id}")
     @PreAuthorize("isAuthenticated()")
     public String delete(Model model, @PathVariable Integer id) {

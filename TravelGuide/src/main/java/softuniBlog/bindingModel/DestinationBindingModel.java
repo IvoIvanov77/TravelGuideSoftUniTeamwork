@@ -5,24 +5,24 @@ package softuniBlog.bindingModel;
  */
 public class DestinationBindingModel {
 
-    private String destinationName;
+    private String name;
     private String review;
-    private Long categoryId;
+    private Integer categoryId;
 
-    public Long getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
-    public String getDestinationName() {
-        return destinationName;
+    public String getName() {
+        return name;
     }
 
-    public void setDestinationName(String destinationName) {
-        this.destinationName = destinationName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getReview() {
