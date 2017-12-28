@@ -139,6 +139,8 @@ public class UserController {
         return "redirect:/login?logout";
     }
 
+    // TODO: 12/28/2017 - add editMyProfile , profile details
+
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     public String profilePage(Model model) {

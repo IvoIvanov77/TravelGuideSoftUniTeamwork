@@ -197,38 +197,5 @@ public class AdminController {
 
         return null;
     }
-//
-//    @GetMapping("/admin/deleteUser/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    public String deleteUser(@PathVariable Integer id, Model model) {
-//        if (!this.userRepository.exists(id)) {
-//            return "redirect:/profile";
-//        }
-//
-//        User user = this.userRepository.findOne(id);
-//
-//        model.addAttribute("user", user);
-//        model.addAttribute("view", "user/delete");
-//
-//        return "base-layout";
-//    }
-//
-//    @PostMapping("/admin/deleteUser/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    public String deleteUserProccess(@PathVariable Integer id) {
-//        if (!this.userRepository.exists(id)) {
-//            return "redirect:/admin/users";
-//        }
-//
-//        User user = this.userRepository.findOne(id);
-//
-//        /*if (user != null && !user.getEmail().equals(getUser().getEmail()) && user.getId() != 1) {
-//            deleteUserCategorys(user.getCategorys());
-//            deleteProfilePictures(user);
-//            this.userRepository.delete(user);
-//        }*/
-//
-//        return "redirect:/admin/users";
-//    }
 
 }
