@@ -10,9 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.bindingModel.CategoryBindingModel;
-import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.User;
 import softuniBlog.repository.CategoryRepository;
@@ -34,13 +32,13 @@ public class AdminController {
         this.categoryRepository = categoryRepository;
     }
 
-    @GetMapping("/all_users/addCategory")
+    @GetMapping("/category/addCategory")
     public String addCategory(Model model) {
         model.addAttribute("view", "admin/addCategory");
         return "base-layout";
     }
 
-    @PostMapping("/all_users/addCategory")
+    @PostMapping("/category/addCategory")
     public String addCategoryProcess(Model model, CategoryBindingModel categoryBindingModel) {
         this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName()));
         return "redirect:/all_categories";
@@ -76,7 +74,7 @@ public class AdminController {
         model.addAttribute("user", user);
         if (user.isAdmin()) {
             List<Category> allCategories = this.categoryRepository.findAll();
-            model.addAttribute("view", "category/all_categories");
+            model.addAttribute("view", "category/listCategories");
             model.addAttribute("categories", allCategories);
             return "base-layout";
         }
@@ -181,4 +179,38 @@ public class AdminController {
 
         return null;
     }
+
+    @GetMapping("/admin/deleteUser/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteUser(@PathVariable Integer id, Model model) {
+        if (!this.userRepository.exists(id)) {
+            return "redirect:/profile";
+        }
+
+        User user = this.userRepository.findOne(id);
+
+        model.addAttribute("user", user);
+        model.addAttribute("view", "user/delete");
+
+        return "base-layout";
+    }
+
+    @PostMapping("/admin/deleteUser/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String deleteUserProccess(@PathVariable Integer id) {
+        if (!this.userRepository.exists(id)) {
+            return "redirect:/admin/users";
+        }
+
+        User user = this.userRepository.findOne(id);
+
+        /*if (user != null && !user.getEmail().equals(getUser().getEmail()) && user.getId() != 1) {
+            deleteUserCategorys(user.getCategorys());
+            deleteProfilePictures(user);
+            this.userRepository.delete(user);
+        }*/
+
+        return "redirect:/admin/users";
+    }
+
 }

@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import softuniBlog.entity.Category;
 import softuniBlog.repository.CategoryRepository;
 
-import java.util.Arrays;
-
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
@@ -31,10 +29,5 @@ public class CategoryController {
         return "base-layout";
     }
 
-    void initializeData() {
-        Category coastal = new Category("Coastal Tourism");
-        Category urban = new Category("Urban Tourism");
-        Category rural = new Category("Rural Tourism");
-        this.categoryRepository.save(Arrays.asList(new Category[]{coastal, urban, rural}));
-    }
+
 }

@@ -2,11 +2,13 @@ package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.DestinationBindingModel;
 import softuniBlog.entity.Category;
@@ -49,8 +51,27 @@ public class DestinationController {
         User currentUser = this.userRepository.findByEmail(principal.getUsername());
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
         this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getDestinationName(),
-                destinationBindingModel.getReview(), currentUser,category));
+                destinationBindingModel.getReview(), currentUser, category));
         return "redirect:/";
+    }
+
+    @GetMapping("/destination/{id}")
+    public String createDestination(Model model, @PathVariable Integer id) {
+        if (!this.destinationRepository.exists(id)) {
+            return "redirect:/";
+        }
+        if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            User user = this.userRepository.findByEmail(principal.getUsername());
+            model.addAttribute("user", user);
+        }
+        Destination destination = this.destinationRepository.findOne(id);
+        model.addAttribute("view", "destination/details")
+                .addAttribute("destination", destination);
+        return "base-layout";
     }
 
 }
