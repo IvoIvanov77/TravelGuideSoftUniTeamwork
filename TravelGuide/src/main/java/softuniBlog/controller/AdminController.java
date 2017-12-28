@@ -27,7 +27,7 @@ public class AdminController {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    public AdminController(UserRepository userRepository,CategoryRepository categoryRepository) {
+    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -55,7 +55,7 @@ public class AdminController {
         model.addAttribute("user", user);
         if (user.isAdmin()) {
             List<User> allUsers = this.userRepository.findAll();
-            model.addAttribute("view", "admin/admin");
+            model.addAttribute("view", "admin/listUsers");
             model.addAttribute("users", allUsers);
             return "base-layout";
         }
@@ -74,7 +74,7 @@ public class AdminController {
         model.addAttribute("user", user);
         if (user.isAdmin()) {
             List<Category> allCategories = this.categoryRepository.findAll();
-            model.addAttribute("view", "category/listCategories");
+            model.addAttribute("view", "admin/listCategories");
             model.addAttribute("categories", allCategories);
             return "base-layout";
         }
@@ -161,11 +161,12 @@ public class AdminController {
 
     }
 
-    private boolean isCurrentUserAdmin(){
+    private boolean isCurrentUserAdmin() {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 
-    private User getCurrentUser(){
+    //
+    private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
                 instanceof AnonymousAuthenticationToken)) {
@@ -179,38 +180,38 @@ public class AdminController {
 
         return null;
     }
-
-    @GetMapping("/admin/deleteUser/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String deleteUser(@PathVariable Integer id, Model model) {
-        if (!this.userRepository.exists(id)) {
-            return "redirect:/profile";
-        }
-
-        User user = this.userRepository.findOne(id);
-
-        model.addAttribute("user", user);
-        model.addAttribute("view", "user/delete");
-
-        return "base-layout";
-    }
-
-    @PostMapping("/admin/deleteUser/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String deleteUserProccess(@PathVariable Integer id) {
-        if (!this.userRepository.exists(id)) {
-            return "redirect:/admin/users";
-        }
-
-        User user = this.userRepository.findOne(id);
-
-        /*if (user != null && !user.getEmail().equals(getUser().getEmail()) && user.getId() != 1) {
-            deleteUserCategorys(user.getCategorys());
-            deleteProfilePictures(user);
-            this.userRepository.delete(user);
-        }*/
-
-        return "redirect:/admin/users";
-    }
+//
+//    @GetMapping("/admin/deleteUser/{id}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    public String deleteUser(@PathVariable Integer id, Model model) {
+//        if (!this.userRepository.exists(id)) {
+//            return "redirect:/profile";
+//        }
+//
+//        User user = this.userRepository.findOne(id);
+//
+//        model.addAttribute("user", user);
+//        model.addAttribute("view", "user/delete");
+//
+//        return "base-layout";
+//    }
+//
+//    @PostMapping("/admin/deleteUser/{id}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    public String deleteUserProccess(@PathVariable Integer id) {
+//        if (!this.userRepository.exists(id)) {
+//            return "redirect:/admin/users";
+//        }
+//
+//        User user = this.userRepository.findOne(id);
+//
+//        /*if (user != null && !user.getEmail().equals(getUser().getEmail()) && user.getId() != 1) {
+//            deleteUserCategorys(user.getCategorys());
+//            deleteProfilePictures(user);
+//            this.userRepository.delete(user);
+//        }*/
+//
+//        return "redirect:/admin/users";
+//    }
 
 }
