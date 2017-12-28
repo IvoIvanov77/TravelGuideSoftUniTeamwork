@@ -7056,3 +7056,21 @@ article .author  {
 article .author  {
   content: '\2014 \00A0';
 }
+
+ul#messages li {
+  display: block;
+  width: 80%;
+  margin: 5px auto;
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+ul#messages li.info {
+  background: #7f7;
+}
+
+ul#messages li.error {
+  background: #d00;
+  color: white;
+}

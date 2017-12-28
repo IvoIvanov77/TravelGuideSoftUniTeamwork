@@ -10,28 +10,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.bindingModel.CategoryBindingModel;
-import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.User;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.UserRepository;
+import softuniBlog.service.NotificationService;
+import softuniBlog.utils.Messages;
 
 import java.util.List;
 
-/**
- * Created by George-Lenovo on 6/29/2017.
- */
+
 @Controller
 public class AdminController {
     private UserRepository userRepository;
     private CategoryRepository categoryRepository;
+    private final NotificationService notifyService;
 
     @Autowired
-    public AdminController(UserRepository userRepository,CategoryRepository categoryRepository) {
+    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.notifyService = notifyService;
     }
 
     @GetMapping("/all_users/addCategory")
@@ -62,6 +62,7 @@ public class AdminController {
             return "base-layout";
         }
 
+        this.notifyService.addInfoMessage(Messages.ERROR);
         return "redirect:/login";
     }
 
@@ -81,6 +82,7 @@ public class AdminController {
             return "base-layout";
         }
 
+        this.notifyService.addInfoMessage(Messages.ERROR);
         return "redirect:/login";
     }
 
@@ -89,10 +91,12 @@ public class AdminController {
     public String editCategory(Model model, @PathVariable Integer id) {
 
         if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/";
         }
 
         if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/login";
         }
 
@@ -100,6 +104,7 @@ public class AdminController {
 
         model.addAttribute("view", "category/edit")
                 .addAttribute("category", category);
+
         return "base-layout";
     }
 
@@ -108,10 +113,12 @@ public class AdminController {
     public String editCategoryAction(CategoryBindingModel categoryBindingModel, @PathVariable Integer id) {
 
         if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/";
         }
 
         if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/login";
         }
 
@@ -121,6 +128,7 @@ public class AdminController {
 
 
         this.categoryRepository.saveAndFlush(category);
+        this.notifyService.addInfoMessage(Messages.SUCCESS);
         return "redirect:/all_categories";
 
     }
@@ -130,9 +138,11 @@ public class AdminController {
     public String deleteCategory(Model model, @PathVariable Integer id) {
 
         if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/";
         }
         if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/login";
         }
 
@@ -148,10 +158,12 @@ public class AdminController {
     public String deleteCategoryAction(@PathVariable Integer id) {
 
         if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/";
         }
 
         if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/login";
         }
 
@@ -159,6 +171,7 @@ public class AdminController {
 
 
         this.categoryRepository.delete(id);
+        this.notifyService.addInfoMessage(Messages.SUCCESS);
         return "redirect:/all_categories";
 
     }

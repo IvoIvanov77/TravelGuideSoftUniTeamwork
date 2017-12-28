@@ -20,6 +20,8 @@ import softuniBlog.entity.Role;
 import softuniBlog.entity.User;
 import softuniBlog.repository.RoleRepository;
 import softuniBlog.repository.UserRepository;
+import softuniBlog.service.NotificationService;
+import softuniBlog.utils.Messages;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -29,18 +31,21 @@ public class UserController {
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
-    private final RoleRepository roleRepository;
 
+    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final NotificationService notifyService;
+
     private CategoryController categoryController;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(RoleRepository roleRepository, UserRepository userRepository, CategoryController categoryController) {
+    public UserController(RoleRepository roleRepository, UserRepository userRepository, CategoryController categoryController, NotificationService notifyService) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.categoryController = categoryController;
         this.passwordEncoder = new BCryptPasswordEncoder();
+        this.notifyService = notifyService;
     }
 
     @GetMapping("/register")
@@ -67,8 +72,9 @@ public class UserController {
         // TODO: check email for duplicates
 
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
-            String error = "";
+
             /// TODO: send error message
+            notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/register";
         }
 
@@ -98,9 +104,9 @@ public class UserController {
         user.addRole(userRole);
 
         this.userRepository.saveAndFlush(user);
-        String success = "";
-        /// TODO: send  message
 
+        /// TODO: send  message
+        notifyService.addInfoMessage(Messages.SUCCESS);
         if(this.isCurrentUserAdmin()){
             return "redirect:/all_users";
         }
@@ -114,6 +120,13 @@ public class UserController {
 
         return "base-layout";
     }
+
+//    @GetMapping ("/login/error/403")
+//    public String loginFailure(@PathVariable final String error) {
+//
+//        this.notifyService.addErrorMessage(error);
+//        return "redirect:/login";
+//    }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
@@ -146,9 +159,12 @@ public class UserController {
     public String edit(Model model, @PathVariable Integer id) {
 
         if(!this.isCurrentUserAdmin()){
+            this.notifyService.addErrorMessage("please login as admin ");
             return "redirect:/login?logout";
         }
         if (!this.userRepository.exists(id)) {
+            //TODO
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/";
         }
         User user = this.userRepository.findOne(id);
@@ -166,24 +182,27 @@ public class UserController {
                              @RequestParam(defaultValue = "false") boolean checkbox) {
 
         if (!this.userRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/all_users";
         }
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
         }
         User user = this.userRepository.findOne(id);
 
         //can't change admin profile
         if(user.isAdmin() && this.getCurrentUser().getId() != 1){
-            String error = "";
             /// TODO: send error message
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
         }
 
         //can't change own profile
         if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
-            String error = "";
+
             /// TODO: send error message
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
         }
 
@@ -201,6 +220,7 @@ public class UserController {
         }
 
         this.userRepository.saveAndFlush(user);
+        notifyService.addInfoMessage(Messages.SUCCESS);
         return "redirect:/all_users";
     }
 
@@ -209,10 +229,12 @@ public class UserController {
     public String delete(Model model, @PathVariable Integer id) {
 
         if(!this.isCurrentUserAdmin()){
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/login?logout";
         }
 
         if (!this.userRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/";
         }
         User user = this.userRepository.findOne(id);
@@ -227,6 +249,7 @@ public class UserController {
     public String deleteAction(@PathVariable Integer id) {
 
         if (!this.userRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/";
         }
 
@@ -234,20 +257,22 @@ public class UserController {
 
         //can't delete admin profile
         if(user.isAdmin() && this.getCurrentUser().getId() != 1){
-            String error = "";
+
             /// TODO: send error message
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/delete/" + id;
         }
 
         //can't delete own profile
         if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
-            String error = "";
             /// TODO: send error message
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/delete/" + id;
         }
 
 
         this.userRepository.delete(id);
+        notifyService.addInfoMessage(Messages.SUCCESS);
         return "redirect:/all_users";
 
     }
