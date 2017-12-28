@@ -27,9 +27,10 @@ public class CategoryController {
     public String details(Model model, @PathVariable Integer id) {
         Category category = this.categoryRepository.findOne(id);
         List<Category> categories = this.categoryRepository.findAll();
-        model.addAttribute("view", "home/index");
-        model.addAttribute("categories", categories);
-        model.addAttribute("destinations", category.getDestinations());
+        model.addAttribute("view", "category/details");
+//        model.addAttribute("categories", categories);
+        model.addAttribute("category", category);
+//        model.addAttribute("destinations", category.getDestinations());
         return "base-layout";
     }
 }

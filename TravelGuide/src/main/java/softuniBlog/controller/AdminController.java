@@ -28,11 +28,9 @@ public class AdminController {
     private final NotificationService notifyService;
 
     @Autowired
-<<<<<<< HEAD
+
     public AdminController(UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService) {
-=======
-    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository) {
->>>>>>> 845b966e3556d24b6625b5dffa79ac1f90bab0fd
+
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.notifyService = notifyService;
@@ -81,7 +79,7 @@ public class AdminController {
         model.addAttribute("user", user);
         if (user.isAdmin()) {
             List<Category> allCategories = this.categoryRepository.findAll();
-            model.addAttribute("view", "admin/listCategories");
+            model.addAttribute("view", "category/all_categories");
             model.addAttribute("categories", allCategories);
             return "base-layout";
         }

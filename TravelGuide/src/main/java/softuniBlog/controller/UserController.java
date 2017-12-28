@@ -185,16 +185,15 @@ public class UserController {
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/all_users";
         }
-<<<<<<< HEAD
+
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
         }
         User user = this.userRepository.findOne(id);
 
-        //can't change admin profile
+        //only first registered admin can edit admin profile
         if(user.isAdmin() && this.getCurrentUser().getId() != 1){
-            /// TODO: send error message
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
         }
@@ -202,15 +201,9 @@ public class UserController {
         //can't change own profile
         if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
 
-            /// TODO: send error message
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/user/edit/" + id;
-=======
 
-        User user = this.userRepository.findOne(id);
-        if (!hasRights(user)) {
-            return "redirect:/all_users";
->>>>>>> 845b966e3556d24b6625b5dffa79ac1f90bab0fd
         }
 
         if (!StringUtils.isEmpty(userBindingModel.getPassword())
@@ -225,61 +218,25 @@ public class UserController {
 
         user.setFullName(userBindingModel.getFullName());
 
+        if(checkbox && !user.isAdmin()){
+            user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
+
+        }else if(!checkbox && user.isAdmin()){
+            user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
+        }
+
+
         this.userRepository.saveAndFlush(user);
-<<<<<<< HEAD
+
         notifyService.addInfoMessage(Messages.SUCCESS);
-=======
-
->>>>>>> 845b966e3556d24b6625b5dffa79ac1f90bab0fd
         return "redirect:/all_users";
-
-//        if (!this.userRepository.exists(id)) {
-//            return "redirect:/all_users";
-//        }
-//        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
-//            return "redirect:/user/edit/" + id;
-//        }
-//        User user = this.userRepository.findOne(id);
-//
-//        //can't change admin profile
-//        if(user.isAdmin() && this.getCurrentUser().getId() != 1){
-//            String error = "";
-//            /// TODO: send error message
-//            return "redirect:/user/edit/" + id;
-//        }
-//
-//        //can't change own profile
-//        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
-//            String error = "";
-//            /// TODO: send error message
-//            return "redirect:/user/edit/" + id;
-//        }
-//
-//        user.setEmail(userBindingModel.getEmail());
-//        user.setFullName(userBindingModel.getFullName());
-//        if(userBindingModel.getPassword() != null){
-//            user.setPassword(this.passwordEncoder.encode(userBindingModel.getPassword()));
-//        }
-//
-//        if(checkbox && !user.isAdmin()){
-//            user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
-//
-//        }else if(!checkbox && user.isAdmin()){
-//            user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
-//        }
-//
-//        this.userRepository.saveAndFlush(user);
-//        return "redirect:/all_users";
     }
 
     private boolean hasRights(User browsingUser) {
         User currentLoggedInUser = getUser();
-        if (browsingUser != null && (browsingUser.getEmail().equals(currentLoggedInUser.getEmail()) || currentLoggedInUser.getRoles().stream()
-                .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN"))) {
-            return true;
-        }
+        return browsingUser != null && (browsingUser.getEmail().equals(currentLoggedInUser.getEmail()) || currentLoggedInUser.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN"));
 
-        return false;
     }
     private User getUser() {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
@@ -318,7 +275,7 @@ public class UserController {
 
         User user = this.userRepository.findOne(id);
 
-        //can't delete admin profile
+        //only first registered admin can edit admin profile
         if(user.isAdmin() && this.getCurrentUser().getId() != 1){
 
             /// TODO: send error message
