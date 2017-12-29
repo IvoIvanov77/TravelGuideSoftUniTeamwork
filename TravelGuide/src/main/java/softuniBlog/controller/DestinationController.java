@@ -51,7 +51,7 @@ public class DestinationController {
         User currentUser = this.userRepository.findByEmail(principal.getUsername());
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
         this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getName(),
-                destinationBindingModel.getReview(), currentUser, category));
+                destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice()));
         return "redirect:/";
     }
 

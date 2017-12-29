@@ -8,6 +8,7 @@ public class DestinationBindingModel {
     private String name;
     private String review;
     private Integer categoryId;
+    private Double price;
 
     public Integer getCategoryId() {
         return categoryId;
@@ -31,5 +32,13 @@ public class DestinationBindingModel {
 
     public void setReview(String review) {
         this.review = review;
+    }
+
+    public Double getPrice() {
+        return this.price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

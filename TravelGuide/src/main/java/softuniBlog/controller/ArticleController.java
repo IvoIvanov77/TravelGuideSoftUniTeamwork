@@ -18,6 +18,8 @@ import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.UserRepository;
 
+import java.util.HashSet;
+
 @Controller
 public class ArticleController {
 
@@ -52,7 +54,7 @@ public class ArticleController {
         Destination destination = this.destinationRepository.findOne(1);
         Article article = new Article(articleBindingModel.getTitle(),
                 articleBindingModel.getContent(),
-                user,destination);
+                user,destination, new HashSet<>());
 
         this.articleRepository.saveAndFlush(article);
         return "redirect:/";

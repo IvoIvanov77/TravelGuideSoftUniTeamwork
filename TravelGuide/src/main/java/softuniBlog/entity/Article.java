@@ -2,6 +2,7 @@ package softuniBlog.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity(name = "articles")
 public class Article {
@@ -16,11 +17,14 @@ public class Article {
 
     private Destination destination;
 
-    public Article(String title, String content, User author, Destination destination) {
+    private Set<Comment> comments;
+
+    public Article(String title, String content, User author, Destination destination, Set<Comment> comments) {
         this.title = title;
         this.content = content;
         this.author = author;
         this.destination = destination;
+        this.comments = comments;
     }
 
     public Article() {
@@ -80,4 +84,12 @@ public class Article {
         return this.getContent().substring(0, this.getContent().length() / 2) + "...";
     }
 
+    @OneToMany(mappedBy = "article")
+    public Set<Comment> getComments() {
+        return this.comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 }

@@ -22,16 +22,19 @@ public class Destination {
 
     private Category category;
 
+    private Double price;
+
     public Destination() {
     }
 
-    public Destination(String name, String review, User author, Category category) {
+    public Destination(String name, String review, User author, Category category, Double price) {
         this.name = name;
         this.review = review;
         this.starRating = 0D;
         this.author = author;
         this.articles = new HashSet<>();
         this.category = category;
+        this.price = price;
     }
 
     @ManyToOne
@@ -99,5 +102,13 @@ public class Destination {
 
     public void setArticles(Set<Article> articles) {
         this.articles = articles;
+    }
+    @Column(nullable = false)
+    public Double getPrice(){
+        return this.price;
+    }
+
+    public  void setPrice(Double price){
+        this.price = price;
     }
 }
