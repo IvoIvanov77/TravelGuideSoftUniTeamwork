@@ -63,7 +63,6 @@ public class DestinationController {
     @PostMapping("/destination/add")
     @PreAuthorize("isAuthenticated()")
     public String createDestinationProcess(DestinationBindingModel destinationBindingModel) {
-
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
