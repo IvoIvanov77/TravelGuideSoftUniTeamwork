@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.DestinationBindingModel;
+import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.User;
@@ -22,6 +23,7 @@ import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -50,7 +52,7 @@ public class DestinationController {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
-        if(this.categoryRepository.findAll().isEmpty()){
+        if (this.categoryRepository.findAll().isEmpty()) {
             this.notifyService.addErrorMessage(Messages.THERE_ARE_NO_CATEGORIES_AVAILABLE);
         }
         model.addAttribute("view", "destination/create");
@@ -85,8 +87,10 @@ public class DestinationController {
         }
 
         Destination destination = this.destinationRepository.findOne(id);
+        Set<Article> articles = destination.getArticles();
         model.addAttribute("view", "destination/details")
-                .addAttribute("destination", destination);
+                .addAttribute("destination", destination)
+                .addAttribute("articles", articles);
         return "base-layout";
     }
 
@@ -113,7 +117,7 @@ public class DestinationController {
 
     @PostMapping("/destination/edit/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id){
+    public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id) {
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
