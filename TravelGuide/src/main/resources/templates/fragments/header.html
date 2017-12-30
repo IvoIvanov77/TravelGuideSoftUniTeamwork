@@ -1,63 +1,5 @@
 <header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
-    <!-- <div class="navbar navbar-default navbar-static-top" role="navigation">
-         <div class="container">
-             <div class="navbar-header">
-                 <a th:href="@{/}" class="navbar-brand">OUR TRAVEL GUIDE</a>
 
-                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                     <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>
-                     <span class="icon-bar"></span>
-                 </button>
-             </div>
-             <div class="navbar-collapse collapse">
-                 <ul class="nav navbar-nav navbar-right">
-                     <li>
-                         <a th:href="@{/}">
-                             HOME
-                         </a>
-                     </li>
-                     <li>
-                         <a th:href="@{/search}">
-                             SEARCH
-                         </a>
-                     </li>
-                     <li>
-                         <a th:href="@{#}">
-                             MAP
-                         </a>
-                     </li>
-                     <li sec:authorize="isAuthenticated()">
-                         <a th:href="@{/article/create}">
-                             Create Article
-                         </a>
-                     </li>
-                     <li sec:authorize="isAuthenticated()">
-                         <a th:href="@{/profile}">
-                             My Profile
-                         </a>
-                     </li>
-                     <li sec:authorize="isAuthenticated()">
-                         <a th:href="@{/logout}">
-                             Logout
-                         </a>
-                     </li>
-
-                     <li sec:authorize="isAnonymous()">
-                         <a th:href="@{/register}">
-                             REGISTER
-                         </a>
-                     </li>
-                     <li sec:authorize="isAnonymous()">
-                         <a th:href="@{/login}">
-                             LOGIN
-                         </a>
-                     </li>
-
-                 </ul>
-             </div>
-         </div>
-     </div>-->
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
@@ -68,28 +10,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="nav navbar-nav navbar-right">
-                    <!--<li class="nav-item ">-->
-                        <!--<a class="nav-link" th:href="@{/newHome}">NewHomePageAfterYouAgree-->
-                            <!--&lt;!&ndash;<span class="sr-only">(current)</span>&ndash;&gt;-->
-                        <!--</a>-->
-                    <!--</li>-->
+
                     <li class="nav-item ">
-                        <a class="nav-link" th:href="@{/}">Home
-                            <!--<span class="sr-only">(current)</span>-->
+                        <a class="nav-link" th:href="@{/}">
+                            Home
                         </a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/category/addCategory}">Add Category</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/destination/add}">Add Destination</a>
-                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Map</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/article/create}">
-                            Create Article
+                        <a class="nav-link" href="#">
+                            Map
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
@@ -118,29 +47,11 @@
                             Login
                         </a>
                     </li>
-
-
                     <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
                         <a class="btn btn-info" th:href="@{/all_users}">
                             admin control panel
                         </a>
                     </li>
-
-
-
-
-                    <!-- <li class="nav-item">
-                         <a class="nav-link" href="#">My Profile</a>
-                     </li>
-                     <li class="nav-item">
-                         <a class="nav-link" href="#">Logout</a>
-                     </li>
-                     <li class="nav-item">
-                         <a class="nav-link" href="#">Register</a>
-                     </li>
-                     <li class="nav-item">
-                         <a class="nav-link" href="#">Login</a>
-                     </li>-->
 
                 </ul>
 

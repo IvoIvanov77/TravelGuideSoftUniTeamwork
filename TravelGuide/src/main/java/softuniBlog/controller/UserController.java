@@ -35,15 +35,12 @@ public class UserController {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final NotificationService notifyService;
-
-    private CategoryController categoryController;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserController(RoleRepository roleRepository, UserRepository userRepository, CategoryController categoryController, NotificationService notifyService) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
-        this.categoryController = categoryController;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.notifyService = notifyService;
     }
@@ -51,6 +48,9 @@ public class UserController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("view", "user/register");
+        if(this.isCurrentUserAdmin()){
+            return "admin/admin_panel-layout";
+        }
         return "base-layout";
     }
 
@@ -69,16 +69,23 @@ public class UserController {
     public String registerProcess(UserBindingModel userBindingModel,
                                   @RequestParam(defaultValue = "false") boolean checkbox) {
 
-        // TODO: check email for duplicates
-
-        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
-
-            /// TODO: send error message
+        if(
+                this.userRepository.findAll()
+                .stream()
+                .filter(user -> user.getEmail().equals(userBindingModel.getEmail()))
+                .count() > 0
+                ){
             notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/register";
         }
 
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
+
+
+            notifyService.addErrorMessage(Messages.ERROR);
+            return "redirect:/register";
+        }
 
         User user = new User(
                 userBindingModel.getEmail(),
@@ -105,7 +112,6 @@ public class UserController {
 
         this.userRepository.saveAndFlush(user);
 
-        /// TODO: send  message
         notifyService.addInfoMessage(Messages.SUCCESS);
         if(this.isCurrentUserAdmin()){
             return "redirect:/all_users";
@@ -121,7 +127,7 @@ public class UserController {
         return "base-layout";
     }
 
-//    @GetMapping ("/login/error/403")
+//    @GetMapping ("/login?error")
 //    public String loginFailure(@PathVariable final String error) {
 //
 //        this.notifyService.addErrorMessage(error);
@@ -160,12 +166,11 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
-        if(!this.isCurrentUserAdmin()){
-            this.notifyService.addErrorMessage("please login as admin ");
+        if(!this.isCurrentUserAdmin() && !Objects.equals(this.getCurrentUser().getId(), id)){
+            this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/login?logout";
         }
         if (!this.userRepository.exists(id)) {
-            //TODO
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/";
         }
@@ -175,7 +180,7 @@ public class UserController {
 
         model.addAttribute("view", "user/edit")
                 .addAttribute("user", user);
-        return "base-layout";
+        return "admin/admin_panel-layout";
     }
 
     @PostMapping("/user/edit/{id}")
@@ -200,13 +205,6 @@ public class UserController {
             return "redirect:/user/edit/" + id;
         }
 
-        //can't change own profile
-        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
-
-            this.notifyService.addErrorMessage(Messages.ERROR);
-            return "redirect:/user/edit/" + id;
-
-        }
 
         if (!StringUtils.isEmpty(userBindingModel.getPassword())
                 && !StringUtils.isEmpty(userBindingModel.getConfirmPassword())) {
@@ -226,11 +224,13 @@ public class UserController {
         }else if(!checkbox && user.isAdmin()){
             user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
         }
-
-
         this.userRepository.saveAndFlush(user);
-
         notifyService.addInfoMessage(Messages.SUCCESS);
+
+        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
+            return "redirect:/login?logout";
+
+        }
         return "redirect:/all_users";
     }
 
@@ -263,7 +263,7 @@ public class UserController {
 
         model.addAttribute("view", "user/delete")
                 .addAttribute("user", user);
-        return "base-layout";
+        return "admin/admin_panel-layout";
     }
 
     @PostMapping("/user/delete/{id}")
@@ -314,7 +314,6 @@ public class UserController {
             return this.userRepository.findByEmail(principal.getUsername());
 
         }
-
         return null;
     }
 

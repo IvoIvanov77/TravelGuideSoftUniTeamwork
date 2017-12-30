@@ -31,8 +31,10 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="category_dropdown_menu"></label>
                         <div class="col-sm-4 ">
-                            <select class="form-control" id="category_dropdown_menu" name="categoryId">
-                                <option th:each="category : ${categories}" th:value="${category.id}"
+                            <select class="form-control"  id="category_dropdown_menu" name="categoryId">
+                                <option
+                                        th:each="category : ${categories}"
+                                        th:value="${category.id}"
                                         th:text="${category.name}">
                                 </option>
                             </select>

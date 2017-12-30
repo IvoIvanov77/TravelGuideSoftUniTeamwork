@@ -11,9 +11,9 @@
 
                         <div class="pull-right">
 
-                            <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin()}">
+                            <th:block sec:authorize="isAuthenticated()">
                                 <a class="btn btn-success btn-xs" th:href="@{/user/edit/{id}(id = ${user.id})}">Edit profile</a>
-                                <a class="btn btn-danger btn-xs" th:href="@{/user/delete/{id}(id = ${user.id})}">Delete profile</a>
+                                <!--<a class="btn btn-danger btn-xs" th:href="@{/user/delete/{id}(id = ${user.id})}">Delete profile</a>-->
                             </th:block>
 
 

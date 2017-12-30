@@ -38,8 +38,8 @@ public class AdminController {
 
     @GetMapping("/category/addCategory")
     public String addCategory(Model model) {
-        model.addAttribute("view", "admin/addCategory");
-        return "base-layout";
+        model.addAttribute("view", "category/add_category");
+        return "admin/admin_panel-layout";
     }
 
     @PostMapping("/category/addCategory")
@@ -59,9 +59,9 @@ public class AdminController {
         model.addAttribute("user", user);
         if (user.isAdmin()) {
             List<User> allUsers = this.userRepository.findAll();
-            model.addAttribute("view", "admin/listUsers");
+            model.addAttribute("view", "user/all_users");
             model.addAttribute("users", allUsers);
-            return "base-layout";
+            return "admin/admin_panel-layout";
         }
 
         this.notifyService.addInfoMessage(Messages.ERROR);
@@ -81,7 +81,7 @@ public class AdminController {
             List<Category> allCategories = this.categoryRepository.findAll();
             model.addAttribute("view", "category/all_categories");
             model.addAttribute("categories", allCategories);
-            return "base-layout";
+            return "admin/admin_panel-layout";
         }
 
         this.notifyService.addInfoMessage(Messages.ERROR);
@@ -107,7 +107,7 @@ public class AdminController {
         model.addAttribute("view", "category/edit")
                 .addAttribute("category", category);
 
-        return "base-layout";
+        return "admin/admin_panel-layout";
     }
 
     @PostMapping("/category/edit/{id}")
@@ -152,7 +152,7 @@ public class AdminController {
 
         model.addAttribute("view", "category/delete")
                 .addAttribute("category", category);
-        return "base-layout";
+        return "admin/admin_panel-layout";
     }
 
     @PostMapping("/category/delete/{id}")
