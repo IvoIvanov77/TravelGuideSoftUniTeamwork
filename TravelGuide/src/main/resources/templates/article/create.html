@@ -3,26 +3,40 @@
         <div class="well">
             <form class="form-horizontal" th:action="@{/article/create}" method="POST">
                 <fieldset>
-                    <legend>New Post</legend>
+                    <legend>Create Article</legend>
 
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="article_title">Article Title</label>
+                        <label class="col-sm-4 control-label" for="title">Title</label>
                         <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="article_title" placeholder="Article Title"
+                            <input type="text" class="form-control" id="title" placeholder="Title"
                                    name="title"/>
                         </div>
                     </div>
 
+
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="article_content">Content</label>
+                        <label class="col-sm-4 control-label" for="content">Content</label>
                         <div class="col-sm-6">
-                            <textarea class="form-control" rows="6" id="article_content" name="content"></textarea>
+                            <textarea class="form-control" rows="25" id="content" name="content"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="destination_dropdown_menu"></label>
+                        <div class="col-sm-4 ">
+                            <select class="form-control"  id="destination_dropdown_menu" name="destinationId">
+                                <option
+                                        th:each="destination : ${destinations}"
+                                        th:value="${destination.id}"
+                                        th:text="${destination.name}">
+                                </option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" th:href="@{/}">Cancel</a>
+                            <a class="btn btn-default" th:href="@{/all_articles}">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Submit"/>
                         </div>
                     </div>

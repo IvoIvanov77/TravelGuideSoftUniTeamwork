@@ -41,6 +41,10 @@ public class DestinationController {
 
     @GetMapping("/destination/add")
     public String createDestination(Model model) {
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
+            return "redirect:/login";
+        }
         model.addAttribute("view", "destination/create");
         model.addAttribute("categories", this.categoryRepository.findAll());
         return "admin/admin_panel-layout";
@@ -49,15 +53,17 @@ public class DestinationController {
     @PostMapping("/destination/add")
     @PreAuthorize("isAuthenticated()")
     public String createDestinationProcess(DestinationBindingModel destinationBindingModel) {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
+            return "redirect:/login";
+        }
 
-        User currentUser = this.userRepository.findByEmail(principal.getUsername());
+        User currentUser = this.getCurrentUser();
+
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
         this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getName(),
                 destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice()));
-        return "redirect:/";
+        return "redirect:/all_destinations";
     }
 
     @GetMapping("/destination/{id}")
@@ -83,14 +89,15 @@ public class DestinationController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
+            return "redirect:/login";
+        }
+
         if (!this.destinationRepository.exists(id)) {
-            return "redirect:/";
+            return "redirect:/all_destinations";
         }
         Destination destination = this.destinationRepository.findOne(id);
-
-        if (!this.isUserAuthorOrAdmin(destination)) {
-            return "redirect:/";
-        }
 
         model.addAttribute("view", "destination/edit")
                 .addAttribute("destination", destination);
@@ -101,34 +108,31 @@ public class DestinationController {
     @PostMapping("/destination/edit/{id}")
     @PreAuthorize("isAuthenticated()")
     public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id){
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addInfoMessage(Messages.ERROR);
+            return "redirect:/login";
+        }
+
         if (!this.destinationRepository.exists(id)) {
-            return "redirect:/";
+            this.notifyService.addInfoMessage(Messages.ERROR);
+            return "redirect:/all_destinations";
         }
 
         Destination destination = this.destinationRepository.findOne(id);
-
-        if (!this.isUserAuthorOrAdmin(destination)) {
-            return "redirect:/";
-        }
 
         destination.setName(bindingModel.getName());
         destination.setReview(bindingModel.getReview());
         destination.setCategory(this.categoryRepository.findOne(bindingModel.getCategoryId()));
         this.destinationRepository.saveAndFlush(destination);
 
-        return "redirect:/";
+        return "redirect:/all_destinations";
     }
 
     @GetMapping("/all_destinations")
     @PreAuthorize("isAuthenticated()")
     public String categories(Model model) {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
 
-        User user = this.userRepository.findByEmail(principal.getUsername());
-        model.addAttribute("user", user);
-        if (user.isAdmin()) {
+        if (this.isCurrentUserAdmin()) {
             List<Destination> allDestinations = this.destinationRepository.findAll();
             model.addAttribute("view", "destination/all_destinations");
             model.addAttribute("destinations", allDestinations);
@@ -144,5 +148,24 @@ public class DestinationController {
         User userEntity = this.userRepository.findByEmail(user.getUsername());
 
         return userEntity.isAuthor(destination) || userEntity.isAdmin();
+    }
+
+    private boolean isCurrentUserAdmin() {
+        return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
+    }
+
+    //
+    private User getCurrentUser() {
+
+        if (!(SecurityContextHolder.getContext().getAuthentication()
+                instanceof AnonymousAuthenticationToken)) {
+            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            return this.userRepository.findByEmail(principal.getUsername());
+        }
+
+        return null;
     }
 }

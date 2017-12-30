@@ -1,6 +1,8 @@
 package softuniBlog.bindingModel;
 
 
+import softuniBlog.entity.Destination;
+
 import javax.validation.constraints.NotNull;
 
 public class ArticleBindingModel {
@@ -10,6 +12,9 @@ public class ArticleBindingModel {
 
     @NotNull
     private String content;
+
+    @NotNull
+    private Integer destinationId;
 
     public String getTitle() {
         return title;
@@ -25,5 +30,13 @@ public class ArticleBindingModel {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getDestinationId() {
+        return destinationId;
+    }
+
+    public void setDestinationId(Integer destinationId) {
+        this.destinationId = destinationId;
     }
 }

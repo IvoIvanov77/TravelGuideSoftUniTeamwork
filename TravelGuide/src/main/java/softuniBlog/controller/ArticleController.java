@@ -42,7 +42,12 @@ public class ArticleController {
     @GetMapping("/article/create")
     @PreAuthorize("isAuthenticated()")
     public String create(Model model) {
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
+            return "redirect:/login";
+        }
         model.addAttribute("view", "article/create");
+        model.addAttribute("destinations", this.destinationRepository.findAll());
         return "admin/admin_panel-layout";
     }
 
@@ -50,19 +55,22 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     public String createAction(ArticleBindingModel articleBindingModel) {
 
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.ERROR);
+            return "redirect:/login";
+        }
 
-        User user = this.userRepository.findByEmail(principal.getUsername());
+        User user = this.getCurrentUser();
+
         //for building help only, this code will be refactored later.
-        Destination destination = this.destinationRepository.findOne(1);
+        Destination destination = this.destinationRepository.findOne(articleBindingModel.getDestinationId());
+
         Article article = new Article(articleBindingModel.getTitle(),
                 articleBindingModel.getContent(),
                 user,destination, new HashSet<>());
 
         this.articleRepository.saveAndFlush(article);
-        return "redirect:/";
+        return "redirect:/all_articles";
     }
 
     @GetMapping("/article/{id}")
@@ -189,6 +197,25 @@ public class ArticleController {
         User userEntity = this.userRepository.findByEmail(user.getUsername());
 
         return userEntity.isAuthor(article) || userEntity.isAdmin();
+    }
+
+    private boolean isCurrentUserAdmin() {
+        return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
+    }
+
+    //
+    private User getCurrentUser() {
+
+        if (!(SecurityContextHolder.getContext().getAuthentication()
+                instanceof AnonymousAuthenticationToken)) {
+            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            return this.userRepository.findByEmail(principal.getUsername());
+        }
+
+        return null;
     }
 
 
