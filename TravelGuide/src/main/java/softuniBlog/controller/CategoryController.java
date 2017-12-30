@@ -162,6 +162,7 @@ public class CategoryController {
                 .filter(destination -> destination.getCategory().getId().equals(id))
                 .collect(Collectors.toList());
 
+        //delete all articles and destinations with given category
         for (Destination destination : destinationToDelete) {
             this.deleteDestination(destination.getId());
         }

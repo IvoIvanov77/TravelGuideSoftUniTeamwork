@@ -94,7 +94,7 @@ public class ArticleController {
 
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage("ERROR");
-            return "redirect:/article/" + id;
+            return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
@@ -115,7 +115,7 @@ public class ArticleController {
 
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage("ERROR");
-            return "redirect:/article/" + id;
+            return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
@@ -139,7 +139,7 @@ public class ArticleController {
 
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage("ERROR");
-            return "redirect:/article/" + id;
+            return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
@@ -159,7 +159,7 @@ public class ArticleController {
 
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage("ERROR");
-            return "redirect:/article/" + id;
+            return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {

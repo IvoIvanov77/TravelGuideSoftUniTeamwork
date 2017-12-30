@@ -15,6 +15,7 @@ import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.User;
+import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.UserRepository;
@@ -22,6 +23,7 @@ import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -31,13 +33,15 @@ public class DestinationController {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final NotificationService notifyService;
+    private final ArticleRepository articleRepository;
 
     @Autowired
-    public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService) {
+    public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService, ArticleRepository articleRepository) {
         this.destinationRepository = destinationRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.notifyService = notifyService;
+        this.articleRepository = articleRepository;
     }
 
     @GetMapping("/destination/add")
@@ -146,44 +150,52 @@ public class DestinationController {
         this.notifyService.addInfoMessage(Messages.ERROR);
         return "redirect:/login";
     }
-//
-//    @GetMapping("/destination/delete/{id}")
-//    @PreAuthorize("isAuthenticated()")
-//    public String delete(Model model, @PathVariable Integer id) {
-//
-//        if (!this.isCurrentUserAdmin()) {
-//            this.notifyService.addErrorMessage("ERROR");
-//            return "redirect:/destination/" + id;
-//        }
-//
-//        if (!this.articleRepository.exists(id)) {
-//            return "redirect:/";
-//        }
-//
-//        Article article = this.articleRepository.findOne(id);
-//
-//        model.addAttribute("view", "article/delete")
-//                .addAttribute("article", article);
-//        return "admin/admin_panel-layout";
-//    }
-//
-//    @PostMapping("/article/delete/{id}")
-//    @PreAuthorize("isAuthenticated()")
-//    public String deleteAction(@PathVariable Integer id) {
-//
-//        if (!this.isCurrentUserAdmin()) {
-//            this.notifyService.addErrorMessage("ERROR");
-//            return "redirect:/article/" + id;
-//        }
-//
-//        if (!this.articleRepository.exists(id)) {
-//            return "redirect:/";       }
-//
-//
-//        this.articleRepository.delete(id);
-//        return "redirect:/all_articles";
-//
-//    }
+
+    @GetMapping("/destination/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Model model, @PathVariable Integer id) {
+
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
+            return "redirect:/login";
+        }
+
+        if (!this.destinationRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        Destination destination = this.destinationRepository.findOne(id);
+
+        model.addAttribute("view", "destination/delete")
+                .addAttribute("destination", destination);
+        return "admin/admin_panel-layout";
+    }
+
+    @PostMapping("/destination/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteAction(@PathVariable Integer id) {
+
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
+            return "redirect:/login";
+        }
+
+        if (!this.destinationRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        //remove all articles with given destination
+        this.articleRepository.delete(
+                this.articleRepository.findAll()
+                        .stream()
+                        .filter(article -> article.getDestination().getId().equals(id))
+                        .collect(Collectors.toList())
+        );
+
+        this.destinationRepository.delete(id);
+        return "redirect:/all_destinations";
+
+    }
 
     private boolean isUserAuthorOrAdmin(Destination destination) {
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
