@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head th:include="fragments/head" th:with="pageTitle='Travel Guide'"></head>
+
+<body>
+
+<header th:include="admin/admin_header">
+
+</header>
+<main  >
+    <div class="row">
+        <div class="col-sm-3" th:include="admin/admin_navbar">
+
+        </div>
+        <div class="col-sm-9" th:include="${view}">
+
+        </div>
+    </div>
+
+</main>
+
+<footer th:include="fragments/footer"></footer>
+
+<span th:include="fragments/scripts-bundle"></span>
+
+</body>
+
+
+</html>
