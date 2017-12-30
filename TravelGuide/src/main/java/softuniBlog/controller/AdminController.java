@@ -35,20 +35,6 @@ public class AdminController {
         this.notifyService = notifyService;
     }
 
-    @GetMapping("/category/addCategory")
-    @PreAuthorize("isAuthenticated()")
-    public String addCategory(Model model) {
-        model.addAttribute("view", "category/add_category");
-        return "admin/admin_panel-layout";
-    }
-
-    @PostMapping("/category/addCategory")
-    public String addCategoryProcess(Model model, CategoryBindingModel categoryBindingModel) {
-        this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName()));
-        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_CATEGORY);
-        return "redirect:/all_categories";
-    }
-
     @GetMapping("/all_users")
     @PreAuthorize("isAuthenticated()")
     public String index(Model model) {

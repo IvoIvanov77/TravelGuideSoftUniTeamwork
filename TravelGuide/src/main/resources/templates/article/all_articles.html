@@ -25,6 +25,7 @@
                         <th>Title</th>
                         <th>Author</th>
                         <th>Destination</th>
+                        <th>Category</th>
 
                     </tr>
                     </thead>
@@ -46,6 +47,7 @@
                             <td th:text="${article.getTitle()}"></td>
                             <td th:text="${article.getAuthor().getFullName()}"></td>
                             <td th:text="${article.getDestination().getName()}"></td>
+                            <td th:text="${article.getDestination().getCategory().getName()}"></td>
 
                         </tr>
                     </th:block>

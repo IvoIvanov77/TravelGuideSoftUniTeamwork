@@ -57,6 +57,29 @@ public class CategoryController {
         return "base-layout";
     }
 
+    @GetMapping("/category/addCategory")
+    @PreAuthorize("isAuthenticated()")
+    public String addCategory(Model model) {
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
+        }
+        model.addAttribute("view", "category/add_category");
+        return "admin/admin_panel-layout";
+    }
+
+    @PostMapping("/category/addCategory")
+    @PreAuthorize("isAuthenticated()")
+    public String addCategoryProcess(Model model, CategoryBindingModel categoryBindingModel) {
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
+        }
+        this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName()));
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_CATEGORY);
+        return "redirect:/all_categories";
+    }
+
     @GetMapping("/all_categories")
     @PreAuthorize("isAuthenticated()")
     public String categories(Model model) {
