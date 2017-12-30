@@ -27,9 +27,9 @@ import java.util.List;
 @Controller
 public class DestinationController {
     
-    private DestinationRepository destinationRepository;
-    private UserRepository userRepository;
-    private CategoryRepository categoryRepository;
+    private final DestinationRepository destinationRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final NotificationService notifyService;
 
     @Autowired
@@ -132,58 +132,58 @@ public class DestinationController {
         return "redirect:/all_destinations";
     }
 
-    @GetMapping("/all_destinations")
-    @PreAuthorize("isAuthenticated()")
-    public String categories(Model model) {
-
-        if (this.isCurrentUserAdmin()) {
-            List<Destination> allDestinations = this.destinationRepository.findAll();
-            model.addAttribute("view", "destination/all_destinations");
-            model.addAttribute("destinations", allDestinations);
-            return "admin/admin_panel-layout";
-        }
-        //// TODO: 12/30/2017  
-        this.notifyService.addInfoMessage(Messages.ERROR);
-        return "redirect:/login";
-    }
-
-    @GetMapping("/destination/delete/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public String delete(Model model, @PathVariable Integer id) {
-
-        if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
-            return "redirect:/destination/" + id;
-        }
-
-        if (!this.articleRepository.exists(id)) {
-            return "redirect:/";
-        }
-
-        Article article = this.articleRepository.findOne(id);
-
-        model.addAttribute("view", "article/delete")
-                .addAttribute("article", article);
-        return "admin/admin_panel-layout";
-    }
-
-    @PostMapping("/article/delete/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public String deleteAction(@PathVariable Integer id) {
-
-        if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
-            return "redirect:/article/" + id;
-        }
-
-        if (!this.articleRepository.exists(id)) {
-            return "redirect:/";       }
-
-
-        this.articleRepository.delete(id);
-        return "redirect:/all_articles";
-
-    }
+//    @GetMapping("/all_destinations")
+//    @PreAuthorize("isAuthenticated()")
+//    public String categories(Model model) {
+//
+//        if (this.isCurrentUserAdmin()) {
+//            List<Destination> allDestinations = this.destinationRepository.findAll();
+//            model.addAttribute("view", "destination/all_destinations");
+//            model.addAttribute("destinations", allDestinations);
+//            return "admin/admin_panel-layout";
+//        }
+//        //// TODO: 12/30/2017
+//        this.notifyService.addInfoMessage(Messages.ERROR);
+//        return "redirect:/login";
+//    }
+//
+//    @GetMapping("/destination/delete/{id}")
+//    @PreAuthorize("isAuthenticated()")
+//    public String delete(Model model, @PathVariable Integer id) {
+//
+//        if (!this.isCurrentUserAdmin()) {
+//            this.notifyService.addErrorMessage("ERROR");
+//            return "redirect:/destination/" + id;
+//        }
+//
+//        if (!this.articleRepository.exists(id)) {
+//            return "redirect:/";
+//        }
+//
+//        Article article = this.articleRepository.findOne(id);
+//
+//        model.addAttribute("view", "article/delete")
+//                .addAttribute("article", article);
+//        return "admin/admin_panel-layout";
+//    }
+//
+//    @PostMapping("/article/delete/{id}")
+//    @PreAuthorize("isAuthenticated()")
+//    public String deleteAction(@PathVariable Integer id) {
+//
+//        if (!this.isCurrentUserAdmin()) {
+//            this.notifyService.addErrorMessage("ERROR");
+//            return "redirect:/article/" + id;
+//        }
+//
+//        if (!this.articleRepository.exists(id)) {
+//            return "redirect:/";       }
+//
+//
+//        this.articleRepository.delete(id);
+//        return "redirect:/all_articles";
+//
+//    }
 
     private boolean isUserAuthorOrAdmin(Destination destination) {
         UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
