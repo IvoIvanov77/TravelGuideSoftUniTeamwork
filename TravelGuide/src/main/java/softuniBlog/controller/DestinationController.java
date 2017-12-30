@@ -2,7 +2,6 @@ package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -10,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.DestinationBindingModel;
 import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
@@ -70,9 +70,15 @@ public class DestinationController {
 
         User currentUser = this.getCurrentUser();
 
+        Set<MultipartFile> images = destinationBindingModel.getPictures();
+        images.add(destinationBindingModel.getPicture());
+
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
-        this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getName(),
-                destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice()));
+        Destination destination = new Destination(destinationBindingModel.getName(),
+                destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice());
+//        destination.setImages(images);
+
+        this.destinationRepository.saveAndFlush(destination);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_DESTINATION);
         return "redirect:/all_destinations";
     }
@@ -213,18 +219,10 @@ public class DestinationController {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 
-    //
     private User getCurrentUser() {
-
-        if (!(SecurityContextHolder.getContext().getAuthentication()
-                instanceof AnonymousAuthenticationToken)) {
-            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                    .getAuthentication()
-                    .getPrincipal();
-
-            return this.userRepository.findByEmail(principal.getUsername());
-        }
-
-        return null;
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return this.userRepository.findByEmail(principal.getUsername());
     }
 }

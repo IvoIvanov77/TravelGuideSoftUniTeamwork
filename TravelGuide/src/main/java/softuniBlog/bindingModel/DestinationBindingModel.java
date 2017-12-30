@@ -3,7 +3,7 @@ package softuniBlog.bindingModel;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
@@ -22,7 +22,7 @@ public class DestinationBindingModel {
     @NotNull
     private MultipartFile picture;
 
-    private List<MultipartFile> pictures;
+    private Set<MultipartFile> pictures;
 
     public Integer getCategoryId() {
         return categoryId;
@@ -32,7 +32,7 @@ public class DestinationBindingModel {
         return picture;
     }
 
-    public List<MultipartFile> getPictures() {
+    public Set<MultipartFile> getPictures() {
         return pictures;
     }
 
@@ -40,7 +40,7 @@ public class DestinationBindingModel {
         this.picture = picture;
     }
 
-    public void setPictures(List<MultipartFile> pictures) {
+    public void setPictures(Set<MultipartFile> pictures) {
         this.pictures = pictures;
     }
 

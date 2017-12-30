@@ -20,6 +20,8 @@ public class Destination {
 
     private Set<Article> articles;
 
+    private Set<Image> images;
+
     private Category category;
 
     private Double price;
@@ -35,6 +37,16 @@ public class Destination {
         this.articles = new HashSet<>();
         this.category = category;
         this.price = price;
+        this.images = new HashSet<>();
+    }
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.REMOVE)
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 
     @ManyToOne
@@ -103,12 +115,13 @@ public class Destination {
     public void setArticles(Set<Article> articles) {
         this.articles = articles;
     }
+
     @Column(nullable = false)
-    public Double getPrice(){
+    public Double getPrice() {
         return this.price;
     }
 
-    public  void setPrice(Double price){
+    public void setPrice(Double price) {
         this.price = price;
     }
 }
