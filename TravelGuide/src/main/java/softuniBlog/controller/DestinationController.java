@@ -132,20 +132,20 @@ public class DestinationController {
         return "redirect:/all_destinations";
     }
 
-//    @GetMapping("/all_destinations")
-//    @PreAuthorize("isAuthenticated()")
-//    public String categories(Model model) {
-//
-//        if (this.isCurrentUserAdmin()) {
-//            List<Destination> allDestinations = this.destinationRepository.findAll();
-//            model.addAttribute("view", "destination/all_destinations");
-//            model.addAttribute("destinations", allDestinations);
-//            return "admin/admin_panel-layout";
-//        }
-//        //// TODO: 12/30/2017
-//        this.notifyService.addInfoMessage(Messages.ERROR);
-//        return "redirect:/login";
-//    }
+    @GetMapping("/all_destinations")
+    @PreAuthorize("isAuthenticated()")
+    public String categories(Model model) {
+
+        if (this.isCurrentUserAdmin()) {
+            List<Destination> allDestinations = this.destinationRepository.findAll();
+            model.addAttribute("view", "destination/all_destinations");
+            model.addAttribute("destinations", allDestinations);
+            return "admin/admin_panel-layout";
+        }
+        //// TODO: 12/30/2017
+        this.notifyService.addInfoMessage(Messages.ERROR);
+        return "redirect:/login";
+    }
 //
 //    @GetMapping("/destination/delete/{id}")
 //    @PreAuthorize("isAuthenticated()")
