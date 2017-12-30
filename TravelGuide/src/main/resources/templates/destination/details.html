@@ -16,7 +16,7 @@
 
                         <div class="pull-right">
 
-                            <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isAuthor(destination)}">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                                 <a class="btn btn-success btn-xs" th:href="@{/destination/edit/{id}(id = ${destination.id})}">Edit</a>
                                 <a class="btn btn-danger btn-xs" th:href="@{/destination/delete/{id}(id = ${destination.id})}">Delete</a>
                             </th:block>

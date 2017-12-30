@@ -8,22 +8,27 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="destination_name">Destination name</label>
                         <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="destination_name" placeholder="Destination name" name="name" th:value="${destination.name}"/>
+                            <input type="text" class="form-control" id="destination_name" placeholder="Destination name"
+                                   name="name" th:value="${destination.name}" required="required"/>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="destination_review">Review</label>
                         <div class="col-sm-6">
-                            <textarea class="form-control" rows="6" id="destination_review" name="review" th:field="${destination.review}"></textarea>
+                            <textarea class="form-control" rows="6" id="destination_review" name="review"
+                                      th:field="${destination.review}" required="required">
+
+                            </textarea>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="category_dropdown_menu"></label>
                         <div class="col-sm-4 ">
-                            <select class="form-control" id="category_dropdown_menu" name="categoryId">
-                                <option th:each="category : ${categories}" th:value="${category.id}"
+                            <select class="form-control" id="category_dropdown_menu" name="categoryId" required="required">
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
                                         th:text="${category.name}">
                                 </option>
                             </select>

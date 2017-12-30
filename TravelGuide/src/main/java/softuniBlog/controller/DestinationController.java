@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.DestinationBindingModel;
+import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.User;
@@ -44,6 +45,9 @@ public class DestinationController {
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addInfoMessage(Messages.ERROR);
             return "redirect:/login";
+        }
+        if(this.categoryRepository.findAll().isEmpty()){
+            this.notifyService.addErrorMessage("there are no categories available");
         }
         model.addAttribute("view", "destination/create");
         model.addAttribute("categories", this.categoryRepository.findAll());
@@ -141,6 +145,44 @@ public class DestinationController {
         //// TODO: 12/30/2017  
         this.notifyService.addInfoMessage(Messages.ERROR);
         return "redirect:/login";
+    }
+
+    @GetMapping("/destination/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Model model, @PathVariable Integer id) {
+
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
+            return "redirect:/destination/" + id;
+        }
+
+        if (!this.articleRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        Article article = this.articleRepository.findOne(id);
+
+        model.addAttribute("view", "article/delete")
+                .addAttribute("article", article);
+        return "admin/admin_panel-layout";
+    }
+
+    @PostMapping("/article/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteAction(@PathVariable Integer id) {
+
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
+            return "redirect:/article/" + id;
+        }
+
+        if (!this.articleRepository.exists(id)) {
+            return "redirect:/";       }
+
+
+        this.articleRepository.delete(id);
+        return "redirect:/all_articles";
+
     }
 
     private boolean isUserAuthorOrAdmin(Destination destination) {

@@ -161,7 +161,7 @@ public class CategoryController {
         List<Destination> destinationToDelete = this.destinationRepository.findAll().stream()
                 .filter(destination -> destination.getCategory().getId().equals(id))
                 .collect(Collectors.toList());
-        
+
         for (Destination destination : destinationToDelete) {
             this.deleteDestination(destination.getId());
         }

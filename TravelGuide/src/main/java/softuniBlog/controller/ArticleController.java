@@ -46,6 +46,10 @@ public class ArticleController {
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/login";
         }
+
+        if(this.destinationRepository.findAll().isEmpty()){
+            this.notifyService.addErrorMessage("there are no destination available");
+        }
         model.addAttribute("view", "article/create");
         model.addAttribute("destinations", this.destinationRepository.findAll());
         return "admin/admin_panel-layout";
@@ -59,10 +63,8 @@ public class ArticleController {
             this.notifyService.addErrorMessage(Messages.ERROR);
             return "redirect:/login";
         }
-
         User user = this.getCurrentUser();
 
-        //for building help only, this code will be refactored later.
         Destination destination = this.destinationRepository.findOne(articleBindingModel.getDestinationId());
 
         Article article = new Article(articleBindingModel.getTitle(),
