@@ -25,9 +25,7 @@ import softuniBlog.utils.Messages;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by George-Lenovo on 6/29/2017.
- */
+
 @Controller
 public class CategoryController {
 
@@ -48,32 +46,29 @@ public class CategoryController {
 
     @GetMapping("/category/{id}")
     public String details(Model model, @PathVariable Integer id) {
+
+        if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
         Category category = this.categoryRepository.findOne(id);
-        List<Category> categories = this.categoryRepository.findAll();
         model.addAttribute("view", "category/details");
-//        model.addAttribute("categories", categories);
         model.addAttribute("category", category);
-//        model.addAttribute("destinations", category.getDestinations());
         return "base-layout";
     }
 
     @GetMapping("/all_categories")
     @PreAuthorize("isAuthenticated()")
     public String categories(Model model) {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
 
-        User user = this.userRepository.findByEmail(principal.getUsername());
-        model.addAttribute("user", user);
-        if (user.isAdmin()) {
+        if (this.isCurrentUserAdmin()) {
             List<Category> allCategories = this.categoryRepository.findAll();
             model.addAttribute("view", "category/all_categories");
             model.addAttribute("categories", allCategories);
             return "admin/admin_panel-layout";
         }
 
-        this.notifyService.addInfoMessage(Messages.ERROR);
+        this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
         return "redirect:/login";
     }
 
@@ -81,14 +76,14 @@ public class CategoryController {
     @PreAuthorize("isAuthenticated()")
     public String editCategory(Model model, @PathVariable Integer id) {
 
-        if (!this.categoryRepository.exists(id)) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
-            return "redirect:/";
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
         }
 
-        if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
-            return "redirect:/login";
+        if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
         }
 
         Category category = this.categoryRepository.findOne(id);
@@ -103,23 +98,22 @@ public class CategoryController {
     @PreAuthorize("isAuthenticated()")
     public String editCategoryAction(CategoryBindingModel categoryBindingModel, @PathVariable Integer id) {
 
-        if (!this.categoryRepository.exists(id)) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
-            return "redirect:/";
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
         }
 
-        if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
-            return "redirect:/login";
+        if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
         }
 
         Category category = this.categoryRepository.findOne(id);
 
         category.setName(categoryBindingModel.getName());
 
-
         this.categoryRepository.saveAndFlush(category);
-        this.notifyService.addInfoMessage(Messages.SUCCESS);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_CATEGORY);
         return "redirect:/all_categories";
 
     }
@@ -128,13 +122,14 @@ public class CategoryController {
     @PreAuthorize("isAuthenticated()")
     public String deleteCategory(Model model, @PathVariable Integer id) {
 
-        if (!this.categoryRepository.exists(id)) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
-            return "redirect:/";
-        }
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
+        }
+
+        if (!this.categoryRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
         }
 
         Category category = this.categoryRepository.findOne(id);
@@ -149,12 +144,12 @@ public class CategoryController {
     public String deleteCategoryAction(@PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.categoryRepository.exists(id)) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -167,7 +162,7 @@ public class CategoryController {
             this.deleteDestination(destination.getId());
         }
         this.categoryRepository.delete(id);
-        this.notifyService.addInfoMessage(Messages.SUCCESS);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_CATEGORY);
         return "redirect:/all_categories";
 
     }

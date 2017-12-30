@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
+
+
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
@@ -69,23 +71,20 @@ public class UserController {
     public String registerProcess(UserBindingModel userBindingModel,
                                   @RequestParam(defaultValue = "false") boolean checkbox) {
 
-        if(
-                this.userRepository.findAll()
+        //checking for existing email
+        if(this.userRepository.findAll()
                 .stream()
                 .filter(user -> user.getEmail().equals(userBindingModel.getEmail()))
-                .count() > 0
-                ){
-            notifyService.addErrorMessage(Messages.ERROR);
+                .count() > 0){
+            notifyService.addErrorMessage(Messages.EMAIL_ALREADY_EXIST);
             return "redirect:/register";
         }
-
 
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
-
-
-            notifyService.addErrorMessage(Messages.ERROR);
+            notifyService.addErrorMessage(Messages.THE_PASSWORD_DOESN_T_MATCH);
             return "redirect:/register";
         }
+
 
         User user = new User(
                 userBindingModel.getEmail(),
@@ -112,7 +111,7 @@ public class UserController {
 
         this.userRepository.saveAndFlush(user);
 
-        notifyService.addInfoMessage(Messages.SUCCESS);
+        notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_USER);
         if(this.isCurrentUserAdmin()){
             return "redirect:/all_users";
         }
@@ -145,7 +144,7 @@ public class UserController {
         return "redirect:/login?logout";
     }
 
-    // TODO: 12/28/2017 - add editMyProfile , profile details
+
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
@@ -166,12 +165,12 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
-        if(!this.isCurrentUserAdmin() && !Objects.equals(this.getCurrentUser().getId(), id)){
-            this.notifyService.addErrorMessage(Messages.ERROR);
-            return "redirect:/login?logout";
+        if(!this.isCurrentUserAdmin()){
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
         }
         if (!this.userRepository.exists(id)) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
         User user = this.userRepository.findOne(id);
@@ -189,19 +188,19 @@ public class UserController {
                              @RequestParam(defaultValue = "false") boolean checkbox) {
 
         if (!this.userRepository.exists(id)) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/all_users";
         }
 
         if (!userBindingModel.getPassword().equals(userBindingModel.getConfirmPassword())) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.THE_PASSWORD_DOESN_T_MATCH);
             return "redirect:/user/edit/" + id;
         }
         User user = this.userRepository.findOne(id);
 
         //only first registered admin can edit admin profile
         if(user.isAdmin() && this.getCurrentUser().getId() != 1){
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/user/edit/" + id;
         }
 
@@ -225,7 +224,7 @@ public class UserController {
             user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
         }
         this.userRepository.saveAndFlush(user);
-        notifyService.addInfoMessage(Messages.SUCCESS);
+        notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_USER);
 
         if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
             return "redirect:/login?logout";
@@ -234,29 +233,29 @@ public class UserController {
         return "redirect:/all_users";
     }
 
-    private boolean hasRights(User browsingUser) {
-        User currentLoggedInUser = getUser();
-        return browsingUser != null && (browsingUser.getEmail().equals(currentLoggedInUser.getEmail()) || currentLoggedInUser.getRoles().stream()
-                .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN"));
-
-    }
-    private User getUser() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-        return this.userRepository.findByEmail(principal.getUsername());
-    }
+//    private boolean hasRights(User browsingUser) {
+//        User currentLoggedInUser = getUser();
+//        return browsingUser != null && (browsingUser.getEmail().equals(currentLoggedInUser.getEmail()) || currentLoggedInUser.getRoles().stream()
+//                .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN"));
+//
+//    }
+//    private User getUser() {
+//        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getPrincipal();
+//        return this.userRepository.findByEmail(principal.getUsername());
+//    }
     @GetMapping("/user/delete/{id}")
     @PreAuthorize("isAuthenticated()")
     public String delete(Model model, @PathVariable Integer id) {
 
         if(!this.isCurrentUserAdmin()){
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login?logout";
         }
 
         if (!this.userRepository.exists(id)) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
         User user = this.userRepository.findOne(id);
@@ -271,7 +270,7 @@ public class UserController {
     public String deleteAction(@PathVariable Integer id) {
 
         if (!this.userRepository.exists(id)) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -280,21 +279,18 @@ public class UserController {
         //only first registered admin can edit admin profile
         if(user.isAdmin() && this.getCurrentUser().getId() != 1){
 
-            /// TODO: send error message
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/user/delete/" + id;
         }
 
         //can't delete own profile
         if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
-            /// TODO: send error message
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_CAN_NOT_DELETE_YOUR_PROFILE);
             return "redirect:/user/delete/" + id;
         }
 
-
         this.userRepository.delete(id);
-        notifyService.addInfoMessage(Messages.SUCCESS);
+        notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_USER);
         return "redirect:/all_users";
 
     }

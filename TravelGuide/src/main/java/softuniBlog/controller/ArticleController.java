@@ -43,12 +43,12 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     public String create(Model model) {
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if(this.destinationRepository.findAll().isEmpty()){
-            this.notifyService.addErrorMessage("there are no destination available");
+            this.notifyService.addErrorMessage(Messages.THERE_ARE_NO_DESTINATIONS_AVAILABLE);
         }
         model.addAttribute("view", "article/create");
         model.addAttribute("destinations", this.destinationRepository.findAll());
@@ -60,7 +60,7 @@ public class ArticleController {
     public String createAction(ArticleBindingModel articleBindingModel) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
         User user = this.getCurrentUser();
@@ -72,6 +72,7 @@ public class ArticleController {
                 user,destination, new HashSet<>());
 
         this.articleRepository.saveAndFlush(article);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_ARTICLE);
         return "redirect:/all_articles";
     }
 
@@ -79,6 +80,7 @@ public class ArticleController {
     public String details(Model model, @PathVariable Integer id) {
 
         if (!this.articleRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -93,11 +95,12 @@ public class ArticleController {
     public String edit(Model model, @PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -114,11 +117,12 @@ public class ArticleController {
     public String editAction(ArticleBindingModel articleBindingModel, @PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -129,6 +133,7 @@ public class ArticleController {
         Destination destination = this.destinationRepository.findOne(articleBindingModel.getDestinationId());
         article.setDestination(destination);
         this.articleRepository.saveAndFlush(article);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_ARTICLE);
         return "redirect:/article/" + article.getId();
 
     }
@@ -138,11 +143,12 @@ public class ArticleController {
     public String delete(Model model, @PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -158,15 +164,17 @@ public class ArticleController {
     public String deleteAction(@PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.articleRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";       }
 
 
         this.articleRepository.delete(id);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_ARTICLE);
         return "redirect:/all_articles";
 
     }
@@ -186,17 +194,17 @@ public class ArticleController {
             model.addAttribute("articles", allArticles);
             return "admin/admin_panel-layout";
         }
-        //// TODO: 12/30/2017
-        this.notifyService.addInfoMessage(Messages.ERROR);
+
+        this.notifyService.addInfoMessage(Messages.YOU_HAVE_NO_PERMISSION);
         return "redirect:/login";
     }
 
-    private boolean isUserAuthorOrAdmin(Article article) {
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User userEntity = this.userRepository.findByEmail(user.getUsername());
-
-        return userEntity.isAuthor(article) || userEntity.isAdmin();
-    }
+//    private boolean isUserAuthorOrAdmin(Article article) {
+//        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User userEntity = this.userRepository.findByEmail(user.getUsername());
+//
+//        return userEntity.isAuthor(article) || userEntity.isAdmin();
+//    }
 
     private boolean isCurrentUserAdmin() {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();

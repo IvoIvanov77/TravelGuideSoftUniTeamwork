@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.DestinationBindingModel;
-import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.User;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class DestinationController {
-    
+
     private final DestinationRepository destinationRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -45,13 +44,14 @@ public class DestinationController {
     }
 
     @GetMapping("/destination/add")
+    @PreAuthorize("isAuthenticated()")
     public String createDestination(Model model) {
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
         if(this.categoryRepository.findAll().isEmpty()){
-            this.notifyService.addErrorMessage("there are no categories available");
+            this.notifyService.addErrorMessage(Messages.THERE_ARE_NO_CATEGORIES_AVAILABLE);
         }
         model.addAttribute("view", "destination/create");
         model.addAttribute("categories", this.categoryRepository.findAll());
@@ -61,8 +61,9 @@ public class DestinationController {
     @PostMapping("/destination/add")
     @PreAuthorize("isAuthenticated()")
     public String createDestinationProcess(DestinationBindingModel destinationBindingModel) {
+
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
@@ -71,22 +72,18 @@ public class DestinationController {
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
         this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getName(),
                 destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice()));
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_DESTINATION);
         return "redirect:/all_destinations";
     }
 
     @GetMapping("/destination/{id}")
     public String destinationDetails(Model model, @PathVariable Integer id) {
+
         if (!this.destinationRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
-        if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
-            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                    .getAuthentication()
-                    .getPrincipal();
 
-            User user = this.userRepository.findByEmail(principal.getUsername());
-            model.addAttribute("user", user);
-        }
         Destination destination = this.destinationRepository.findOne(id);
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination);
@@ -98,11 +95,12 @@ public class DestinationController {
     public String edit(Model model, @PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.destinationRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/all_destinations";
         }
         Destination destination = this.destinationRepository.findOne(id);
@@ -117,12 +115,12 @@ public class DestinationController {
     @PreAuthorize("isAuthenticated()")
     public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id){
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.destinationRepository.exists(id)) {
-            this.notifyService.addInfoMessage(Messages.ERROR);
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/all_destinations";
         }
 
@@ -132,6 +130,7 @@ public class DestinationController {
         destination.setReview(bindingModel.getReview());
         destination.setCategory(this.categoryRepository.findOne(bindingModel.getCategoryId()));
         this.destinationRepository.saveAndFlush(destination);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_DESTINATION);
 
         return "redirect:/all_destinations";
     }
@@ -146,8 +145,8 @@ public class DestinationController {
             model.addAttribute("destinations", allDestinations);
             return "admin/admin_panel-layout";
         }
-        //// TODO: 12/30/2017
-        this.notifyService.addInfoMessage(Messages.ERROR);
+
+        this.notifyService.addInfoMessage(Messages.YOU_HAVE_NO_PERMISSION);
         return "redirect:/login";
     }
 
@@ -156,11 +155,12 @@ public class DestinationController {
     public String delete(Model model, @PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.destinationRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -176,11 +176,12 @@ public class DestinationController {
     public String deleteAction(@PathVariable Integer id) {
 
         if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage("ERROR");
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
 
         if (!this.destinationRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
 
@@ -193,16 +194,17 @@ public class DestinationController {
         );
 
         this.destinationRepository.delete(id);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_DESTINATION);
         return "redirect:/all_destinations";
 
     }
 
-    private boolean isUserAuthorOrAdmin(Destination destination) {
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User userEntity = this.userRepository.findByEmail(user.getUsername());
-
-        return userEntity.isAuthor(destination) || userEntity.isAdmin();
-    }
+//    private boolean isUserAuthorOrAdmin(Destination destination) {
+//        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User userEntity = this.userRepository.findByEmail(user.getUsername());
+//
+//        return userEntity.isAuthor(destination) || userEntity.isAdmin();
+//    }
 
     private boolean isCurrentUserAdmin() {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();

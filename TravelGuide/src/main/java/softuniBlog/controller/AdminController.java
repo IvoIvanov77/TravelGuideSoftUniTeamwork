@@ -28,9 +28,8 @@ public class AdminController {
     private final NotificationService notifyService;
 
     @Autowired
-
-    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService) {
-
+    public AdminController(UserRepository userRepository, CategoryRepository categoryRepository,
+                           NotificationService notifyService) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.notifyService = notifyService;
@@ -45,6 +44,7 @@ public class AdminController {
     @PostMapping("/category/addCategory")
     public String addCategoryProcess(Model model, CategoryBindingModel categoryBindingModel) {
         this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName()));
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_CATEGORY);
         return "redirect:/all_categories";
     }
 
@@ -64,7 +64,7 @@ public class AdminController {
             return "admin/admin_panel-layout";
         }
 
-        this.notifyService.addInfoMessage(Messages.ERROR);
+        this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
         return "redirect:/login";
     }
 

@@ -1,6 +1,5 @@
 <main>
 
-
     <div class="col-md-10 col-md-offset-1">
 
         <div class="panel panel-default panel-table">
@@ -11,7 +10,8 @@
                     </div>
                     <div class="col col-xs-6 text-right">
                         <a class="btn btn-sm btn-primary btn-create"
-                           th:href="@{/category/addCategory}">Add Category
+                           th:href="@{/category/addCategory}">
+                            Add Category
                         </a>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody sec:authorize="hasRole('ROLE_ADMIN')">
                     <th:block th:each="category : ${categories}">
                         <tr>
                             <td align="center">
