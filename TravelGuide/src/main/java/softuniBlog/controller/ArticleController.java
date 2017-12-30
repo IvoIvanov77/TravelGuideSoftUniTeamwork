@@ -28,7 +28,7 @@ public class ArticleController {
 
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
-    private DestinationRepository destinationRepository;
+    private final DestinationRepository destinationRepository;
     private final NotificationService notifyService;
 
     @Autowired
@@ -79,14 +79,7 @@ public class ArticleController {
         if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
-        if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
-            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                    .getAuthentication()
-                    .getPrincipal();
 
-            User user = this.userRepository.findByEmail(principal.getUsername());
-            model.addAttribute("user", user);
-        }
         Article article = this.articleRepository.findOne(id);
         model.addAttribute("view", "article/details")
                 .addAttribute("article", article);
@@ -97,17 +90,20 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
-        if (!this.articleRepository.exists(id)) {
-            return "redirect:/";
-        }
-        Article article = this.articleRepository.findOne(id);
-
-        if (this.isUserAuthorOrAdmin(article)) {
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
             return "redirect:/article/" + id;
         }
 
+        if (!this.articleRepository.exists(id)) {
+            return "redirect:/";
+        }
+
+        Article article = this.articleRepository.findOne(id);
+
         model.addAttribute("view", "article/edit")
                 .addAttribute("article", article);
+        model.addAttribute("destinations", this.destinationRepository.findAll());
         return "admin/admin_panel-layout";
     }
 
@@ -115,20 +111,21 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     public String editAction(ArticleBindingModel articleBindingModel, @PathVariable Integer id) {
 
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
+            return "redirect:/article/" + id;
+        }
+
         if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
 
         Article article = this.articleRepository.findOne(id);
 
-        if (this.isUserAuthorOrAdmin(article)) {
-            return "redirect:/article/" + id;
-        }
-
         article.setTitle(articleBindingModel.getTitle());
         article.setContent(articleBindingModel.getContent());
-
-
+        Destination destination = this.destinationRepository.findOne(articleBindingModel.getDestinationId());
+        article.setDestination(destination);
         this.articleRepository.saveAndFlush(article);
         return "redirect:/article/" + article.getId();
 
@@ -138,14 +135,16 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     public String delete(Model model, @PathVariable Integer id) {
 
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
+            return "redirect:/article/" + id;
+        }
+
         if (!this.articleRepository.exists(id)) {
             return "redirect:/";
         }
-        Article article = this.articleRepository.findOne(id);
 
-        if (this.isUserAuthorOrAdmin(article)) {
-            return "redirect:/article/" + id;
-        }
+        Article article = this.articleRepository.findOne(id);
 
         model.addAttribute("view", "article/delete")
                 .addAttribute("article", article);
@@ -156,19 +155,17 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     public String deleteAction(@PathVariable Integer id) {
 
-        if (!this.articleRepository.exists(id)) {
-            return "redirect:/";
-        }
-
-        Article article = this.articleRepository.findOne(id);
-
-        if (this.isUserAuthorOrAdmin(article)) {
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage("ERROR");
             return "redirect:/article/" + id;
         }
 
+        if (!this.articleRepository.exists(id)) {
+            return "redirect:/";       }
+
 
         this.articleRepository.delete(id);
-        return "redirect:/";
+        return "redirect:/all_articles";
 
     }
 

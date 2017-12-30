@@ -10,12 +10,14 @@
                     <p th:text="${article.content}"> </p>
 
                     <small class="author" th:text="${article.author.fullName}"></small>
+                    <small class="destination">destination: </small>
+                    <small class="destination" th:text="${article.destination.name}"></small>
 
                     <footer>
 
                         <div class="pull-right">
 
-                            <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isAuthor(article)}">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                                 <a class="btn btn-success btn-xs" th:href="@{/article/edit/{id}(id = ${article.id})}">Edit</a>
                                 <a class="btn btn-danger btn-xs" th:href="@{/article/delete/{id}(id = ${article.id})}">Delete</a>
                             </th:block>

@@ -20,6 +20,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-4 control-label" for="destination_dropdown_menu"></label>
+                        <div class="col-sm-4 ">
+                            <select class="form-control"  id="destination_dropdown_menu" name="destinationId" >
+                                <option
+                                        th:each="destination : ${destinations}"
+                                        th:value="${destination.id}"
+                                        th:text="${destination.name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
                             <a class="btn btn-default" th:href="@{/article/{id}(id = ${article.id})}">Cancel</a>
                             <input type="submit" class="btn btn-success" value="Edit"/>
