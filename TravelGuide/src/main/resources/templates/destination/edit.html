@@ -26,7 +26,13 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="category_dropdown_menu"></label>
                         <div class="col-sm-4 ">
-                            <select class="form-control" id="category_dropdown_menu" name="categoryId" required="required">
+                            <select class="selectpicker"  id="category_dropdown_menu" name="categoryId"
+                                    required="required">
+                                <option th:value="${destination.category.id}"
+                                        th:text="${destination.category.name}"
+                                        selected="selected">
+
+                                </option>
                                 <option th:each="category : ${categories}"
                                         th:value="${category.id}"
                                         th:text="${category.name}">

@@ -36,6 +36,7 @@ public class AdminController {
     }
 
     @GetMapping("/category/addCategory")
+    @PreAuthorize("isAuthenticated()")
     public String addCategory(Model model) {
         model.addAttribute("view", "category/add_category");
         return "admin/admin_panel-layout";
