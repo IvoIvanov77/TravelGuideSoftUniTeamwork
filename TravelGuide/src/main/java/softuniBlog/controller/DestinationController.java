@@ -190,7 +190,8 @@ public class DestinationController {
         Destination destination = this.destinationRepository.findOne(id);
 
         model.addAttribute("view", "destination/delete")
-                .addAttribute("destination", destination);
+                .addAttribute("destination", destination)
+                .addAttribute("images", destination.getImages());
         return "admin/admin_panel-layout";
     }
 
