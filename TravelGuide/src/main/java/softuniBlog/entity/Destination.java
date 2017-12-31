@@ -45,7 +45,7 @@ public class Destination {
     @Transient
     public Image getRandomImage() {
         int size = this.images.size();
-        int number = RandomNumber.getRandomNumber(1, size);
+        int number = RandomNumber.getRandomNumber(0, size);
 
         int i = 0;
         for (Image img : this.images) {
