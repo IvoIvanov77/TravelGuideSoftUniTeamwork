@@ -1,8 +1,6 @@
 package softuniBlog.bindingModel;
 
 
-import softuniBlog.entity.Destination;
-
 import javax.validation.constraints.NotNull;
 
 public class ArticleBindingModel {

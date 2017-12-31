@@ -2,7 +2,6 @@ package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -10,19 +9,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.DestinationBindingModel;
-import softuniBlog.entity.Category;
-import softuniBlog.entity.Destination;
-import softuniBlog.entity.User;
-import softuniBlog.repository.ArticleRepository;
-import softuniBlog.repository.CategoryRepository;
-import softuniBlog.repository.DestinationRepository;
-import softuniBlog.repository.UserRepository;
+import softuniBlog.entity.*;
+import softuniBlog.repository.*;
 import softuniBlog.service.NotificationService;
+import softuniBlog.utils.Constants;
 import softuniBlog.utils.Messages;
+import softuniBlog.utils.UploadImage;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static softuniBlog.utils.Constants.EMTPY_STRING;
 
 
 @Controller
@@ -33,14 +34,18 @@ public class DestinationController {
     private final CategoryRepository categoryRepository;
     private final NotificationService notifyService;
     private final ArticleRepository articleRepository;
+//    private ImageRepository imageRepository;
 
     @Autowired
-    public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService, ArticleRepository articleRepository) {
+    public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository,
+                                 /*ImageRepository imageRepository,*/ CategoryRepository categoryRepository,
+                                 NotificationService notifyService, ArticleRepository articleRepository) {
         this.destinationRepository = destinationRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.notifyService = notifyService;
         this.articleRepository = articleRepository;
+//        this.imageRepository = imageRepository;
     }
 
     @GetMapping("/destination/add")
@@ -50,7 +55,7 @@ public class DestinationController {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
-        if(this.categoryRepository.findAll().isEmpty()){
+        if (this.categoryRepository.findAll().isEmpty()) {
             this.notifyService.addErrorMessage(Messages.THERE_ARE_NO_CATEGORIES_AVAILABLE);
         }
         model.addAttribute("view", "destination/create");
@@ -61,7 +66,6 @@ public class DestinationController {
     @PostMapping("/destination/add")
     @PreAuthorize("isAuthenticated()")
     public String createDestinationProcess(DestinationBindingModel destinationBindingModel) {
-
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
@@ -69,11 +73,28 @@ public class DestinationController {
 
         User currentUser = this.getCurrentUser();
 
+        Set<MultipartFile> files = destinationBindingModel.getPictures();
+        files.add(destinationBindingModel.getPicture());
+
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
-        this.destinationRepository.saveAndFlush(new Destination(destinationBindingModel.getName(),
-                destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice()));
+        Destination destination = new Destination(destinationBindingModel.getName(),
+                destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice());
+        Set<Image> images = this.setImagesToDestination(files, destination);
+        destination.setImages(images);
+
+        this.destinationRepository.saveAndFlush(destination);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_DESTINATION);
         return "redirect:/all_destinations";
+    }
+
+    private Set<Image> setImagesToDestination(Set<MultipartFile> files, Destination destination) {
+        Set<Image> images = new HashSet<>();
+        files.stream().filter(x -> !x.getOriginalFilename().equals(EMTPY_STRING))
+                .forEach(file -> {
+                    String path = UploadImage.upload(Constants.IMG_WIDTH, Constants.IMG_HEIGHT, file);
+                    images.add(new Image(path, destination));
+                });
+        return images;
     }
 
     @GetMapping("/destination/{id}")
@@ -85,8 +106,10 @@ public class DestinationController {
         }
 
         Destination destination = this.destinationRepository.findOne(id);
+        Set<Article> articles = destination.getArticles();
         model.addAttribute("view", "destination/details")
-                .addAttribute("destination", destination);
+                .addAttribute("destination", destination)
+                .addAttribute("articles", articles);
         return "base-layout";
     }
 
@@ -113,7 +136,7 @@ public class DestinationController {
 
     @PostMapping("/destination/edit/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id){
+    public String editAction(DestinationBindingModel bindingModel, @PathVariable Integer id) {
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
@@ -210,18 +233,10 @@ public class DestinationController {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 
-    //
     private User getCurrentUser() {
-
-        if (!(SecurityContextHolder.getContext().getAuthentication()
-                instanceof AnonymousAuthenticationToken)) {
-            UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
-                    .getAuthentication()
-                    .getPrincipal();
-
-            return this.userRepository.findByEmail(principal.getUsername());
-        }
-
-        return null;
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return this.userRepository.findByEmail(principal.getUsername());
     }
 }

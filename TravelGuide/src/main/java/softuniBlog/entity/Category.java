@@ -1,8 +1,8 @@
 package softuniBlog.entity;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "categories")
 public class Category {
@@ -11,16 +11,14 @@ public class Category {
 
     private String name;
 
-    private Set<Destination> destinations;
-
-    public static boolean isDataInitialized = false;
+    private List<Destination> destinations;
 
     public Category() {
     }
 
     public Category(String name) {
         this.name = name;
-        this.destinations = new HashSet<>();
+        this.destinations = new ArrayList<>();
     }
 
     @Id
@@ -43,11 +41,11 @@ public class Category {
     }
 
     @OneToMany(mappedBy = "category")
-    public Set<Destination> getDestinations() {
+    public List<Destination> getDestinations() {
         return this.destinations;
     }
 
-    public void setDestinations(Set<Destination> destinations) {
+    public void setDestinations(List<Destination> destinations) {
         this.destinations = destinations;
     }
 }

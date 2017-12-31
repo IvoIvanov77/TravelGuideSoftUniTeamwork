@@ -6,10 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
-import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
-import softuniBlog.repository.UserRepository;
 
 import java.util.List;
 
@@ -19,25 +17,25 @@ public class HomeController {
 
     private CategoryRepository categoryRepository;
     private DestinationRepository destinationRepository;
-    private UserRepository userRepository;
-    private ArticleRepository articleRepository;
+//    private UserRepository userRepository;
+//    private ArticleRepository articleRepository;
 
     @Autowired
-    public HomeController(CategoryRepository categoryRepository, DestinationRepository destinationRepository,
-                          UserRepository userRepository, ArticleRepository articleRepository) {
+    public HomeController(CategoryRepository categoryRepository, DestinationRepository destinationRepository
+                         /* UserRepository userRepository, ArticleRepository articleRepository*/) {
         this.destinationRepository = destinationRepository;
         this.categoryRepository = categoryRepository;
-        this.userRepository = userRepository;
-        this.articleRepository = articleRepository;
+//        this.userRepository = userRepository;
+//        this.articleRepository = articleRepository;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         List<Category> categories = this.categoryRepository.findAll();
         List<Destination> destinations = this.destinationRepository.findAll();
-        model.addAttribute("view", "home/index");
         model.addAttribute("categories", categories);
         model.addAttribute("destinations", destinations);
+        model.addAttribute("view", "home/index");
         return "base-layout";
     }
 

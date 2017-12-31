@@ -46,14 +46,17 @@ public class CategoryController {
 
     @GetMapping("/category/{id}")
     public String details(Model model, @PathVariable Integer id) {
-
         if (!this.categoryRepository.exists(id)) {
             this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
         Category category = this.categoryRepository.findOne(id);
-        model.addAttribute("view", "category/details");
-        model.addAttribute("category", category);
+        List<Category> categories = this.categoryRepository.findAll();
+//        model.addAttribute("category", category);
+        model.addAttribute("categories", categories);
+        model.addAttribute("destinations", category.getDestinations());
+
+        model.addAttribute("view", "home/index");
         return "base-layout";
     }
 
@@ -190,7 +193,7 @@ public class CategoryController {
 
     }
 
-    private void deleteDestination(Integer id){
+    private void deleteDestination(Integer id) {
         List<Article> articlesToDelete = this.articleRepository.findAll().stream()
                 .filter(destination -> destination.getDestination().getId().equals(id))
                 .collect(Collectors.toList());

@@ -1,5 +1,7 @@
 package softuniBlog.entity;
 
+import softuniBlog.utils.RandomNumber;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -20,6 +22,8 @@ public class Destination {
 
     private Set<Article> articles;
 
+    private Set<Image> images;
+
     private Category category;
 
     private Double price;
@@ -35,6 +39,31 @@ public class Destination {
         this.articles = new HashSet<>();
         this.category = category;
         this.price = price;
+        this.images = new HashSet<>();
+    }
+
+    @Transient
+    public Image getRandomImage() {
+        int size = this.images.size();
+        int number = RandomNumber.getRandomNumber(1, size);
+
+        int i = 0;
+        for (Image img : this.images) {
+            if (i == number)
+                return img;
+            i++;
+        }
+
+        return null;
+    }
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    public Set<Image> getImages() {
+        return this.images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 
     @ManyToOne
@@ -103,12 +132,13 @@ public class Destination {
     public void setArticles(Set<Article> articles) {
         this.articles = articles;
     }
+
     @Column(nullable = false)
-    public Double getPrice(){
+    public Double getPrice() {
         return this.price;
     }
 
-    public  void setPrice(Double price){
+    public void setPrice(Double price) {
         this.price = price;
     }
 }
