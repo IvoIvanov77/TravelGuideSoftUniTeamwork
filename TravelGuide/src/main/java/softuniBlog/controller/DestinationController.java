@@ -152,6 +152,12 @@ public class DestinationController {
         destination.setName(bindingModel.getName());
         destination.setReview(bindingModel.getReview());
         destination.setCategory(this.categoryRepository.findOne(bindingModel.getCategoryId()));
+
+        Set<MultipartFile> pictures = bindingModel.getPictures();
+        pictures.add(bindingModel.getPicture());
+        Set<Image> images = this.setImagesToDestination(pictures, destination);
+        destination.setImages(images);
+
         this.destinationRepository.saveAndFlush(destination);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_DESTINATION);
 
