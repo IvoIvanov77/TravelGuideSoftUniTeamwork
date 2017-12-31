@@ -11,20 +11,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.DestinationBindingModel;
-import softuniBlog.entity.Article;
-import softuniBlog.entity.Category;
-import softuniBlog.entity.Destination;
-import softuniBlog.entity.User;
-import softuniBlog.repository.ArticleRepository;
-import softuniBlog.repository.CategoryRepository;
-import softuniBlog.repository.DestinationRepository;
-import softuniBlog.repository.UserRepository;
+import softuniBlog.entity.*;
+import softuniBlog.repository.*;
 import softuniBlog.service.NotificationService;
+import softuniBlog.utils.Constants;
 import softuniBlog.utils.Messages;
+import softuniBlog.utils.UploadImage;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static softuniBlog.utils.Constants.EMTPY_STRING;
 
 
 @Controller
@@ -35,14 +34,18 @@ public class DestinationController {
     private final CategoryRepository categoryRepository;
     private final NotificationService notifyService;
     private final ArticleRepository articleRepository;
+//    private ImageRepository imageRepository;
 
     @Autowired
-    public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository, CategoryRepository categoryRepository, NotificationService notifyService, ArticleRepository articleRepository) {
+    public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository,
+                                 /*ImageRepository imageRepository,*/ CategoryRepository categoryRepository,
+                                 NotificationService notifyService, ArticleRepository articleRepository) {
         this.destinationRepository = destinationRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.notifyService = notifyService;
         this.articleRepository = articleRepository;
+//        this.imageRepository = imageRepository;
     }
 
     @GetMapping("/destination/add")
@@ -70,17 +73,28 @@ public class DestinationController {
 
         User currentUser = this.getCurrentUser();
 
-        Set<MultipartFile> images = destinationBindingModel.getPictures();
-        images.add(destinationBindingModel.getPicture());
+        Set<MultipartFile> files = destinationBindingModel.getPictures();
+        files.add(destinationBindingModel.getPicture());
 
         Category category = this.categoryRepository.findOne(Math.toIntExact(destinationBindingModel.getCategoryId()));
         Destination destination = new Destination(destinationBindingModel.getName(),
                 destinationBindingModel.getReview(), currentUser, category, destinationBindingModel.getPrice());
-//        destination.setImages(images);
+        Set<Image> images = this.setImagesToDestination(files, destination);
+        destination.setImages(images);
 
         this.destinationRepository.saveAndFlush(destination);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_DESTINATION);
         return "redirect:/all_destinations";
+    }
+
+    private Set<Image> setImagesToDestination(Set<MultipartFile> files, Destination destination) {
+        Set<Image> images = new HashSet<>();
+        files.stream().filter(x -> !x.getOriginalFilename().equals(EMTPY_STRING))
+                .forEach(file -> {
+                    String path = UploadImage.upload(Constants.IMG_WIDTH, Constants.IMG_HEIGHT, file);
+                    images.add(new Image(path, destination));
+                });
+        return images;
     }
 
     @GetMapping("/destination/{id}")

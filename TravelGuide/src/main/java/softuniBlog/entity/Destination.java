@@ -1,5 +1,7 @@
 package softuniBlog.entity;
 
+import softuniBlog.utils.RandomNumber;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -40,9 +42,24 @@ public class Destination {
         this.images = new HashSet<>();
     }
 
-    @OneToMany(mappedBy = "destination", cascade = CascadeType.REMOVE)
+    @Transient
+    public Image getRandomImage() {
+        int size = this.images.size();
+        int number = RandomNumber.getRandomNumber(1, size);
+
+        int i = 0;
+        for (Image img : this.images) {
+            if (i == number)
+                return img;
+            i++;
+        }
+
+        return null;
+    }
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
     public Set<Image> getImages() {
-        return images;
+        return this.images;
     }
 
     public void setImages(Set<Image> images) {
