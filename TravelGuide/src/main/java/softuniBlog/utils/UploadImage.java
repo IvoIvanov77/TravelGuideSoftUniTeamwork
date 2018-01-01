@@ -24,7 +24,7 @@ public final class UploadImage {
             File imageFile = new File(imageDirectoryParam, originalName);
             try {
                 file.transferTo(imageFile);
-                path = doUploadAndDelete(imageDirectoryParam, folderPathParam, widthParam, heightParam, true, imageFile);
+                path = doUploadAndDelete(imageDirectoryParam, folderPathParam, widthParam, heightParam, imageFile);
             } catch (IOException e) {
 //                e.printStackTrace();
             }
@@ -34,11 +34,9 @@ public final class UploadImage {
     }
 
     private static String doUploadAndDelete(String imageDirectoryParam, String folderPathParam, int widthParam, int heightParam,
-                                            boolean deleteOriginalFile, File imageFile) {
+                                            File imageFile) {
         String finalName = resizeAndWriteImage(imageDirectoryParam, imageFile, widthParam, heightParam);
-        if (deleteOriginalFile) {
-            deleteOriginalFile(imageFile);
-        }
+        deleteOriginalFile(imageFile);
         return folderPathParam + finalName;
     }
 

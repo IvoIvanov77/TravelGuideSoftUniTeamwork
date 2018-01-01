@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.CategoryBindingModel;
-import softuniBlog.entity.Article;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.User;
@@ -184,22 +183,24 @@ public class CategoryController {
                 .collect(Collectors.toList());
 
         //delete all articles and destinations with given category
-        for (Destination destination : destinationToDelete) {
-            this.deleteDestination(destination.getId());
-        }
+        //TODO: done it cascade, test if it works
+//        for (Destination destination : destinationToDelete) {
+//            this.deleteDestination(destination.getId());
+//        }
+
         this.categoryRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_CATEGORY);
         return "redirect:/all_categories";
 
     }
 
-    private void deleteDestination(Integer id) {
-        List<Article> articlesToDelete = this.articleRepository.findAll().stream()
-                .filter(destination -> destination.getDestination().getId().equals(id))
-                .collect(Collectors.toList());
-        this.articleRepository.delete(articlesToDelete);
-        this.destinationRepository.delete(id);
-    }
+//    private void deleteDestination(Integer id) {
+//        List<Article> articlesToDelete = this.articleRepository.findAll().stream()
+//                .filter(destination -> destination.getDestination().getId().equals(id))
+//                .collect(Collectors.toList());
+//        this.articleRepository.delete(articlesToDelete);
+//        this.destinationRepository.delete(id);
+//    }
 
     private boolean isCurrentUserAdmin() {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();

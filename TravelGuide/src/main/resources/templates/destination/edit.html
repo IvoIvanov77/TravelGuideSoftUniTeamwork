@@ -1,7 +1,7 @@
 <main>
     <div class="container body-content span=8 offset=2">
         <div class="well">
-            <form class="form-horizontal" th:action="@{/destination/edit/{id}(id=${destination.id})}" method="POST">
+            <form class="form-horizontal" th:action="@{/destination/edit/{id}(id=${destination.id})}" method="POST" enctype="multipart/form-data">
                 <fieldset>
                     <legend>Edit Destination</legend>
 
@@ -28,11 +28,11 @@
                         <div class="col-sm-4 ">
                             <select class="selectpicker"  id="category_dropdown_menu" name="categoryId"
                                     required="required">
-                                <option th:value="${destination.category.id}"
-                                        th:text="${destination.category.name}"
-                                        selected="selected">
+                                <!--<option th:value="${destination.category.id}"-->
+                                        <!--th:text="${destination.category.name}"-->
+                                        <!--selected="selected">-->
 
-                                </option>
+                                <!--</option>-->
                                 <option th:each="category : ${categories}"
                                         th:value="${category.id}"
                                         th:text="${category.name}">
@@ -40,6 +40,39 @@
                             </select>
                         </div>
                     </div>
+
+                    <!--Images HTML-->
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="image">Base Image</label>
+                        <div class="col-sm-4 ">
+                            <input type="file" name="picture" id="image" accept="image/*"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="image1">Image</label>
+                        <div class="col-sm-4 ">
+                            <input type="file" name="pictures" accept="image/*" id="image1"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="image2">Image</label>
+                        <div class="col-sm-4 ">
+                            <input type="file" name="pictures" accept="image/*" id="image2"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="image3">Image</label>
+                        <div class="col-sm-4 ">
+                            <input type="file" name="pictures" accept="image/*" id="image3"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="image4">Image</label>
+                        <div class="col-sm-4 ">
+                            <input type="file" name="pictures" accept="image/*" id="image4"/>
+                        </div>
+                    </div>
+                    <!--Images HTML-->
 
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">

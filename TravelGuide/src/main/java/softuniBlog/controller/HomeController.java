@@ -10,6 +10,7 @@ import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -33,8 +34,11 @@ public class HomeController {
     public String index(Model model) {
         List<Category> categories = this.categoryRepository.findAll();
         List<Destination> destinations = this.destinationRepository.findAll();
+        List<Destination> topDestinations = this.destinationRepository.getTopThreeDestinations().stream().limit(3).collect(Collectors.toList());
+
         model.addAttribute("categories", categories);
         model.addAttribute("destinations", destinations);
+        model.addAttribute("topDestinations", topDestinations);
         model.addAttribute("view", "home/index");
         return "base-layout";
     }

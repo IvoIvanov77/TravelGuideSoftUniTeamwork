@@ -20,16 +20,20 @@ public class User {
 
     private Set<Article> articles;
 
+    private Set<Destination> destinations;
+
     public User(String email, String fullName, String password) {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
 
+        this.destinations = new HashSet<>();
         this.roles = new HashSet<>();
         this.articles = new HashSet<>();
     }
 
-    public User() {    }
+    public User() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +43,15 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
+    public Set<Destination> getDestinations() {
+        return destinations;
+    }
+
+    public void setDestinations(Set<Destination> destinations) {
+        this.destinations = destinations;
     }
 
     @Column(name = "email", unique = true, nullable = false)
@@ -82,13 +95,17 @@ public class User {
         this.roles.add(role);
     }
 
-    public void deleteRole(Role role){this.roles.remove(role);}
+    public void deleteRole(Role role) {
+        this.roles.remove(role);
+    }
 
-    public boolean hasRole(Role role){return this.roles.contains(role);}
+    public boolean hasRole(Role role) {
+        return this.roles.contains(role);
+    }
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
     public Set<Article> getArticles() {
-        return articles;
+        return this.articles;
     }
 
     public void setArticles(Set<Article> articles) {
@@ -96,18 +113,18 @@ public class User {
     }
 
     @Transient
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return this.getRoles().stream()
                 .anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
     }
 
     @Transient
-    public boolean isAuthor(Article article){
+    public boolean isAuthor(Article article) {
         return this.getId().equals(article.getAuthor().getId());
     }
 
     @Transient
-    public boolean isAuthor(Destination destination){
+    public boolean isAuthor(Destination destination) {
         return this.getId().equals(destination.getAuthor().getId());
     }
 }

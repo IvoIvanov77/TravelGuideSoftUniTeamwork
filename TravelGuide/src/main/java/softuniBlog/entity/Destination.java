@@ -7,7 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "destinations")
+@Entity
+@Table(name = "destinations")
 public class Destination {
 
     private Integer id;
@@ -45,7 +46,7 @@ public class Destination {
     @Transient
     public Image getRandomImage() {
         int size = this.images.size();
-        int number = RandomNumber.getRandomNumber(1, size);
+        int number = RandomNumber.getRandomNumber(0, size);
 
         int i = 0;
         for (Image img : this.images) {
@@ -70,7 +71,7 @@ public class Destination {
     @NotNull
     @JoinColumn(nullable = false, name = "categoryId")
     public Category getCategory() {
-        return category;
+        return this.category;
     }
 
     public void setCategory(Category destination) {
@@ -114,7 +115,7 @@ public class Destination {
         this.starRating = starRating;
     }
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(nullable = false, name = "authorId")
     public User getAuthor() {
         return this.author;
@@ -124,7 +125,7 @@ public class Destination {
         this.author = author;
     }
 
-    @OneToMany(mappedBy = "destination")
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.REMOVE)
     public Set<Article> getArticles() {
         return this.articles;
     }
@@ -140,5 +141,11 @@ public class Destination {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public void addImages(Set<Image> images) {
+        if (this.images != null) {
+            this.images.addAll(images);
+        }
     }
 }

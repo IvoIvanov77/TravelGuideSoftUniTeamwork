@@ -72,7 +72,7 @@ public class Article {
     @ManyToOne
     @JoinColumn(nullable = false, name = "authorId")
     public User getAuthor() {
-        return author;
+        return this.author;
     }
 
     public void setAuthor(User author) {

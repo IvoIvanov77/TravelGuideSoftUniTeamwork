@@ -26,11 +26,11 @@
                         <label class="col-sm-4 control-label" for="destination_dropdown_menu">Destination</label>
                         <div class="col-sm-4 ">
                             <select class="selectpicker"  id="destination_dropdown_menu" name="destinationId" required="required">
-                                <option th:value="${article.destination.id}"
-                                        th:text="${article.destination.name}"
-                                        selected="selected">
+                                <!--<option th:value="${article.destination.id}"-->
+                                        <!--th:text="${article.destination.name}"-->
+                                        <!--selected="selected">-->
 
-                                </option>
+                                <!--</option>-->
                                 <option
                                         th:each="destination : ${destinations}"
                                         th:value="${destination.id}"
