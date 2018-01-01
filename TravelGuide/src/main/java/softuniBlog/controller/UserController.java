@@ -288,7 +288,6 @@ public class UserController {
             return "redirect:/user/delete/" + id;
         }
 
-        //TODO: should delete its categories too
         this.userRepository.delete(id);
         notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_USER);
         return "redirect:/all_users";

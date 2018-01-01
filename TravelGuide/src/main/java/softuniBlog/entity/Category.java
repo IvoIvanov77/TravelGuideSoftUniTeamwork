@@ -13,11 +13,14 @@ public class Category {
 
     private List<Destination> destinations;
 
+    private User author;
+
     public Category() {
     }
 
-    public Category(String name) {
+    public Category(String name, User author) {
         this.name = name;
+        this.author = author;
         this.destinations = new ArrayList<>();
     }
 
@@ -29,6 +32,16 @@ public class Category {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "authorId")
+    public User getAuthor() {
+        return this.author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     @Column(nullable = false)

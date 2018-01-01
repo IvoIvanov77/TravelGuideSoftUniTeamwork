@@ -231,14 +231,14 @@ public class DestinationController {
 //                        .collect(Collectors.toList())
 //        );
 
-        this.deleteImagesFromDisk(this.destinationRepository.findOne(id).getImages());
+        DestinationController.deleteImagesFromDisk(this.destinationRepository.findOne(id).getImages());
         this.destinationRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_DESTINATION);
         return "redirect:/all_destinations";
 
     }
 
-    private void deleteImagesFromDisk(Set<Image> images) {
+    public static void deleteImagesFromDisk(Set<Image> images) {
         DeleteImage.deleteImagesFiles(images);
     }
 
