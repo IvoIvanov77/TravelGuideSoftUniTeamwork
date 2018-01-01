@@ -7,15 +7,17 @@ import javax.validation.constraints.NotNull;
 @Table(name = "image")
 public class Image {
     private Long id;
-    private String imagePath;
+    private String smallImagePath;
+    private String bigImagePath;
     private Destination destination;
 
     public Image() {
     }
 
-    public Image(String path, Destination destination) {
+    public Image(String smallImagePath, String bigImagePath, Destination destination) {
         this.destination = destination;
-        this.imagePath = path;
+        this.smallImagePath = smallImagePath;
+        this.bigImagePath = bigImagePath;
     }
 
     @Id
@@ -28,13 +30,22 @@ public class Image {
         this.id = id;
     }
 
-    @Column(columnDefinition = "text", nullable = false)
-    public String getImagePath() {
-        return imagePath;
+    @Column(name = "bigImagePath", columnDefinition = "text", nullable = false)
+    public String getBigImagePath() {
+        return bigImagePath;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setBigImagePath(String bigImagePath) {
+        this.bigImagePath = bigImagePath;
+    }
+
+    @Column(name = "smallImagePath", columnDefinition = "text", nullable = false)
+    public String getSmallImagePath() {
+        return smallImagePath;
+    }
+
+    public void setSmallImagePath(String smallImagePath) {
+        this.smallImagePath = smallImagePath;
     }
 
     @ManyToOne
@@ -52,8 +63,8 @@ public class Image {
         this.destination = destination;
     }
 
-    @Transient
+    /*@Transient
     public String getName() {
-        return this.imagePath.substring(14);
-    }
+        return this.smallImagePath.substring(IMAGE_FOLDER_PATH.length());
+    }*/
 }

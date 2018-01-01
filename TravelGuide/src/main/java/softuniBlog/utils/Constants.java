@@ -14,6 +14,9 @@ public final class Constants {
 
     //any kind of numbers
     public static final int DESTINATION_AVAILABLE_IMAGES_COUNT = 5;
-    public static final int IMG_WIDTH = 700;
-    public static final int IMG_HEIGHT = 400;
+
+    public static final int IMG_BIG_WIDTH = 900;
+    public static final int IMG_BIG_HEIGHT = 350;
+    public static final int IMG_SMALL_WIDTH = 700;
+    public static final int IMG_SMALL_HEIGHT = 400;
 }

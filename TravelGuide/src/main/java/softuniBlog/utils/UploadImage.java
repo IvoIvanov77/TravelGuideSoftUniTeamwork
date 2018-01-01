@@ -1,5 +1,6 @@
 package softuniBlog.utils;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.imgscalr.Scalr;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,7 @@ import java.util.Date;
  */
 public final class UploadImage {
 
-    public static String upload(int widthParam, int heightParam, MultipartFile file) {
+    public static String upload(int width, int height, MultipartFile file) {
         String path = null;
         String imageDirectoryParam = System.getProperty("user.dir") + Constants.IMAGE_PATH;
         String folderPathParam = Constants.IMAGE_FOLDER_PATH;
@@ -23,18 +24,19 @@ public final class UploadImage {
             String originalName = file.getOriginalFilename();
             File imageFile = new File(imageDirectoryParam, originalName);
             try {
-                file.transferTo(imageFile);
-                path = doUploadAndDelete(imageDirectoryParam, folderPathParam, widthParam, heightParam, imageFile);
+//                file.transferTo(imageFile);
+                FileUtils.writeByteArrayToFile(imageFile, file.getBytes());
+                path = doUpload(imageDirectoryParam, folderPathParam, width, height, imageFile);
             } catch (IOException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             }
         }
 
         return path;
     }
 
-    private static String doUploadAndDelete(String imageDirectoryParam, String folderPathParam, int widthParam, int heightParam,
-                                            File imageFile) {
+    private static String doUpload(String imageDirectoryParam, String folderPathParam, int widthParam, int heightParam,
+                                   File imageFile) {
         String finalName = resizeAndWriteImage(imageDirectoryParam, imageFile, widthParam, heightParam);
         deleteOriginalFile(imageFile);
         return folderPathParam + finalName;

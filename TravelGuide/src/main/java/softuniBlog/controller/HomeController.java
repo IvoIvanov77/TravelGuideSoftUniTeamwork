@@ -10,7 +10,7 @@ import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 
 @Controller
@@ -34,13 +34,19 @@ public class HomeController {
     public String index(Model model) {
         List<Category> categories = this.categoryRepository.findAll();
         List<Destination> destinations = this.destinationRepository.findAll();
-        List<Destination> topDestinations = this.destinationRepository.getTopThreeDestinations().stream().limit(3).collect(Collectors.toList());
+        //when there are no destinations ?!?
+        Destination topDestination = this.getBestByRating();
 
         model.addAttribute("categories", categories);
         model.addAttribute("destinations", destinations);
-        model.addAttribute("topDestinations", topDestinations);
+        model.addAttribute("topDestination", topDestination);
         model.addAttribute("view", "home/index");
         return "base-layout";
+    }
+
+    private Destination getBestByRating() {
+        Optional<Destination> first = this.destinationRepository.findBestByRating().stream().findFirst();
+        return first.orElse(null);
     }
 
 //    @GetMapping("/destination/{id}")
