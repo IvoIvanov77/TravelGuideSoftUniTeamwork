@@ -18,6 +18,7 @@ import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.UserRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Constants;
+import softuniBlog.utils.DeleteImage;
 import softuniBlog.utils.Messages;
 import softuniBlog.utils.UploadImage;
 
@@ -161,7 +162,8 @@ public class DestinationController {
         pictures.add(bindingModel.getPicture());
         int availableImageToAdd = DESTINATION_AVAILABLE_IMAGES_COUNT - destination.getImages().size();
         Set<Image> images = this.setImagesToDestination(pictures, destination).stream().limit(availableImageToAdd).collect(Collectors.toSet());
-        destination.setImages(images);
+        destination.addImages(images);
+//        destination.setImages(images);
 
         this.destinationRepository.saveAndFlush(destination);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_DESTINATION);
@@ -229,10 +231,15 @@ public class DestinationController {
 //                        .collect(Collectors.toList())
 //        );
 
+        this.deleteImagesFromDisk(this.destinationRepository.findOne(id).getImages());
         this.destinationRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_DESTINATION);
         return "redirect:/all_destinations";
 
+    }
+
+    private void deleteImagesFromDisk(Set<Image> images) {
+        DeleteImage.deleteImagesFiles(images);
     }
 
 //    private boolean isUserAuthorOrAdmin(Destination destination) {

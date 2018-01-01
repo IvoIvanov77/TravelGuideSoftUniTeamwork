@@ -64,14 +64,14 @@ public class Destination {
     }
 
     public void setImages(Set<Image> images) {
-        this.images.addAll(images);
+        this.images = images;
     }
 
     @ManyToOne
     @NotNull
     @JoinColumn(nullable = false, name = "categoryId")
     public Category getCategory() {
-        return category;
+        return this.category;
     }
 
     public void setCategory(Category destination) {
@@ -141,5 +141,11 @@ public class Destination {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public void addImages(Set<Image> images) {
+        if (this.images != null) {
+            this.images.addAll(images);
+        }
     }
 }
