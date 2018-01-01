@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.DestinationBindingModel;
 import softuniBlog.entity.*;
-import softuniBlog.repository.*;
+import softuniBlog.repository.ArticleRepository;
+import softuniBlog.repository.CategoryRepository;
+import softuniBlog.repository.DestinationRepository;
+import softuniBlog.repository.UserRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Constants;
 import softuniBlog.utils.Messages;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static softuniBlog.utils.Constants.DESTINATION_AVAILABLE_IMAGES_COUNT;
 import static softuniBlog.utils.Constants.EMTPY_STRING;
 
 
@@ -155,7 +159,8 @@ public class DestinationController {
 
         Set<MultipartFile> pictures = bindingModel.getPictures();
         pictures.add(bindingModel.getPicture());
-        Set<Image> images = this.setImagesToDestination(pictures, destination);
+        int availableImageToAdd = DESTINATION_AVAILABLE_IMAGES_COUNT - destination.getImages().size();
+        Set<Image> images = this.setImagesToDestination(pictures, destination).stream().limit(availableImageToAdd).collect(Collectors.toSet());
         destination.setImages(images);
 
         this.destinationRepository.saveAndFlush(destination);
@@ -216,12 +221,13 @@ public class DestinationController {
         }
 
         //remove all articles with given destination
-        this.articleRepository.delete(
-                this.articleRepository.findAll()
-                        .stream()
-                        .filter(article -> article.getDestination().getId().equals(id))
-                        .collect(Collectors.toList())
-        );
+        //TODO: used cascade to do this, test if it works
+//        this.articleRepository.delete(
+//                this.articleRepository.findAll()
+//                        .stream()
+//                        .filter(article -> article.getDestination().getId().equals(id))
+//                        .collect(Collectors.toList())
+//        );
 
         this.destinationRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_DESTINATION);

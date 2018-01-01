@@ -24,7 +24,6 @@ import softuniBlog.utils.Messages;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -289,6 +288,7 @@ public class UserController {
             return "redirect:/user/delete/" + id;
         }
 
+        //TODO: should delete its categories too
         this.userRepository.delete(id);
         notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_USER);
         return "redirect:/all_users";

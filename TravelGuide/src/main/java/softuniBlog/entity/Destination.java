@@ -64,7 +64,7 @@ public class Destination {
     }
 
     public void setImages(Set<Image> images) {
-        this.images = images;
+        this.images.addAll(images);
     }
 
     @ManyToOne
@@ -115,7 +115,7 @@ public class Destination {
         this.starRating = starRating;
     }
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(nullable = false, name = "authorId")
     public User getAuthor() {
         return this.author;
@@ -125,7 +125,7 @@ public class Destination {
         this.author = author;
     }
 
-    @OneToMany(mappedBy = "destination")
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.REMOVE)
     public Set<Article> getArticles() {
         return this.articles;
     }
