@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
+    private static final int TOP_DESTINATIONS_COUNT = 1;
+
     private CategoryRepository categoryRepository;
     private DestinationRepository destinationRepository;
 
@@ -28,7 +30,7 @@ public class HomeController {
     @GetMapping("/")
     public String index(Model model) {
         List<Category> categories = this.categoryRepository.findAll();
-        List<Destination> destinations = this.destinationRepository.findAllOrderedByRatingDesc().stream().skip(1).collect(Collectors.toList());
+        List<Destination> destinations = this.destinationRepository.findAllOrderedByRatingDesc().stream().skip(TOP_DESTINATIONS_COUNT).collect(Collectors.toList());
         Destination topDestination = this.getBestByRating();
 
         model.addAttribute("categories", categories);

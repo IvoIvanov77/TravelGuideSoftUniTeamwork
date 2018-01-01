@@ -56,7 +56,13 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     public List<Destination> getDestinations() {
-        Comparator<Destination> comp = Comparator.comparing(Destination::getId);
+        Comparator<Destination> comp = (o1, o2) -> {
+            int compare = Double.compare(o2.getStarRating(), o1.getStarRating());
+            if (compare == 0) {
+                return Integer.compare(o2.getId(), o1.getId());
+            }
+            return compare;
+        };
         this.destinations.sort(comp);
         return this.destinations;
     }
