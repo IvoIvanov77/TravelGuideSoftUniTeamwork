@@ -2,6 +2,7 @@ package softuniBlog.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity(name = "categories")
@@ -55,6 +56,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     public List<Destination> getDestinations() {
+        Comparator<Destination> comp = Comparator.comparing(Destination::getId);
+        this.destinations.sort(comp);
         return this.destinations;
     }
 

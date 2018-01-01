@@ -52,7 +52,6 @@ public class CategoryController {
         }
         Category category = this.categoryRepository.findOne(id);
         List<Category> categories = this.categoryRepository.findAll();
-//        model.addAttribute("category", category);
         model.addAttribute("categories", categories);
         model.addAttribute("destinations", category.getDestinations());
 
