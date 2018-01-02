@@ -16,6 +16,9 @@ public class Comment {
 
     private Article article;
 
+    public Comment() {
+    }
+
     public Comment(String title, String content, User author, Article article) {
         this.title = title;
         this.content = content;

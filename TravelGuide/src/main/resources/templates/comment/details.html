@@ -1,0 +1,32 @@
+<main>
+    <div class="container body-content">
+        <div class="row">
+            <div class="col-md-12">
+                <article>
+                    <header>
+                        <h2 th:text="${comment.title}"></h2>
+                    </header>
+
+                    <p th:text="${comment.content}"> </p>
+
+                    <small class="author" th:text="${comment.author.fullName}"></small>
+                    <small class="destination">Article: </small>
+                    <small class="destination" th:text="${comment.article.title}"></small>
+
+                    <footer>
+
+                        <div class="pull-right">
+
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a class="btn btn-success btn-xs" th:href="@{/comment/edit/{id}(id = ${comment.id})}">Edit</a>
+                                <a class="btn btn-danger btn-xs" th:href="@{/comment/delete/{id}(id = ${comment.id})}">Delete</a>
+                            </th:block>
+
+                            <a class="btn btn-default btn-xs" th:href="@{/}">back &raquo;</a>
+                        </div>
+                    </footer>
+                </article>
+            </div>
+        </div>
+    </div>
+</main>

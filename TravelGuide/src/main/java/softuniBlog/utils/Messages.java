@@ -24,6 +24,8 @@ public final class Messages {
 
     public static final String SUCCESSFULLY_CREATED_DESTINATION = "Successfully created destination";
 
+    public static final String SUCCESSFULLY_CREATED_COMMENT = "Successfully created comment";
+
     public static final String SUCCESSFULLY_CREATED_USER = "Successfully registered user";
 
     public static final String SUCCESSFULLY_EDITED_ARTICLE = "Successfully edited article";

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.CommentBindingModel;
 import softuniBlog.entity.Article;
@@ -56,7 +57,20 @@ public class CommentController {
         Article article = this.articleRepository.findOne(bindingModel.getArticleId());
         Comment comment = new Comment(bindingModel.getTitle(), bindingModel.getContent(), author, article);
         this.commentRepository.saveAndFlush(comment);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_COMMENT);
         return "redirect:/";
+    }
+
+    @GetMapping("/comment/{id}")
+    public String details(Model model, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        model.addAttribute("view", "comment/details")
+                .addAttribute("comment", comment);
+        return "base-layout";
     }
 
     private User getCurrentUser() {
