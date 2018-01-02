@@ -109,6 +109,32 @@ public class CommentController {
         return "base-layout";
     }
 
+    @GetMapping("/comment/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Model model, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        model.addAttribute("view", "comment/delete");
+        model.addAttribute("comment", comment);
+        return "base-layout";
+    }
+
+    @PostMapping("/comment/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteProcess(@PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        this.commentRepository.delete(comment);
+        this.commentRepository.flush();
+        return "redirect:/comment/listAll";
+    }
+
     private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
