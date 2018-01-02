@@ -16,8 +16,10 @@ public class Comment {
 
     private Article article;
 
-    public Comment(Integer id, String title, String content, User author, Article article) {
-        this.id = id;
+    public Comment() {
+    }
+
+    public Comment(String title, String content, User author, Article article) {
         this.title = title;
         this.content = content;
         this.author = author;

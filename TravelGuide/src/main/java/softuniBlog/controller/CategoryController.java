@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.CategoryBindingModel;
 import softuniBlog.entity.Category;
-import softuniBlog.entity.Destination;
+import softuniBlog.entity.Image;
 import softuniBlog.entity.User;
 import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.CategoryRepository;
@@ -21,8 +21,9 @@ import softuniBlog.repository.UserRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 
 @Controller
@@ -51,7 +52,6 @@ public class CategoryController {
         }
         Category category = this.categoryRepository.findOne(id);
         List<Category> categories = this.categoryRepository.findAll();
-//        model.addAttribute("category", category);
         model.addAttribute("categories", categories);
         model.addAttribute("destinations", category.getDestinations());
 
@@ -77,7 +77,9 @@ public class CategoryController {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
-        this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName()));
+
+        User currentUser = this.getCurrentUser();
+        this.categoryRepository.saveAndFlush(new Category(categoryBindingModel.getName(), currentUser));
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_CATEGORY);
         return "redirect:/all_categories";
     }
@@ -178,29 +180,31 @@ public class CategoryController {
             return "redirect:/";
         }
 
+        /*TODO: done it cascade, test if it works
         List<Destination> destinationToDelete = this.destinationRepository.findAll().stream()
                 .filter(destination -> destination.getCategory().getId().equals(id))
                 .collect(Collectors.toList());
+        delete all articles and destinations with given category
+        for (Destination destination : destinationToDelete) {
+            this.deleteDestination(destination.getId());
+        }*/
 
-        //delete all articles and destinations with given category
-        //TODO: done it cascade, test if it works
-//        for (Destination destination : destinationToDelete) {
-//            this.deleteDestination(destination.getId());
-//        }
-
+        Set<Image> imagesToDelete = new HashSet<>();
+        this.categoryRepository.findOne(id).getDestinations().forEach(d -> imagesToDelete.addAll(d.getImages()));
+        DestinationController.deleteImagesFromDisk(imagesToDelete);
         this.categoryRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_CATEGORY);
         return "redirect:/all_categories";
 
     }
 
-//    private void deleteDestination(Integer id) {
-//        List<Article> articlesToDelete = this.articleRepository.findAll().stream()
-//                .filter(destination -> destination.getDestination().getId().equals(id))
-//                .collect(Collectors.toList());
-//        this.articleRepository.delete(articlesToDelete);
-//        this.destinationRepository.delete(id);
-//    }
+    /*private void deleteDestination(Integer id) {
+        List<Article> articlesToDelete = this.articleRepository.findAll().stream()
+                .filter(destination -> destination.getDestination().getId().equals(id))
+                .collect(Collectors.toList());
+        this.articleRepository.delete(articlesToDelete);
+        this.destinationRepository.delete(id);
+    }*/
 
     private boolean isCurrentUserAdmin() {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();

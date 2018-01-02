@@ -22,6 +22,8 @@ public class User {
 
     private Set<Destination> destinations;
 
+    private Set<Category> categories;
+
     public User(String email, String fullName, String password) {
         this.email = email;
         this.password = password;
@@ -30,6 +32,7 @@ public class User {
         this.destinations = new HashSet<>();
         this.roles = new HashSet<>();
         this.articles = new HashSet<>();
+        this.categories = new HashSet<>();
     }
 
     public User() {
@@ -43,6 +46,15 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)

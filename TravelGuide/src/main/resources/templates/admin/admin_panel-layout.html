@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
 <head th:include="fragments/head" th:with="pageTitle='Travel Guide'"></head>
 
 <body>
 
-<header th:include="fragments/header">
+<header th:include="fragments/header"></header>
 
-</header>
-<main  >
+<main>
     <div class="row">
         <div class="col-sm-3" th:include="admin/admin_navbar">
 
@@ -26,6 +26,5 @@
 
 
 </body>
-
 
 </html>

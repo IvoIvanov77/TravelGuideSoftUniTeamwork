@@ -5,6 +5,8 @@ public class CommentBindingModel {
 
     private String content;
 
+    private Integer articleId;
+
     public CommentBindingModel() {
     }
 
@@ -22,5 +24,13 @@ public class CommentBindingModel {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getArticleId() {
+        return this.articleId;
+    }
+
+    public void setArticleId(Integer articleId) {
+        this.articleId = articleId;
     }
 }

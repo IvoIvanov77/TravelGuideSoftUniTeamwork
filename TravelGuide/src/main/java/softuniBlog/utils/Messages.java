@@ -6,6 +6,8 @@ public final class Messages {
 
     public static final String THERE_ARE_NO_DESTINATIONS_AVAILABLE = "There are no destinations available";
 
+    public static final String THERE_ARE_NO_ARTICLES_AVAILABLE = "There are no articles available";
+
     public static final String THERE_ARE_NO_CATEGORIES_AVAILABLE = "There are no categories available";
 
     public static final String NOT_FOUND = "Not Found";
@@ -21,6 +23,8 @@ public final class Messages {
     public static final String SUCCESSFULLY_CREATED_CATEGORY = "Successfully created category";
 
     public static final String SUCCESSFULLY_CREATED_DESTINATION = "Successfully created destination";
+
+    public static final String SUCCESSFULLY_CREATED_COMMENT = "Successfully created comment";
 
     public static final String SUCCESSFULLY_CREATED_USER = "Successfully registered user";
 

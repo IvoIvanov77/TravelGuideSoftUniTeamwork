@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import softuniBlog.bindingModel.UserBindingModel;
+import softuniBlog.entity.Destination;
+import softuniBlog.entity.Image;
 import softuniBlog.entity.Role;
 import softuniBlog.entity.User;
 import softuniBlog.repository.RoleRepository;
@@ -23,7 +25,9 @@ import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Controller
 public class UserController {
@@ -49,7 +53,7 @@ public class UserController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("view", "user/register");
-        if(this.isCurrentUserAdmin()){
+        if (this.isCurrentUserAdmin()) {
             return "admin/admin_panel-layout";
         }
         return "base-layout";
@@ -71,10 +75,10 @@ public class UserController {
                                   @RequestParam(defaultValue = "false") boolean checkbox) {
 
         //checking for existing email
-        if(this.userRepository.findAll()
+        if (this.userRepository.findAll()
                 .stream()
                 .filter(user -> user.getEmail().equals(userBindingModel.getEmail()))
-                .count() > 0){
+                .count() > 0) {
             notifyService.addErrorMessage(Messages.EMAIL_ALREADY_EXIST);
             return "redirect:/register";
         }
@@ -102,7 +106,7 @@ public class UserController {
             user.addRole(adminRole);
         }
 
-        if(checkbox){
+        if (checkbox) {
             user.addRole(adminRole);
         }
 
@@ -111,7 +115,7 @@ public class UserController {
         this.userRepository.saveAndFlush(user);
 
         notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_USER);
-        if(this.isCurrentUserAdmin()){
+        if (this.isCurrentUserAdmin()) {
             return "redirect:/all_users";
         }
 
@@ -144,7 +148,6 @@ public class UserController {
     }
 
 
-
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     public String profilePage(Model model) {
@@ -164,7 +167,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
-        if(!this.isCurrentUserAdmin()){
+        if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
@@ -198,7 +201,7 @@ public class UserController {
         User user = this.userRepository.findOne(id);
 
         //only first registered admin can edit admin profile
-        if(user.isAdmin() && this.getCurrentUser().getId() != 1){
+        if (user.isAdmin() && this.getCurrentUser().getId() != 1) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/user/edit/" + id;
         }
@@ -216,23 +219,23 @@ public class UserController {
 
         user.setFullName(userBindingModel.getFullName());
 
-        if(checkbox && !user.isAdmin()){
+        if (checkbox && !user.isAdmin()) {
             user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
 
-        }else if(!checkbox && user.isAdmin()){
+        } else if (!checkbox && user.isAdmin()) {
             user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
         }
         this.userRepository.saveAndFlush(user);
         notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_USER);
 
-        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
+        if (Objects.equals(this.getCurrentUser().getId(), user.getId())) {
             return "redirect:/login?logout";
 
         }
         return "redirect:/all_users";
     }
 
-//    private boolean hasRights(User browsingUser) {
+    //    private boolean hasRights(User browsingUser) {
 //        User currentLoggedInUser = getUser();
 //        return browsingUser != null && (browsingUser.getEmail().equals(currentLoggedInUser.getEmail()) || currentLoggedInUser.getRoles().stream()
 //                .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN"));
@@ -248,7 +251,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String delete(Model model, @PathVariable Integer id) {
 
-        if(!this.isCurrentUserAdmin()){
+        if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login?logout";
         }
@@ -276,30 +279,36 @@ public class UserController {
         User user = this.userRepository.findOne(id);
 
         //only first registered admin can edit admin profile
-        if(user.isAdmin() && this.getCurrentUser().getId() != 1){
+        if (user.isAdmin() && this.getCurrentUser().getId() != 1) {
 
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/user/delete/" + id;
         }
 
         //can't delete own profile
-        if(Objects.equals(this.getCurrentUser().getId(), user.getId())){
+        if (Objects.equals(this.getCurrentUser().getId(), user.getId())) {
             this.notifyService.addErrorMessage(Messages.YOU_CAN_NOT_DELETE_YOUR_PROFILE);
             return "redirect:/user/delete/" + id;
         }
 
-        //TODO: should delete its categories too
+        this.deleteUserDestinationsImages(this.userRepository.findOne(id).getDestinations());
         this.userRepository.delete(id);
         notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_USER);
         return "redirect:/all_users";
 
     }
 
-    private boolean isCurrentUserAdmin(){
-       return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
+    private void deleteUserDestinationsImages(Set<Destination> destinations) {
+        Set<Image> imagesToDelete = new HashSet<>();
+        destinations.forEach(d -> imagesToDelete.addAll(d.getImages()));
+        DestinationController.deleteImagesFromDisk(imagesToDelete);
     }
 
-    private User getCurrentUser(){
+    private boolean isCurrentUserAdmin() {
+        return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
+    }
+
+    private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
                 instanceof AnonymousAuthenticationToken)) {
@@ -312,7 +321,6 @@ public class UserController {
         }
         return null;
     }
-
 
 
 }

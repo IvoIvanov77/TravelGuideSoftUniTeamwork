@@ -2,6 +2,7 @@ package softuniBlog.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity(name = "categories")
@@ -13,11 +14,14 @@ public class Category {
 
     private List<Destination> destinations;
 
+    private User author;
+
     public Category() {
     }
 
-    public Category(String name) {
+    public Category(String name, User author) {
         this.name = name;
+        this.author = author;
         this.destinations = new ArrayList<>();
     }
 
@@ -31,6 +35,16 @@ public class Category {
         this.id = id;
     }
 
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "authorId")
+    public User getAuthor() {
+        return this.author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
     @Column(nullable = false)
     public String getName() {
         return this.name;
@@ -42,6 +56,14 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     public List<Destination> getDestinations() {
+        Comparator<Destination> comp = (o1, o2) -> {
+            int compare = Double.compare(o2.getStarRating(), o1.getStarRating());
+            if (compare == 0) {
+                return Integer.compare(o2.getId(), o1.getId());
+            }
+            return compare;
+        };
+        this.destinations.sort(comp);
         return this.destinations;
     }
 

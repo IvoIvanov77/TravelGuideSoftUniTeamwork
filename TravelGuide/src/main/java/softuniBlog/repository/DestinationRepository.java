@@ -9,6 +9,6 @@ import java.util.List;
 public interface DestinationRepository extends JpaRepository<Destination, Integer> {
     Destination findByName(String name);
 
-    @Query("select d from Destination d order by d.starRating desc")
-    List<Destination> getTopThreeDestinations();
+    @Query("select d from Destination d order by d.starRating desc, d.id desc")
+    List<Destination> findAllOrderedByRatingDesc();
 }

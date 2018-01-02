@@ -1,6 +1,4 @@
 <header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
-
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" th:href="@{/}">OUR TRAVEL GUIDE</a>
@@ -10,25 +8,33 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="nav navbar-nav navbar-right">
-
                     <li class="nav-item ">
                         <a class="nav-link" th:href="@{/}">
                             Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" th:href="@{/map}">
                             Map
                         </a>
+                    </li><li class="nav-item">
+                        <a class="nav-link" th:href="@{/comment/create}">
+                            Comment
+                        </a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" th:href="@{/profile}">
-                            My Profile
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/comment/listAll}">
+                            All comments
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/search}">
                             Search
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" th:href="@{/profile}">
+                            My Profile
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
@@ -47,13 +53,14 @@
                         </a>
                     </li>
                     <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
-                        <a class="btn btn-info" th:href="@{/all_users}">
-                            admin control panel
+                        <a class="nav-link" th:href="@{/all_users}">
+                            Admin Control Panel
                         </a>
+                        <!--<a class="btn btn-info" th:href="@{/all_users}">-->
+                            <!--Admin Control Panel-->
+                        <!--</a>-->
                     </li>
-
                 </ul>
-
             </div>
         </div>
     </nav>

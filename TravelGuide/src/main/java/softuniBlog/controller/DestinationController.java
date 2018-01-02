@@ -96,8 +96,9 @@ public class DestinationController {
         Set<Image> images = new HashSet<>();
         files.stream().filter(x -> !x.getOriginalFilename().equals(EMTPY_STRING))
                 .forEach(file -> {
-                    String path = UploadImage.upload(Constants.IMG_WIDTH, Constants.IMG_HEIGHT, file);
-                    images.add(new Image(path, destination));
+                    String smallImagePath = UploadImage.upload(Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT, file);
+                    String bigImagePath = UploadImage.upload(Constants.IMG_BIG_WIDTH, Constants.IMG_BIG_HEIGHT, file);
+                    images.add(new Image(smallImagePath, bigImagePath, destination));
                 });
         return images;
     }
@@ -231,14 +232,14 @@ public class DestinationController {
 //                        .collect(Collectors.toList())
 //        );
 
-        this.deleteImagesFromDisk(this.destinationRepository.findOne(id).getImages());
+        DestinationController.deleteImagesFromDisk(this.destinationRepository.findOne(id).getImages());
         this.destinationRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_DESTINATION);
         return "redirect:/all_destinations";
 
     }
 
-    private void deleteImagesFromDisk(Set<Image> images) {
+    public static void deleteImagesFromDisk(Set<Image> images) {
         DeleteImage.deleteImagesFiles(images);
     }
 

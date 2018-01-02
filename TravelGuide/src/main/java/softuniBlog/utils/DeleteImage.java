@@ -20,6 +20,7 @@ public final class DeleteImage {
     }
 
     public static void deleteImagesFiles(Set<Image> images) {
-        images.forEach(i -> DeleteImage.deleteImageFiles(i.getImagePath()));
+        images.forEach(i -> DeleteImage.deleteImageFiles(i.getSmallImagePath()));
+        images.forEach(i -> DeleteImage.deleteImageFiles(i.getBigImagePath()));
     }
 }
