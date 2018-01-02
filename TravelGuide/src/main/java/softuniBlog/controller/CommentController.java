@@ -73,6 +73,35 @@ public class CommentController {
         return "base-layout";
     }
 
+    @GetMapping("/comment/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String edit(Model model, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        model.addAttribute("view", "comment/edit");
+        model.addAttribute("comment", comment);
+        model.addAttribute("articles", this.articleRepository.findAll());
+        return "base-layout";
+    }
+
+    @PostMapping("/comment/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editProcess(CommentBindingModel commentBindingModel, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        comment.setArticle(this.articleRepository.findOne(commentBindingModel.getArticleId()));
+        comment.setContent(commentBindingModel.getContent());
+        comment.setTitle(commentBindingModel.getTitle());
+        this.commentRepository.saveAndFlush(comment);
+        return "redirect:/";
+    }
+
     private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
