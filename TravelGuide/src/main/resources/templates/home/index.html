@@ -53,8 +53,11 @@
                         <div class="card h-100">
                             <a th:href="@{/destination/{id}(id=${destination.id})}">
                                 <!--destination.getRandomImage().getImagePath()-->
-                                <img class="card-img-top" th:src="${destination.getRandomImage().getImagePath()}"
-                                     alt=""/></a>
+                                <!--<div th:if="${destination.getRandomImage() != null}">-->
+                                    <img class="card-img-top" th:src="${destination.getRandomImage().getImagePath()}"
+                                         alt=""/>
+                                <!--</div>-->
+                            </a>
                             <div class="card-body">
                                 <h4 class="card-title">
                                     <a th:text="${destination.name}"
