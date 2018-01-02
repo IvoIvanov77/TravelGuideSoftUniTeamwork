@@ -102,6 +102,13 @@ public class CommentController {
         return "redirect:/";
     }
 
+    @GetMapping("/comment/listAll")
+    public String listAll(Model model){
+        model.addAttribute("view", "comment/all_comments");
+        model.addAttribute("comments", this.commentRepository.findAll());
+        return "base-layout";
+    }
+
     private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
