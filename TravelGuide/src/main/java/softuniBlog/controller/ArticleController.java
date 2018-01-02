@@ -87,6 +87,7 @@ public class ArticleController {
         Article article = this.articleRepository.findOne(id);
         model.addAttribute("view", "article/details")
                 .addAttribute("article", article);
+        model.addAttribute("comments", article.getComments());
         return "base-layout";
     }
 
