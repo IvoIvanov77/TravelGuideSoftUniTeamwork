@@ -21,12 +21,11 @@ import softuniBlog.repository.UserRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
-//TODO
+
 @Controller
 public class CommentController {
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
-    private final DestinationRepository destinationRepository;
     private final NotificationService notifyService;
     private final CommentRepository commentRepository;
 
@@ -34,7 +33,6 @@ public class CommentController {
     public CommentController(ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepository, NotificationService notifyService, CommentRepository commentRepository) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
-        this.destinationRepository = destinationRepository;
         this.notifyService = notifyService;
         this.commentRepository = commentRepository;
     }
@@ -73,6 +71,84 @@ public class CommentController {
         return "base-layout";
     }
 
+    @GetMapping("/comment/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String edit(Model model, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        if(this.getCurrentUser() != comment.getAuthor() && !isCurrentUserAdmin()){
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/";
+        }
+        model.addAttribute("view", "comment/edit");
+        model.addAttribute("comment", comment);
+        model.addAttribute("articles", this.articleRepository.findAll());
+        return "base-layout";
+    }
+
+    @PostMapping("/comment/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editProcess(CommentBindingModel commentBindingModel, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        if(this.getCurrentUser() != comment.getAuthor() && !isCurrentUserAdmin()){
+             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+             return "redirect:/";
+        }
+        comment.setArticle(this.articleRepository.findOne(commentBindingModel.getArticleId()));
+        comment.setContent(commentBindingModel.getContent());
+        comment.setTitle(commentBindingModel.getTitle());
+        this.commentRepository.saveAndFlush(comment);
+        return "redirect:/";
+    }
+
+    @GetMapping("/comment/listAll")
+    public String listAll(Model model){
+        model.addAttribute("view", "comment/all_comments");
+        model.addAttribute("comments", this.commentRepository.findAll());
+        return "base-layout";
+    }
+
+    @GetMapping("/comment/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Model model, @PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        if(this.getCurrentUser() != comment.getAuthor() && !isCurrentUserAdmin()){
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/";
+        }
+        model.addAttribute("view", "comment/delete");
+        model.addAttribute("comment", comment);
+        return "base-layout";
+    }
+
+    @PostMapping("/comment/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteProcess(@PathVariable Integer id){
+        if(!this.commentRepository.exists(id)){
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+        Comment comment = this.commentRepository.findOne(id);
+        if(this.getCurrentUser() != comment.getAuthor() && !isCurrentUserAdmin()){
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/";
+        }
+        this.commentRepository.delete(comment);
+        this.commentRepository.flush();
+        return "redirect:/comment/listAll";
+    }
+
     private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
@@ -85,5 +161,9 @@ public class CommentController {
         }
 
         return null;
+    }
+
+    private boolean isCurrentUserAdmin() {
+        return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 }

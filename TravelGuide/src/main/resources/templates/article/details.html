@@ -13,6 +13,7 @@
                     <small class="destination">destination: </small>
                     <small class="destination" th:text="${article.destination.name}"></small>
 
+
                     <footer>
 
                         <div class="pull-right">
@@ -25,6 +26,29 @@
                             <a class="btn btn-default btn-xs" th:href="@{/}">back &raquo;</a>
                         </div>
                     </footer>
+
+                    <div class="row">
+                        <th:block th:each="comment : ${comments}">
+                            <div class="col-md-6">
+                                <article>
+                                    <header>
+                                        <h2 th:text="${comment.title}"></h2>
+                                    </header>
+
+                                    <p th:text="${comment.content}"></p>
+
+                                    <small class="author" th:text="${comment.author.fullName}"></small>
+
+                                    <footer>
+                                        <div class="pull-right">
+                                            <a class="btn btn-default btn-xs"
+                                               th:href="@{/comment/{id}(id=${comment.id})}">Read more &raquo;</a>
+                                        </div>
+                                    </footer>
+                                </article>
+                            </div>
+                        </th:block>
+                    </div>
                 </article>
             </div>
         </div>
