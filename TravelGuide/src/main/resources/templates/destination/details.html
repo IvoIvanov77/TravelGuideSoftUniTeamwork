@@ -4,6 +4,8 @@
         <h3>My Google Maps Demo</h3>
         <div id="map"></div>
 
+        <span class="stars" th:value="${destination.starRating}"></span>
+
         <div class="row">
             <th:block th:each="article : ${articles}">
                 <div class="col-md-6">
