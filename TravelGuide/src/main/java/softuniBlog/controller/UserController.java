@@ -167,7 +167,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
-        if (!this.isCurrentUserAdmin()) {
+        if (!Objects.equals(this.getCurrentUser().getId(), id) && !this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
