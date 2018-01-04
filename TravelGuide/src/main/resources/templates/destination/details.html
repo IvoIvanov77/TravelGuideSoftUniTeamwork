@@ -5,6 +5,7 @@
         <div id="map"></div>
 
         <span class="stars" th:value="${destination.starRating}"></span>
+        <span th:text="${destination.starRating}"></span>
 
         <div class="row">
             <th:block th:each="article : ${articles}">

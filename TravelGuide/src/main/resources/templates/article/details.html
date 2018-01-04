@@ -13,6 +13,18 @@
                     <small class="destination">destination: </small>
                     <small class="destination" th:text="${article.destination.name}"></small>
 
+                    <form th:action="@{/article/{id}(id = ${article.id})}" th:object="${ratings}" method="POST">
+                    <fieldset class="rating" th:each="rating : ${ratings}">
+                        <legend>Please rate:</legend>
+                        <input type="radio" th:field="*{value}" th:value="${rating}" />
+                        <label th:for="${#ids.prev('type')}" th:text="${rating}">star</label>
+                        <!--<input type="radio" id="star2" th:name="rating" th:value="2" /><label for="star2" title="Kinda bad">2 stars</label>-->
+                        <!--<input type="radio" id="star3" th:name="rating" th:value="3" /><label for="star3" title="Meh">3 stars</label>-->
+                        <!--<input type="radio" id="star4" th:name="rating" th:value="4" /><label for="star4" title="Pretty good">4 stars</label>-->
+                        <!--<input type="radio" id="star5" th:name="rating" th:value="5" /><label for="star5" title="Rocks!">5 stars</label>-->
+                        <input type="submit" value="Submit"/>
+                    </fieldset>
+                    </form>
 
                     <footer>
 

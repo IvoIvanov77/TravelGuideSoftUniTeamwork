@@ -14,12 +14,16 @@ import softuniBlog.bindingModel.ArticleBindingModel;
 import softuniBlog.entity.Article;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.User;
+import softuniBlog.entity.Vote;
+import softuniBlog.enums.Rating;
 import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.UserRepository;
+import softuniBlog.repository.UsersVotesRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -30,13 +34,15 @@ public class ArticleController {
     private final UserRepository userRepository;
     private final DestinationRepository destinationRepository;
     private final NotificationService notifyService;
+    private final UsersVotesRepository usersVotesRepository;
 
     @Autowired
-    public ArticleController(ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService) {
+    public ArticleController(ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService, UsersVotesRepository usersVotesRepository) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.destinationRepository= destinationRepo;
         this.notifyService = notifyService;
+        this.usersVotesRepository = usersVotesRepository;
     }
 
     @GetMapping("/article/create")
@@ -88,7 +94,33 @@ public class ArticleController {
         model.addAttribute("view", "article/details")
                 .addAttribute("article", article);
         model.addAttribute("comments", article.getComments());
+        List<Rating> ratings = Arrays.asList(Rating.values());
+        model.addAttribute("ratings", ratings);
+
         return "base-layout";
+    }
+
+    @PostMapping("/article/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String details(ArticleBindingModel articleBindingModel, @PathVariable Integer id) {
+
+//        if (!this.isCurrentUserAdmin()) {
+//            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+//            return "redirect:/login";
+//        }
+//
+//        if (!this.articleRepository.exists(id)) {
+//            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+//            return "redirect:/";
+//        }
+        Vote vote = new Vote();
+        vote.setUser(this.getCurrentUser());
+        vote.setArticle(this.articleRepository.findOne(id));
+        vote.setVote(articleBindingModel.getVote());
+        this.usersVotesRepository.saveAndFlush(vote);
+        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_ARTICLE);
+        return "redirect:/article/" + id;
+
     }
 
     @GetMapping("/article/edit/{id}")

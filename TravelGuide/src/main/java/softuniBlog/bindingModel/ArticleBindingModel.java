@@ -14,6 +14,8 @@ public class ArticleBindingModel {
     @NotNull
     private Integer destinationId;
 
+    private Integer vote;
+
     public String getTitle() {
         return title;
     }
@@ -36,5 +38,13 @@ public class ArticleBindingModel {
 
     public void setDestinationId(Integer destinationId) {
         this.destinationId = destinationId;
+    }
+
+    public Integer getVote() {
+        return this.vote;
+    }
+
+    public void setVote(Integer vote) {
+        this.vote = vote;
     }
 }

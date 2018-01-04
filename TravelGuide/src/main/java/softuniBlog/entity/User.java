@@ -24,6 +24,8 @@ public class User {
 
     private Set<Category> categories;
 
+    private Set<Vote> votes;
+
     public User(String email, String fullName, String password) {
         this.email = email;
         this.password = password;
@@ -33,6 +35,7 @@ public class User {
         this.roles = new HashSet<>();
         this.articles = new HashSet<>();
         this.categories = new HashSet<>();
+        this.votes = new HashSet<>();
     }
 
     public User() {
@@ -138,5 +141,14 @@ public class User {
     @Transient
     public boolean isAuthor(Destination destination) {
         return this.getId().equals(destination.getAuthor().getId());
+    }
+
+    @OneToMany(mappedBy = "user")
+    public Set<Vote> getVotes() {
+        return this.votes;
+    }
+
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
     }
 }

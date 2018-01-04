@@ -2,6 +2,7 @@ package softuniBlog.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "articles")
@@ -19,12 +20,15 @@ public class Article {
 
     private Set<Comment> comments;
 
+    private Set<Vote> votes;
+
     public Article(String title, String content, User author, Destination destination, Set<Comment> comments) {
         this.title = title;
         this.content = content;
         this.author = author;
         this.destination = destination;
         this.comments = comments;
+        this.votes = new HashSet<>();
     }
 
     public Article() {
@@ -91,5 +95,14 @@ public class Article {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    @OneToMany(mappedBy = "article")
+    public Set<Vote> getVotes() {
+        return this.votes;
+    }
+
+    public void setVotes(Set<Vote> votes) {
+        this.votes = votes;
     }
 }
