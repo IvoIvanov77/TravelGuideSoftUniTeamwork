@@ -1,6 +1,5 @@
 package softuniBlog.entity;
 
-import softuniBlog.enums.Rating;
 import softuniBlog.utils.RandomNumber;
 
 import javax.persistence.*;
