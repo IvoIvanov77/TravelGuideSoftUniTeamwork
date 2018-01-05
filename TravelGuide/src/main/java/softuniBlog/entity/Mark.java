@@ -13,6 +13,9 @@ public class Mark {
     private Image image;
     private User author;
 
+    public Mark() {
+    }
+
     public Mark(Destination destination, Image image, User author) {
         this.destination = destination;
         this.image = image;

@@ -46,7 +46,7 @@ public class Destination {
         this.images = new HashSet<>();
     }
 
-    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "destination")
     public Set<Mark> getMarks() {
         return this.marks;
     }
