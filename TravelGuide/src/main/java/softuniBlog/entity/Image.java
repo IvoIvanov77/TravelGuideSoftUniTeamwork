@@ -45,9 +45,9 @@ public class Image {
         this.id = id;
     }
 
-    @Column(name = "bigImagePath", columnDefinition = "text", nullable = false)
+    @Column(name = "bigImagePath", columnDefinition = "text", nullable = true)
     public String getBigImagePath() {
-        return bigImagePath;
+        return this.bigImagePath;
     }
 
     public void setBigImagePath(String bigImagePath) {

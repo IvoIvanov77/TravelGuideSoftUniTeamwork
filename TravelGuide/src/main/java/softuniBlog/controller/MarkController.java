@@ -37,10 +37,11 @@ public class MarkController {
     private MarkRepository markRepository;
 
     @Autowired
-    public MarkController(UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService) {
+    public MarkController(MarkRepository markRepository, UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService) {
         this.userRepository = userRepository;
         this.destinationRepository = destinationRepo;
         this.notifyService = notifyService;
+        this.markRepository = markRepository;
     }
 
     @GetMapping("/mark/add")
@@ -58,10 +59,9 @@ public class MarkController {
 //        User user = this.getCurrentUser();
         Destination destination = this.destinationRepository.findOne(markBindingModel.getDestinationId());
         MultipartFile file = markBindingModel.getPicture();
-        String imagePath = UploadImage.upload(Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT, file);
-        //TODO Refactor my code: change non required code with cascade DB later on
-        Image image = new Image(imagePath, destination);
-        Mark mark = new Mark(destination, image);
+        String imagePathSmall = UploadImage.upload(Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT, file);
+        String imagePathBig = UploadImage.upload(Constants.IMG_BIG_WIDTH, Constants.IMG_BIG_HEIGHT, file);
+        Mark mark = new Mark(destination, new Image(imagePathSmall, imagePathBig, destination));
         this.markRepository.saveAndFlush(mark);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_MARK);
         return "redirect:/all_articles";

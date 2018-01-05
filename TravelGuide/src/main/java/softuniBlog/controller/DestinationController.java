@@ -113,9 +113,11 @@ public class DestinationController {
 
         Destination destination = this.destinationRepository.findOne(id);
         Set<Article> articles = destination.getArticles();
+        Set<Mark> marks = destination.getMarks();
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination)
-                .addAttribute("articles", articles);
+                .addAttribute("articles", articles)
+                .addAttribute("marks", marks);
         return "base-layout";
     }
 
