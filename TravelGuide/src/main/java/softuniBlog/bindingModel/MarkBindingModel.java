@@ -11,7 +11,7 @@ public class MarkBindingModel {
     @NotNull
     private Integer destinationId;
     @NotNull
-    private MultipartFile picture;
+    private MultipartFile markPicture;
 
     public Integer getDestinationId() {
         return destinationId;
@@ -21,11 +21,11 @@ public class MarkBindingModel {
         this.destinationId = destinationId;
     }
 
-    public MultipartFile getPicture() {
-        return picture;
+    public MultipartFile getMarkPicture() {
+        return markPicture;
     }
 
-    public void setPicture(MultipartFile picture) {
-        this.picture = picture;
+    public void setMarkPicture(MultipartFile markPicture) {
+        this.markPicture = markPicture;
     }
 }

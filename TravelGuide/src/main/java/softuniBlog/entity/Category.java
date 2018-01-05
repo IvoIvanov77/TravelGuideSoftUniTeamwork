@@ -70,4 +70,18 @@ public class Category {
     public void setDestinations(List<Destination> destinations) {
         this.destinations = destinations;
     }
+
+    @Transient
+    public List<Destination> getUniqueDestinations() {
+        List<Integer> ids = new ArrayList<>();
+        List<Destination> filteredDestinations = new ArrayList<>();
+        for (Destination destination : this.getDestinations()) {
+            Integer targetId = destination.getId();
+            if (!ids.contains(targetId)) {
+                ids.add(targetId);
+                filteredDestinations.add(destination);
+            }
+        }
+        return filteredDestinations;
+    }
 }

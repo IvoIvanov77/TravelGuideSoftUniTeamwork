@@ -16,9 +16,7 @@ public class Image {
     }
 
     public Image(String smallImagePath, Destination destination) {
-        this.destination = destination;
-        this.smallImagePath = smallImagePath;
-        this.bigImagePath = null;
+        this(smallImagePath, null, destination);
     }
 
     public Image(String smallImagePath, String bigImagePath, Destination destination) {
@@ -27,7 +25,7 @@ public class Image {
         this.bigImagePath = bigImagePath;
     }
 
-    @OneToOne()
+    @OneToOne(mappedBy = "image")
     public Mark getMark() {
         return mark;
     }
@@ -46,7 +44,7 @@ public class Image {
         this.id = id;
     }
 
-    @Column(name = "bigImagePath", columnDefinition = "text", nullable = true)
+    @Column(name = "bigImagePath", columnDefinition = "text", nullable = false)
     public String getBigImagePath() {
         return this.bigImagePath;
     }

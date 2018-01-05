@@ -53,7 +53,8 @@ public class CategoryController {
         Category category = this.categoryRepository.findOne(id);
         List<Category> categories = this.categoryRepository.findAll();
         model.addAttribute("categories", categories);
-        model.addAttribute("destinations", category.getDestinations());
+        //TODO: bug to fix.
+        model.addAttribute("destinations", category.getUniqueDestinations());
 
         model.addAttribute("view", "home/index");
         return "base-layout";
