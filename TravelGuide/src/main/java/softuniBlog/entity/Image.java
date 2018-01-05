@@ -20,13 +20,14 @@ public class Image {
         this.smallImagePath = smallImagePath;
         this.bigImagePath = null;
     }
+
     public Image(String smallImagePath, String bigImagePath, Destination destination) {
         this.destination = destination;
         this.smallImagePath = smallImagePath;
         this.bigImagePath = bigImagePath;
     }
 
-    @OneToOne(mappedBy = "image")
+    @OneToOne()
     public Mark getMark() {
         return mark;
     }
@@ -56,7 +57,7 @@ public class Image {
 
     @Column(name = "smallImagePath", columnDefinition = "text", nullable = false)
     public String getSmallImagePath() {
-        return smallImagePath;
+        return this.smallImagePath;
     }
 
     public void setSmallImagePath(String smallImagePath) {

@@ -1,7 +1,5 @@
 package softuniBlog.entity;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -13,11 +11,12 @@ public class Mark {
     private Integer id;
     private Destination destination;
     private Image image;
+    private User author;
 
-    @Autowired
-    public Mark(Destination destination, Image image) {
+    public Mark(Destination destination, Image image, User author) {
         this.destination = destination;
         this.image = image;
+        this.author = author;
     }
 
     @Id
@@ -28,6 +27,16 @@ public class Mark {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @OneToOne
+    @JoinColumn(nullable = false, name = "authorId")
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     @ManyToOne
@@ -41,10 +50,10 @@ public class Mark {
         this.destination = destination;
     }
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "imageId", nullable = false)
     public Image getImage() {
-        return image;
+        return this.image;
     }
 
     public void setImage(Image image) {

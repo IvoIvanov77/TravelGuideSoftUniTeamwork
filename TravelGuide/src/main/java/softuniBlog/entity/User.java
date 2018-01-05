@@ -24,6 +24,8 @@ public class User {
 
     private Set<Category> categories;
 
+    private Mark mark;
+
     public User(String email, String fullName, String password) {
         this.email = email;
         this.password = password;
@@ -36,6 +38,15 @@ public class User {
     }
 
     public User() {
+    }
+
+    @OneToOne(mappedBy = "author")
+    public Mark getMark() {
+        return mark;
+    }
+
+    public void setMark(Mark mark) {
+        this.mark = mark;
     }
 
     @Id

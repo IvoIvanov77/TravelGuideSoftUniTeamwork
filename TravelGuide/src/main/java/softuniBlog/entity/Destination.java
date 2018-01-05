@@ -48,7 +48,7 @@ public class Destination {
 
     @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
     public Set<Mark> getMarks() {
-        return marks;
+        return this.marks;
     }
 
     public void setMarks(Set<Mark> marks) {

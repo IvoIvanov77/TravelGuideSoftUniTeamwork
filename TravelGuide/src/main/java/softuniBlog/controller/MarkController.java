@@ -16,6 +16,7 @@ import softuniBlog.entity.Image;
 import softuniBlog.entity.Mark;
 import softuniBlog.entity.User;
 import softuniBlog.repository.DestinationRepository;
+import softuniBlog.repository.ImageRepository;
 import softuniBlog.repository.MarkRepository;
 import softuniBlog.repository.UserRepository;
 import softuniBlog.service.NotificationService;
@@ -35,13 +36,15 @@ public class MarkController {
     private UserRepository userRepository;
     private final NotificationService notifyService;
     private MarkRepository markRepository;
+    private ImageRepository imageRepository;
 
     @Autowired
-    public MarkController(MarkRepository markRepository, UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService) {
+    public MarkController(ImageRepository imageRepository, MarkRepository markRepository, UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService) {
         this.userRepository = userRepository;
         this.destinationRepository = destinationRepo;
         this.notifyService = notifyService;
         this.markRepository = markRepository;
+        this.imageRepository = imageRepository;
     }
 
     @GetMapping("/mark/add")
@@ -56,15 +59,16 @@ public class MarkController {
     @PostMapping("/mark/add")
     @PreAuthorize("isAuthenticated()")
     public String addMarkProcess(MarkBindingModel markBindingModel) {
-//        User user = this.getCurrentUser();
         Destination destination = this.destinationRepository.findOne(markBindingModel.getDestinationId());
         MultipartFile file = markBindingModel.getPicture();
         String imagePathSmall = UploadImage.upload(Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT, file);
         String imagePathBig = UploadImage.upload(Constants.IMG_BIG_WIDTH, Constants.IMG_BIG_HEIGHT, file);
-        Mark mark = new Mark(destination, new Image(imagePathSmall, imagePathBig, destination));
+        Image image = new Image(imagePathSmall, imagePathBig, destination);
+        User currentUser = this.getCurrentUser();
+        Mark mark = new Mark(destination, image,currentUser);
         this.markRepository.saveAndFlush(mark);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_MARK);
-        return "redirect:/all_articles";
+        return "redirect:/";
     }
 
     private User getCurrentUser() {
@@ -73,10 +77,9 @@ public class MarkController {
             UserDetails principal = (UserDetails) SecurityContextHolder.getContext()
                     .getAuthentication()
                     .getPrincipal();
-
             return this.userRepository.findByEmail(principal.getUsername());
         }
-
         return null;
     }
+
 }
