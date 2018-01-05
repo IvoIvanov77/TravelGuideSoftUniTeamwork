@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.CategoryBindingModel;
 import softuniBlog.entity.Category;
+import softuniBlog.entity.Destination;
 import softuniBlog.entity.Image;
 import softuniBlog.entity.User;
 import softuniBlog.repository.ArticleRepository;
@@ -32,8 +33,8 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
-    private final DestinationRepository destinationRepository;
     private final NotificationService notifyService;
+    private DestinationRepository destinationRepository;
 
     @Autowired
     public CategoryController(CategoryRepository categoryRepository, ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepository, NotificationService notifyService) {
@@ -54,7 +55,8 @@ public class CategoryController {
         List<Category> categories = this.categoryRepository.findAll();
         model.addAttribute("categories", categories);
         //TODO: bug to fix.
-        model.addAttribute("destinations", category.getUniqueDestinations());
+        List<Destination> uniqueDestinationsByCategoryId = this.destinationRepository.getUniqueDestinationsByCategoryId(category.getId());
+        model.addAttribute("destinations", uniqueDestinationsByCategoryId);
 
         model.addAttribute("view", "home/index");
         return "base-layout";
