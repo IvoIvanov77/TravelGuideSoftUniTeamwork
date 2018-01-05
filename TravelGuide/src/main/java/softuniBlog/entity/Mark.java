@@ -42,7 +42,7 @@ public class Mark {
     }
 
     @OneToOne
-    @JoinColumn(name = "imageId")
+    @JoinColumn(name = "imageId", nullable = false)
     public Image getImage() {
         return image;
     }
