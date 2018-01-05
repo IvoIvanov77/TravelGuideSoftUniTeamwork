@@ -16,6 +16,13 @@ import java.util.Date;
  */
 public final class UploadImage {
 
+    /**
+     * Resize and uplaod image of type MultipartFile on hdd and return path to it.
+     * @param width
+     * @param height
+     * @param file
+     * @return path of uploaded image.
+     */
     public static String upload(int width, int height, MultipartFile file) {
         String path = null;
         String imageDirectoryParam = System.getProperty("user.dir") + Constants.IMAGE_PATH;

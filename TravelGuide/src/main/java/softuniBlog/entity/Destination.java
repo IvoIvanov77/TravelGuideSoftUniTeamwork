@@ -25,6 +25,8 @@ public class Destination {
 
     private Set<Image> images;
 
+    private Set<Mark> marks;
+
     private Category category;
 
     private Double price;
@@ -37,10 +39,20 @@ public class Destination {
         this.review = review;
         this.starRating = 0D;
         this.author = author;
-        this.articles = new HashSet<>();
         this.category = category;
         this.price = price;
+        this.articles = new HashSet<>();
+        this.marks = new HashSet<>();
         this.images = new HashSet<>();
+    }
+
+    @OneToMany(mappedBy = "destination")
+    public Set<Mark> getMarks() {
+        return marks;
+    }
+
+    public void setMarks(Set<Mark> marks) {
+        this.marks = marks;
     }
 
     @Transient

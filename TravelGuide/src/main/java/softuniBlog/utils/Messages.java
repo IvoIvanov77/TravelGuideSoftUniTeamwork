@@ -20,6 +20,8 @@ public final class Messages {
 
     public static final String SUCCESSFULLY_CREATED_ARTICLE = "Successfully created article";
 
+    public static final String SUCCESSFULLY_CREATED_MARK = "Successfully created mark";
+
     public static final String SUCCESSFULLY_CREATED_CATEGORY = "Successfully created category";
 
     public static final String SUCCESSFULLY_CREATED_DESTINATION = "Successfully created destination";
@@ -43,7 +45,6 @@ public final class Messages {
     public static final String SUCCESSFULLY_EDITED_USER = "Successfully edited user profile";
 
     public static final String SUCCESSFULLY_DELETED_USER = "Successfully deleted user profile";
-
 
 
     private Messages() {
