@@ -70,6 +70,14 @@ public class MarkController {
         System.out.println(12);
         return "redirect:/";
     }
+
+    @GetMapping("/mark/listAll")
+    @PreAuthorize("isAuthenticated()")
+    public String listAll(Model model){
+        model.addAttribute("view", "mark/all_marks");
+        model.addAttribute("marks", this.markRepository.findAll());
+        return "base-layout";
+    }
 /*
     @GetMapping("/mark/edit/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -169,6 +177,10 @@ public class MarkController {
             return this.userRepository.findByEmail(principal.getUsername());
         }
         return null;
+    }
+
+    private boolean isCurrentUserAdmin() {
+        return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 
 }
