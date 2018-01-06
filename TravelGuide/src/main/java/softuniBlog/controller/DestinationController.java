@@ -257,15 +257,6 @@ public class DestinationController {
             return "redirect:/";
         }
 
-        //remove all articles with given destination
-        //TODO: used cascade to do this, test if it works
-//        this.articleRepository.delete(
-//                this.articleRepository.findAll()
-//                        .stream()
-//                        .filter(article -> article.getDestination().getId().equals(id))
-//                        .collect(Collectors.toList())
-//        );
-
         DestinationController.deleteImagesFromDisk(this.destinationRepository.findOne(id).getImages());
         this.destinationRepository.delete(id);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_DESTINATION);

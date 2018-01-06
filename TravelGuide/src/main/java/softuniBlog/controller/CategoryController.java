@@ -180,15 +180,6 @@ public class CategoryController {
             return "redirect:/";
         }
 
-        /*TODO: done it cascade, test if it works
-        List<Destination> destinationToDelete = this.destinationRepository.findAll().stream()
-                .filter(destination -> destination.getCategory().getId().equals(id))
-                .collect(Collectors.toList());
-        delete all articles and destinations with given category
-        for (Destination destination : destinationToDelete) {
-            this.deleteDestination(destination.getId());
-        }*/
-
         Set<Image> imagesToDelete = new HashSet<>();
         this.categoryRepository.findOne(id).getDestinations().forEach(d -> imagesToDelete.addAll(d.getImages()));
         DestinationController.deleteImagesFromDisk(imagesToDelete);
@@ -210,7 +201,6 @@ public class CategoryController {
         return this.getCurrentUser() != null && this.getCurrentUser().isAdmin();
     }
 
-    //
     private User getCurrentUser() {
 
         if (!(SecurityContextHolder.getContext().getAuthentication()
