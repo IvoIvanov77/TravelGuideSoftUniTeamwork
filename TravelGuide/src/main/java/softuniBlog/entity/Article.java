@@ -1,5 +1,7 @@
 package softuniBlog.entity;
 
+import softuniBlog.enums.Rating;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -19,6 +21,8 @@ public class Article {
     private Destination destination;
 
     private Set<Comment> comments;
+
+    private Rating rating;
 
     private Set<Vote> votes;
 
@@ -104,5 +108,14 @@ public class Article {
 
     public void setVotes(Set<Vote> votes) {
         this.votes = votes;
+    }
+
+    @Transient
+    public Rating getRating() {
+        return this.rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
     }
 }

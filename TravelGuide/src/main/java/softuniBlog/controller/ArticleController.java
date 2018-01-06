@@ -1,5 +1,6 @@
 package softuniBlog.controller;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -23,6 +24,7 @@ import softuniBlog.repository.UsersVotesRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +39,11 @@ public class ArticleController {
     private final UsersVotesRepository usersVotesRepository;
 
     @Autowired
-    public ArticleController(ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepo, NotificationService notifyService, UsersVotesRepository usersVotesRepository) {
+    public ArticleController(ArticleRepository articleRepository,
+                             UserRepository userRepository,
+                             DestinationRepository destinationRepo,
+                             NotificationService notifyService,
+                             UsersVotesRepository usersVotesRepository) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.destinationRepository= destinationRepo;
@@ -101,24 +107,22 @@ public class ArticleController {
     }
 
     @PostMapping("/article/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public String details(ArticleBindingModel articleBindingModel, @PathVariable Integer id) {
+    public String details(ArticleBindingModel articleBindingModel,
+                          @PathVariable Integer id) {
 
-//        if (!this.isCurrentUserAdmin()) {
-//            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
-//            return "redirect:/login";
-//        }
-//
-//        if (!this.articleRepository.exists(id)) {
-//            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
-//            return "redirect:/";
-//        }
+        Integer userId = this.getCurrentUser().getId();
+        Vote voted = this.usersVotesRepository.findVoteByUserIdAndArticleId(userId,id);
+        if(voted !=null){
+            this.notifyService.addErrorMessage(Messages.ALREADY_VOTED);
+            return "redirect:/article/" + id;
+        }
+
         Vote vote = new Vote();
         vote.setUser(this.getCurrentUser());
         vote.setArticle(this.articleRepository.findOne(id));
-        vote.setVote(articleBindingModel.getVote());
+        vote.setVote(articleBindingModel.getRating().getValue());
         this.usersVotesRepository.saveAndFlush(vote);
-        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_ARTICLE);
+        this.notifyService.addInfoMessage(Messages.THANKS_FOR_VOTE);
         return "redirect:/article/" + id;
 
     }

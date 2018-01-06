@@ -1,6 +1,8 @@
 package softuniBlog.bindingModel;
 
 
+import softuniBlog.enums.Rating;
+
 import javax.validation.constraints.NotNull;
 
 public class ArticleBindingModel {
@@ -14,7 +16,7 @@ public class ArticleBindingModel {
     @NotNull
     private Integer destinationId;
 
-    private Integer vote;
+    private Rating rating;
 
     public String getTitle() {
         return title;
@@ -40,11 +42,11 @@ public class ArticleBindingModel {
         this.destinationId = destinationId;
     }
 
-    public Integer getVote() {
-        return this.vote;
+    public Rating getRating() {
+        return this.rating;
     }
 
-    public void setVote(Integer vote) {
-        this.vote = vote;
+    public void setRating(Rating rating) {
+        this.rating = rating;
     }
 }

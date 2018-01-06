@@ -46,6 +46,11 @@ public final class Messages {
 
     public static final String SUCCESSFULLY_DELETED_USER = "Successfully deleted user profile";
 
+    public static final String NEED_LOGIN = "Log in or register to perform this action!";
+
+    public static final String THANKS_FOR_VOTE = "Thank you!\nYour opinion means a lot for Us!";
+
+    public static final String ALREADY_VOTED = "You already voted!";
 
     private Messages() {
     }
@@ -54,5 +59,5 @@ public final class Messages {
 
     public static final String SUCCESS = "success";
 
-    //// TODO: 12/29/2017  add concrete messeges
+    //// TODO: 12/29/2017  add concrete messages
 }
