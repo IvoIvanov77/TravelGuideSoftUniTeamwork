@@ -1,0 +1,13 @@
+.starRating input[type='radio']{ display:none; }
+
+.starRating label {
+    width: 18px;
+    height: 16px;
+    display: inline-block;
+    text-indent: -9999px; /* hide the label text off screen */
+    background: url(/images/rating_stars.png) -155px -32px;
+}
+
+.starRating label.on {
+    background-position: -155px -76px;
+}
