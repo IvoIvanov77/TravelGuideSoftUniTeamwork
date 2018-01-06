@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.DestinationBindingModel;
 import softuniBlog.entity.*;
-import softuniBlog.enums.Rating;
 import softuniBlog.repository.ArticleRepository;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
@@ -23,7 +22,6 @@ import softuniBlog.utils.DeleteImage;
 import softuniBlog.utils.Messages;
 import softuniBlog.utils.UploadImage;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -115,9 +113,11 @@ public class DestinationController {
 
         Destination destination = this.destinationRepository.findOne(id);
         Set<Article> articles = destination.getArticles();
+        Set<Mark> marks = destination.getMarks();
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination)
-                .addAttribute("articles", articles);
+                .addAttribute("articles", articles)
+                .addAttribute("marks", marks);
         return "base-layout";
     }
 

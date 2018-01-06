@@ -1,30 +1,21 @@
 <main>
     <div class="container body-content span=8 offset=2">
         <div class="well">
-            <form class="form-horizontal" th:action="@{/article/create}" method="POST">
+            <form class="form-horizontal" th:action="@{/mark/add}" method="POST" enctype="multipart/form-data">
                 <fieldset>
-                    <legend>Create Article</legend>
+                    <legend>Create Mark</legend>
 
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="title">Title</label>
+                        <label class="col-sm-4 control-label" for="image">Picture</label>
                         <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="title" placeholder="Title"
-                                   name="title" required="required"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="content">Content</label>
-                        <div class="col-sm-6">
-                            <textarea class="form-control" rows="6" id="content" name="content"
-                                      required="required"></textarea>
+                            <input type="file" name="markPicture" id="image" accept="image/*" required="required"/>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="destination_dropdown_menu">Destination</label>
                         <div class="col-sm-4">
-                            <select class="selectpicker" id="destination_dropdown_menu" name="destinationId"
+                            <select class="selectpicker"  id="destination_dropdown_menu" name="destinationId"
                                     required="required">
                                 <option value="" selected="selected">----------------------</option>
                                 <option
@@ -38,7 +29,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" th:href="@{/all_articles}">Cancel</a>
+                            <a class="btn btn-default" th:href="@{/}">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Submit"/>
                         </div>
                     </div>

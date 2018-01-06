@@ -1,15 +1,17 @@
 <main>
 
+
     <div class="col-md-10 col-md-offset-1">
+
         <div class="panel panel-default panel-table">
             <div class="panel-heading">
                 <div class="row">
                     <div class="col col-xs-6">
-                        <h3 class="panel-title">All Articles</h3>
+                        <h3 class="panel-title">All Marks</h3>
                     </div>
                     <div class="col col-xs-6 text-right">
                         <a class="btn btn-sm btn-primary btn-create"
-                           th:href="@{/article/create}">Create Article
+                           th:href="@{/mark/add}">Add mark
                         </a>
                     </div>
                 </div>
@@ -20,32 +22,32 @@
                     <tr>
                         <th><em class="fa fa-cog"></em></th>
                         <th class="hidden-xs">ID</th>
-                        <th>Title</th>
-                        <th>Author</th>
+                        <!--<th>Id</th>-->
                         <th>Destination</th>
-                        <th>Category</th>
+                        <th>Author</th>
+                        <th>Image</th>
 
                     </tr>
                     </thead>
                     <tbody>
-                    <th:block th:each="article : ${articles}">
+                    <th:block th:each="mark : ${marks}">
                         <tr>
                             <td align="center">
-                                <a class="btn btn-default" th:href="@{/article/{id}(id=${article.id})}" >
+                                <a class="btn btn-default" th:href="@{/mark/{id}(id=${mark.id})}" >
                                     Details
                                 </a>
-                                <a class="btn btn-default" th:href="@{/article/edit/{id}(id = ${article.id})}">
+                                <a class="btn btn-default" th:href="@{/mark/edit/{id}(id = ${mark.id})}">
                                     Edit
                                 </a>
-                                <a class="btn btn-danger" th:href="@{/article/delete/{id}(id = ${article.id})}">
+                                <a class="btn btn-danger" th:href="@{/mark/delete/{id}(id = ${mark.id})}">
                                     Remove
                                 </a>
                             </td>
-                            <td th:text="${article.getId()}"></td>
-                            <td th:text="${article.getTitle()}"></td>
-                            <td th:text="${article.getAuthor().getFullName()}"></td>
-                            <td th:text="${article.getDestination().getName()}"></td>
-                            <td th:text="${article.getDestination().getCategory().getName()}"></td>
+                            <td th:text="${mark.getId()}"></td>
+                            <!--<td th:text="${mark.getTitle()}"></td>-->
+                            <td th:text="${mark.getDestination().getName()}"></td>
+                            <td th:text="${mark.getAuthor().getFullName()}"></td>
+                            <td th:text="${mark.getImage().getBigImagePath()}"></td>
 
                         </tr>
                     </th:block>

@@ -167,7 +167,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
 
-        if (!this.isCurrentUserAdmin()) {
+        if (!Objects.equals(this.getCurrentUser().getId(), id) && !this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
         }
@@ -217,7 +217,11 @@ public class UserController {
             }
         }
 
+
         user.setFullName(userBindingModel.getFullName());
+        user.setEmail(userBindingModel.getEmail());
+
+
 
         if (checkbox && !user.isAdmin()) {
             user.addRole(this.roleRepository.findByName("ROLE_ADMIN"));
@@ -226,10 +230,15 @@ public class UserController {
             user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
         }
         this.userRepository.saveAndFlush(user);
+        if(this.getCurrentUser() == null){
+            notifyService.addInfoMessage("Please login with new email");
+            return "redirect:/logout";
+        }
+
         notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_USER);
 
         if (Objects.equals(this.getCurrentUser().getId(), user.getId())) {
-            return "redirect:/login?logout";
+            return "redirect:/logout";
 
         }
         return "redirect:/all_users";

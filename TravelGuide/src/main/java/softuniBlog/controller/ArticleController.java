@@ -245,7 +245,6 @@ public class ArticleController {
 
     //
     private User getCurrentUser() {
-
         if (!(SecurityContextHolder.getContext().getAuthentication()
                 instanceof AnonymousAuthenticationToken)) {
             UserDetails principal = (UserDetails) SecurityContextHolder.getContext()

@@ -10,14 +10,28 @@ public class Image {
     private String smallImagePath;
     private String bigImagePath;
     private Destination destination;
+    private Mark mark;
 
     public Image() {
+    }
+
+    public Image(String smallImagePath, Destination destination) {
+        this(smallImagePath, null, destination);
     }
 
     public Image(String smallImagePath, String bigImagePath, Destination destination) {
         this.destination = destination;
         this.smallImagePath = smallImagePath;
         this.bigImagePath = bigImagePath;
+    }
+
+    @OneToOne(mappedBy = "image")
+    public Mark getMark() {
+        return mark;
+    }
+
+    public void setMark(Mark mark) {
+        this.mark = mark;
     }
 
     @Id
@@ -32,7 +46,7 @@ public class Image {
 
     @Column(name = "bigImagePath", columnDefinition = "text", nullable = false)
     public String getBigImagePath() {
-        return bigImagePath;
+        return this.bigImagePath;
     }
 
     public void setBigImagePath(String bigImagePath) {
@@ -41,7 +55,7 @@ public class Image {
 
     @Column(name = "smallImagePath", columnDefinition = "text", nullable = false)
     public String getSmallImagePath() {
-        return smallImagePath;
+        return this.smallImagePath;
     }
 
     public void setSmallImagePath(String smallImagePath) {

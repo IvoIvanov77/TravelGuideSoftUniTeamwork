@@ -32,8 +32,8 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
-    private final DestinationRepository destinationRepository;
     private final NotificationService notifyService;
+    private DestinationRepository destinationRepository;
 
     @Autowired
     public CategoryController(CategoryRepository categoryRepository, ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepository, NotificationService notifyService) {
