@@ -6,16 +6,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.DestinationBindingModel;
 import softuniBlog.entity.*;
-import softuniBlog.repository.ArticleRepository;
-import softuniBlog.repository.CategoryRepository;
-import softuniBlog.repository.DestinationRepository;
-import softuniBlog.repository.UserRepository;
+import softuniBlog.repository.*;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Constants;
 import softuniBlog.utils.DeleteImage;
@@ -38,19 +33,19 @@ public class DestinationController {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final NotificationService notifyService;
-    private final ArticleRepository articleRepository;
-//    private ImageRepository imageRepository;
+
+    private MarkRepository markRepository;
+    private Mark currentMark = null;
 
     @Autowired
     public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository,
-                                 /*ImageRepository imageRepository,*/ CategoryRepository categoryRepository,
-                                 NotificationService notifyService, ArticleRepository articleRepository) {
+                                 MarkRepository markRepository, CategoryRepository categoryRepository,
+                                 NotificationService notifyService) {
         this.destinationRepository = destinationRepository;
+        this.markRepository = markRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.notifyService = notifyService;
-        this.articleRepository = articleRepository;
-//        this.imageRepository = imageRepository;
     }
 
     @GetMapping("/destination/add")
@@ -105,7 +100,6 @@ public class DestinationController {
 
     @GetMapping("/destination/{id}")
     public String destinationDetails(Model model, @PathVariable Integer id) {
-
         if (!this.destinationRepository.exists(id)) {
             this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
@@ -113,12 +107,49 @@ public class DestinationController {
 
         Destination destination = this.destinationRepository.findOne(id);
         Set<Article> articles = destination.getArticles();
-        Set<Mark> marks = destination.getMarks();
+
+        if (this.currentMark == null) {
+            this.currentMark = destination.getMarks().stream().collect(Collectors.toList()).get(0);
+        }
+
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination)
-                .addAttribute("articles", articles)
-                .addAttribute("marks", marks);
+                .addAttribute("mark", this.currentMark)
+                .addAttribute("articles", articles);
+
         return "base-layout";
+    }
+
+    @RequestMapping(value = "/prev_mark", method = RequestMethod.GET)
+    public String handlePrevMark(@RequestParam(name = "markId") String markId) {
+        int markIdInt = Integer.parseInt(markId) - 1;//previous
+        int minId = this.markRepository.getMinId();
+
+        if (markIdInt < minId) {
+            markIdInt = minId;
+        }
+
+        Mark prevMark = this.markRepository.findOne(markIdInt);
+        this.currentMark = prevMark;
+
+        Integer destinationId = prevMark.getDestination().getId();
+        return "redirect:/destination/" + destinationId;
+    }
+
+    @RequestMapping(value = "/next_mark", method = RequestMethod.GET)
+    public String handleNextMark(@RequestParam(name = "markId") String markId) {
+        int markIdInt = Integer.parseInt(markId) + 1;//next
+        int maxId = this.markRepository.getMaxId();
+
+        if (markIdInt > maxId) {
+            markIdInt = maxId;
+        }
+
+        Mark prevMark = this.markRepository.findOne(markIdInt);
+        this.currentMark = prevMark;
+
+        Integer destinationId = prevMark.getDestination().getId();
+        return "redirect:/destination/" + destinationId;
     }
 
     @GetMapping("/destination/edit/{id}")
@@ -166,11 +197,12 @@ public class DestinationController {
         int availableImageToAdd = DESTINATION_AVAILABLE_IMAGES_COUNT - destination.getImages().size();
         Set<Image> images = this.setImagesToDestination(pictures, destination).stream().limit(availableImageToAdd).collect(Collectors.toSet());
         destination.addImages(images);
-//        destination.setImages(images);
 
         this.destinationRepository.saveAndFlush(destination);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_EDITED_DESTINATION);
 
+        //TODO: delete the rest
+        DeleteImage.deleteImagesFiles(images);
         return "redirect:/all_destinations";
     }
 
