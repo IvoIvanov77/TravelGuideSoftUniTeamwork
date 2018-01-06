@@ -1,4 +1,4 @@
-<main>
+<main xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
     <div class="container body-content">
         <div class="row">
             <div class="col-md-12">
@@ -12,6 +12,17 @@
                     <small class="author" th:text="${article.author.fullName}"></small>
                     <small class="destination">Destination: </small>
                     <small class="destination" th:text="${article.destination.name}"></small>
+
+                    <form th:action="@{/article/{id}(id = ${article.id})}" th:object="${article}" method="POST">
+                    <fieldset class="rating">
+                        <legend sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">Please rate:</legend>
+                        <span th:each="rating : ${ratings}">
+                        <input type="radio"  th:field="*{rating}" th:value="${rating}" />
+                        <label th:for="${#ids.prev('rating')}" th:text="${rating}">rating</label>
+                        </span>
+                    </fieldset>
+                        <input type="submit" value="Vote!" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"/>
+                    </form>
 
                     <footer>
                         <div class="pull-right">
