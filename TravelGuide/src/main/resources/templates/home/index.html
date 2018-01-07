@@ -18,23 +18,13 @@
             <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel"
                  th:if="${topDestination != null}">
                 <div class="carousel-inner" role="listbox">
-
-                    <!--<div class="carousel-item">
-                        <img class="d-block img-fluid" th:src="${topDestination?.getRandomImage()?.getBigImagePath()}"
-                             alt="First slide"/>
-                    </div>-->
                     <div class="carousel-item active">
-                        <a>
+                        <a href="#">
                             <img class="d-block img-fluid"
                                  th:src="${topDestination?.getRandomImage()?.getBigImagePath()}"
                                  alt="Second slide"/>
                         </a>
                     </div>
-                    <!--<div class="carousel-item">
-                        <img class="d-block img-fluid" th:src="${topDestination?.getRandomImage()?.getBigImagePath()}"
-                             alt="Third slide"/>
-                    </div>-->
-
                 </div>
                 <a id="previous-destination-image-link" class="carousel-control-prev"
                    th:href="@{/prev_dest(destId=${topDestination.getId()})}" role="button"

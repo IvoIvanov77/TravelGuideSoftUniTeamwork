@@ -70,7 +70,7 @@ public class Destination {
         return null;
     }
 
-    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     public Set<Image> getImages() {
         return this.images;
     }

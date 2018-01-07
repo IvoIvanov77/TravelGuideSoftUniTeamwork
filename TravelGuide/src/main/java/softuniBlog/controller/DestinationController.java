@@ -109,7 +109,10 @@ public class DestinationController {
         Set<Article> articles = destination.getArticles();
 
         if (this.currentMark == null) {
-            this.currentMark = destination.getMarks().stream().collect(Collectors.toList()).get(0);
+            Set<Mark> marks = destination.getMarks();
+            if (marks.size() > 0) {
+                this.currentMark = marks.stream().collect(Collectors.toList()).get(0);
+            }
         }
 
         model.addAttribute("view", "destination/details")
