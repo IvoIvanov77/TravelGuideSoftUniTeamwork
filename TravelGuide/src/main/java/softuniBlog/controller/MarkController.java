@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.MarkBindingModel;
@@ -77,6 +78,41 @@ public class MarkController {
         model.addAttribute("view", "mark/all_marks");
         model.addAttribute("marks", this.markRepository.findAll());
         return "base-layout";
+    }
+
+
+    @GetMapping("/mark/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Model model, @PathVariable Integer id){
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
+        }
+
+        if (!this.markRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+
+        model.addAttribute("view", "mark/delete");
+        model.addAttribute("mark", this.markRepository.findOne(id));
+        return "base-layout";
+    }
+
+    @PostMapping("/mark/delete/{id}")
+    public String deleteProcess(@PathVariable Integer id){
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
+        }
+
+        if (!this.markRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+
+        this.markRepository.delete(id);
+        return "redirect:/";
     }
 /*
     @GetMapping("/mark/edit/{id}")
