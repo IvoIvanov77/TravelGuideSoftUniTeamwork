@@ -6,3 +6,5 @@ $(function() {
         $('#messages').find('li').fadeOut();
     }, 3000);
 });
+
+
