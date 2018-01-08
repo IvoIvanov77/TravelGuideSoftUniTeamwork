@@ -144,7 +144,7 @@ public class UserController {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
-        return "redirect:/login?logout";
+        return "redirect:/login";
     }
 
 
@@ -230,6 +230,7 @@ public class UserController {
             user.deleteRole(this.roleRepository.findByName("ROLE_ADMIN"));
         }
         this.userRepository.saveAndFlush(user);
+
         if(this.getCurrentUser() == null){
             notifyService.addInfoMessage("Please login with new email");
             return "redirect:/logout";
