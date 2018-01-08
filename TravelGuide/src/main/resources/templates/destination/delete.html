@@ -20,7 +20,7 @@
                             <textarea class="form-control" rows="6" id="destination_review" name="review"
                                       th:field="${destination.review}" disabled="disabled"></textarea>
                             <th:block th:each="image : ${images}">
-                                <img th:src="${image.getImagePath()}" th:vspace="10" width="280px"/>
+                                <img th:src="${image.getSmallImagePath()}" th:vspace="10" width="280px"/>
                             </th:block>
                         </div>
                     </div>

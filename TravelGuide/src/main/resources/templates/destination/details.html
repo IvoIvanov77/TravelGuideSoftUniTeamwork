@@ -64,16 +64,32 @@
         </div>
 
         <h3>Users marks</h3>
-        <div class="row">
-            <th:block th:each="mark : ${marks}">
-                <div class="col-md-6">
-                    <article>
-                        <img class="card-img-top" th:src="${mark.getImage().getSmallImagePath()}" alt=""/>
-                        <!--<small class="author" th:text="${mark.author.fullName}"></small>-->
-                    </article>
-                </div>
-            </th:block>
-        </div>
+        <div class="col-lg-9">
+            <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        <a th:href="@{/destination/{id}(id=${destination.getId()})}">
 
+                        </a>
+                        <img class="d-block img-fluid" th:src="${mark.getImage().getBigImagePath()}"
+                             alt="Second slide"/>
+                    </div>
+                </div>
+                <a id="prev-mark-link" class="carousel-control-prev"
+                   th:href="@{/prev_mark(markId=${mark.getId()})}" role="button"
+                   data-slide="prev">
+
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a id="next-mark-link" class="carousel-control-next"
+                   th:href="@{/next_mark(markId=${mark.getId()})}" role="button"
+                   data-slide="next">
+
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
     </div>
 </main>
