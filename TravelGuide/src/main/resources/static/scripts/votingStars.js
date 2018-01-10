@@ -1,5 +1,5 @@
 $(() => {
-    let button = $("input[type='submit']");
+    let button = $("input[type='submit']").prop('disabled', false);
 
     $('.rating')
         .addClass('starRating')

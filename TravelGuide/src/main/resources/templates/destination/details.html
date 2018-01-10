@@ -1,4 +1,4 @@
-<main>
+<main xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="container body-content">
 
         <div class="pac-card" id="pac-card">
@@ -38,7 +38,6 @@
         <span class="stars" th:value="${destination.starRating}"></span>
         <span th:text="'Current rating: ' + ${destination.starRating}"></span>
 
-
         <h3>Articles</h3>
         <div class="row">
             <th:block th:each="article : ${articles}">
@@ -53,6 +52,7 @@
                         <small class="author" th:text="${article.author.fullName}"></small>
 
                         <footer>
+                            <span class="stars" th:value="${article.starRating}"></span>
                             <div class="pull-right">
                                 <a class="btn btn-default btn-xs"
                                    th:href="@{/article/{id}(id=${article.id})}">Read more &raquo;</a>
