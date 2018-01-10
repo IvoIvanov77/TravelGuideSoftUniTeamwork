@@ -23,13 +23,13 @@
     vertical-align: middle;
 }
 
-fieldset {
+.rtng > fieldset {
     margin-top: 20px;
     display: inline-block;
 
 }
 
-form > input[type="submit"] {
+.rtng > input[type="submit"] {
 
     border-radius: 50%;
     display: inline-block;

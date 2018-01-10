@@ -1,6 +1,6 @@
 $(() => {
-    let button = $("input[type='submit']").prop('disabled', false);
-
+    let button = $(".rtng > input[type='submit']");
+    button.prop("disabled", true);
     $('.rating')
         .addClass('starRating')
         .on('mouseenter', 'label', function () {

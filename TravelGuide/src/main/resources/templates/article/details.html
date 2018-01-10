@@ -16,8 +16,9 @@
                     <small class="author" th:text="${article.author.fullName}"></small>
                     <small class="destination">Destination:</small>
                     <small class="destination" th:text="${article.destination.name}"></small>
-                    <!--sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"-->
-                    <form
+
+                    //Get user vote if logged in or admin
+                    <form class="rtng" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"
                           th:action="@{/article/{id}(id = ${article.id})}"
                           th:object="${article}" method="POST">
                         <fieldset class="rating">
