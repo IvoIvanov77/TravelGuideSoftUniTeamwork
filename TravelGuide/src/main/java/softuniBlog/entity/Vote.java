@@ -7,7 +7,7 @@ public class Vote {
     private Integer id;
     private User user;
     private Article article;
-    private Integer vote;
+    private Integer vote = 0;
 
     public Vote() {
     }

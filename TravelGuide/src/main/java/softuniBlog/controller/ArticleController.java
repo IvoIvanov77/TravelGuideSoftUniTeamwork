@@ -1,6 +1,5 @@
 package softuniBlog.controller;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -24,7 +23,6 @@ import softuniBlog.repository.UsersVotesRepository;
 import softuniBlog.service.NotificationService;
 import softuniBlog.utils.Messages;
 
-import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -97,6 +95,7 @@ public class ArticleController {
         }
 
         Article article = this.articleRepository.findOne(id);
+//        article.setStarRating(this.ratingService.getArticleRating(id));
         model.addAttribute("view", "article/details")
                 .addAttribute("article", article);
         model.addAttribute("comments", article.getComments());

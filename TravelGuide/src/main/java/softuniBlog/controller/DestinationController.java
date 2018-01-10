@@ -106,12 +106,6 @@ public class DestinationController {
         }
 
         Destination destination = this.destinationRepository.findOne(id);
-        List<Article> articles = new ArrayList<>();
-        destination.getArticles()
-                .forEach((Article a) -> {
-                    a.setStarRating(this.calculateRating(a.getId()));
-                    articles.add(a);
-                });
 
         if (this.currentMark == null) {
             Set<Mark> marks = destination.getMarks();
@@ -123,17 +117,9 @@ public class DestinationController {
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination)
                 .addAttribute("mark", this.currentMark)
-                .addAttribute("articles", articles);
+                .addAttribute("articles", destination.getArticles());
 
         return "base-layout";
-    }
-
-    private Double calculateRating(Integer article_id) {
-        List<Vote> articleVotes = this.usersVotesRepository.findByArticleId(article_id);
-        IntSummaryStatistics stats = articleVotes.stream()
-                .mapToInt(Vote::getVote)
-                .summaryStatistics();
-        return stats.getAverage();
     }
 
     @RequestMapping(value = "/prev_mark", method = RequestMethod.GET)
