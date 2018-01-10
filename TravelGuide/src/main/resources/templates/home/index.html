@@ -55,12 +55,14 @@
                                     <a th:text="${destination.name}"
                                        th:href="@{/destination/{id}(id=${destination.id})}"></a>
                                 </h4>
-                                <h5 th:text="${destination.starRating}"></h5>
                                 <!--short review later on-->
                                 <p class="card-text" th:text="${destination.review}"></p>
                             </div>
                             <div class="card-footer">
                                 <span class="stars" th:value="${destination.starRating}"></span>
+                                <span class="small rating_text"
+                                      th:text="${destination.starRating} + '&nbsp;&nbsp;&#183;&nbsp;&nbsp;' + ${destination.votesCount} + ' votes.'"></span>
+
                             </div>
                         </div>
                     </div>

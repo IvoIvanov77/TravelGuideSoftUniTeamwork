@@ -36,7 +36,8 @@
         </div>
 
         <span class="stars" th:value="${destination.starRating}"></span>
-        <span th:text="'Current rating: ' + ${destination.starRating}"></span>
+        <span class="small rating_text"
+              th:text="${destination.starRating} + '&nbsp;&nbsp;&#183;&nbsp;&nbsp;' + ${destination.votesCount} + ' votes.'"></span>
 
         <h3>Articles</h3>
         <div class="row">
@@ -53,6 +54,9 @@
 
                         <footer>
                             <span class="stars" th:value="${article.starRating}"></span>
+                            <span class="small rating_text"
+                                  th:text="${article.starRating} + '&nbsp;&nbsp;&#183;&nbsp;&nbsp;' + ${#lists.size(article.votes)} + ' votes.'"></span>
+
                             <div class="pull-right">
                                 <a class="btn btn-default btn-xs"
                                    th:href="@{/article/{id}(id=${article.id})}">Read more &raquo;</a>

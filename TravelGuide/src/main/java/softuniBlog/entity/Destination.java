@@ -33,6 +33,8 @@ public class Destination {
 
     private Double price;
 
+    private Integer votesCount;
+
     public Destination() {
     }
 
@@ -170,4 +172,15 @@ public class Destination {
         return stats.getAverage();
     }
 
+    public Integer getVotesCount() {
+        Integer count = 0;
+        for (Article article : this.articles) {
+            count += article.getVotes().size();
+        }
+        return count;
+    }
+
+    public void setVotesCount(Integer votesCount) {
+        this.votesCount = votesCount;
+    }
 }

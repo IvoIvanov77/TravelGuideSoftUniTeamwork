@@ -1,5 +1,5 @@
 span.stars, span.stars span {
-    display: block;
+    display: inline-block;
     background: url(/images/show_rating_stars.png) 0 -16px repeat-x;
     width: 95px;
     height: 16px;
