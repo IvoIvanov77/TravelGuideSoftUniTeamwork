@@ -4,7 +4,9 @@ import softuniBlog.utils.RandomNumber;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.DoubleSummaryStatistics;
 import java.util.HashSet;
+import java.util.IntSummaryStatistics;
 import java.util.Set;
 
 @Entity
@@ -30,6 +32,8 @@ public class Destination {
     private Category category;
 
     private Double price;
+
+    private Integer votesCount;
 
     public Destination() {
     }
@@ -120,7 +124,7 @@ public class Destination {
 
     @Column(nullable = false)
     public Double getStarRating() {
-        return this.starRating;
+        return this.calculateRating();
     }
 
     public void setStarRating(Double starRating) {
@@ -159,5 +163,24 @@ public class Destination {
         if (this.images != null) {
             this.images.addAll(images);
         }
+    }
+
+    private Double calculateRating() {
+        DoubleSummaryStatistics stats = this.articles.stream()
+                    .mapToDouble(Article::getStarRating)
+                    .summaryStatistics();
+        return stats.getAverage();
+    }
+
+    public Integer getVotesCount() {
+        Integer count = 0;
+        for (Article article : this.articles) {
+            count += article.getVotes().size();
+        }
+        return count;
+    }
+
+    public void setVotesCount(Integer votesCount) {
+        this.votesCount = votesCount;
     }
 }

@@ -1,38 +1,36 @@
-<main>
-    <div class="container body-content span=8 offset=2">
-        <div class="well">
-            <form class="form-horizontal" th:action="@{/destination/delete/{id}(id=${destination.id})}" method="POST">
-                <fieldset>
-                    <legend>Delete Destination</legend>
+<div class="col-md-10 col-md-offset-1">
+    <div class="well">
+        <form class="form-horizontal" th:action="@{/destination/delete/{id}(id=${destination.id})}" method="POST">
+            <fieldset>
+                <legend>Delete Destination</legend>
 
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="destination_name">Destination name</label>
-                        <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="destination_name" placeholder="Destination Name"
-                                   name="name"
-                                   th:value="${destination.name}" disabled="disabled"/>
-                        </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="destination_name">Destination name</label>
+                    <div class="col-sm-4 ">
+                        <input type="text" class="form-control" id="destination_name" placeholder="Destination Name"
+                               name="name"
+                               th:value="${destination.name}" disabled="disabled"/>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="destination_review">Review</label>
-                        <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="destination_review">Review</label>
+                    <div class="col-sm-6">
                             <textarea class="form-control" rows="6" id="destination_review" name="review"
                                       th:field="${destination.review}" disabled="disabled"></textarea>
-                            <th:block th:each="image : ${images}">
-                                <img th:src="${image.getSmallImagePath()}" th:vspace="10" width="280px"/>
-                            </th:block>
-                        </div>
+                        <th:block th:each="image : ${images}">
+                            <img th:src="${image.getSmallImagePath()}" th:vspace="10" width="280px"/>
+                        </th:block>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" th:href="@{/all_destinations}">Cancel</a>
-                            <input type="submit" class="btn btn-danger" value="Delete"/>
-                        </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <a class="btn btn-default" th:href="@{/all_destinations}">Cancel</a>
+                        <input type="submit" class="btn btn-danger" value="Delete"/>
                     </div>
-                </fieldset>
-            </form>
-        </div>
+                </div>
+            </fieldset>
+        </form>
     </div>
-</main>
+</div>

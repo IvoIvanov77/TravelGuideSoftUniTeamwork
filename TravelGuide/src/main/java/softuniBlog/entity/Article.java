@@ -5,6 +5,7 @@ import softuniBlog.enums.Rating;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.IntSummaryStatistics;
 import java.util.Set;
 
 @Entity(name = "articles")
@@ -22,6 +23,8 @@ public class Article {
 
     private Set<Comment> comments;
 
+    private Double starRating;
+
     private Rating rating;
 
     private Set<Vote> votes;
@@ -32,10 +35,10 @@ public class Article {
         this.author = author;
         this.destination = destination;
         this.comments = comments;
-        this.votes = new HashSet<>();
     }
 
     public Article() {
+        this.votes = new HashSet<>();
     }
 
     @ManyToOne
@@ -118,4 +121,21 @@ public class Article {
     public void setRating(Rating rating) {
         this.rating = rating;
     }
+
+    @Transient
+    public Double getStarRating() {
+        return this.calculateRating();
+    }
+
+    public void setStarRating(Double starRating) {
+        this.starRating = starRating;
+    }
+
+    private Double calculateRating() {
+        IntSummaryStatistics stats = votes.stream()
+                .mapToInt(Vote::getVote)
+                .summaryStatistics();
+        return stats.getAverage();
+    }
+
 }

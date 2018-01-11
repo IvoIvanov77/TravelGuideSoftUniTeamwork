@@ -18,6 +18,7 @@ public class ArticleBindingModel {
 
     private Rating rating;
 
+
     public String getTitle() {
         return title;
     }

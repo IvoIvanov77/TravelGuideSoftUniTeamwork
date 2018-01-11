@@ -5,9 +5,34 @@
     height: 16px;
     display: inline-block;
     text-indent: -9999px; /* hide the label text off screen */
-    background: url(/images/rating_stars.png) -155px -32px;
+    background: url(/images/vote_rating_stars.png) -155px -32px;
 }
 
 .starRating label.on {
     background-position: -155px -76px;
+}
+
+.starRating legend {
+    margin-bottom: 3px;
+}
+
+.rating_text{
+    height: 25px;
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.rtng > fieldset {
+    margin-top: 20px;
+    display: inline-block;
+
+}
+
+.rtng > input[type="submit"] {
+
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
 }

@@ -17,9 +17,7 @@ import softuniBlog.utils.DeleteImage;
 import softuniBlog.utils.Messages;
 import softuniBlog.utils.UploadImage;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static softuniBlog.utils.Constants.DESTINATION_AVAILABLE_IMAGES_COUNT;
@@ -32,6 +30,7 @@ public class DestinationController {
     private final DestinationRepository destinationRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final UsersVotesRepository usersVotesRepository;
     private final NotificationService notifyService;
 
     private MarkRepository markRepository;
@@ -39,9 +38,10 @@ public class DestinationController {
 
     @Autowired
     public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository,
-                                 MarkRepository markRepository, CategoryRepository categoryRepository,
+                                 UsersVotesRepository usersVotesRepository, MarkRepository markRepository, CategoryRepository categoryRepository,
                                  NotificationService notifyService) {
         this.destinationRepository = destinationRepository;
+        this.usersVotesRepository = usersVotesRepository;
         this.markRepository = markRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
@@ -106,7 +106,6 @@ public class DestinationController {
         }
 
         Destination destination = this.destinationRepository.findOne(id);
-        Set<Article> articles = destination.getArticles();
 
         if (this.currentMark == null) {
             Set<Mark> marks = destination.getMarks();
@@ -118,7 +117,7 @@ public class DestinationController {
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination)
                 .addAttribute("mark", this.currentMark)
-                .addAttribute("articles", articles);
+                .addAttribute("articles", destination.getArticles());
 
         return "base-layout";
     }

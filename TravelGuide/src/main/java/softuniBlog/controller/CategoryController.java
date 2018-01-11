@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import softuniBlog.bindingModel.CategoryBindingModel;
 import softuniBlog.entity.Category;
+import softuniBlog.entity.Destination;
 import softuniBlog.entity.Image;
 import softuniBlog.entity.User;
 import softuniBlog.repository.ArticleRepository;
@@ -25,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Controller
 public class CategoryController {
 
@@ -33,10 +33,14 @@ public class CategoryController {
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
     private final NotificationService notifyService;
-    private DestinationRepository destinationRepository;
+    private final DestinationRepository destinationRepository;
 
     @Autowired
-    public CategoryController(CategoryRepository categoryRepository, ArticleRepository articleRepository, UserRepository userRepository, DestinationRepository destinationRepository, NotificationService notifyService) {
+    public CategoryController(CategoryRepository categoryRepository,
+                              ArticleRepository articleRepository,
+                              UserRepository userRepository,
+                              DestinationRepository destinationRepository,
+                              NotificationService notifyService) {
         this.categoryRepository = categoryRepository;
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;

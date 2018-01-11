@@ -1,30 +1,28 @@
-<main>
-    <div class="container body-content">
-        <div class="row">
-            <div class="col-md-12">
-                <article>
-                    <header>
-                        <h2 th:text="${category.getName()}"></h2>
-                    </header>
+<div class="container body-content">
+    <div class="row">
+        <div class="col-md-12">
+            <article>
+                <header>
+                    <h2 th:text="${category.getName()}"></h2>
+                </header>
 
-                    <!--<p th:text="${article.content}"> </p>
+                <!--<p th:text="${article.content}"> </p>
 
-                    <small class="author" th:text="${article.author.fullName}"></small>
+                <small class="author" th:text="${article.author.fullName}"></small>
 
-                    <footer>
+                <footer>
 
-                        <div class="pull-right">
+                    <div class="pull-right">
 
-                            <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isAuthor(article)}">
-                                <a class="btn btn-success btn-xs" th:href="@{/article/edit/{id}(id = ${article.id})}">Edit</a>
-                                <a class="btn btn-danger btn-xs" th:href="@{/article/delete/{id}(id = ${article.id})}">Delete</a>
-                            </th:block>
+                        <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isAuthor(article)}">
+                            <a class="btn btn-success btn-xs" th:href="@{/article/edit/{id}(id = ${article.id})}">Edit</a>
+                            <a class="btn btn-danger btn-xs" th:href="@{/article/delete/{id}(id = ${article.id})}">Delete</a>
+                        </th:block>
 
-                            <a class="btn btn-default btn-xs" th:href="@{/}">back &raquo;</a>
-                        </div>
-                    </footer>-->
-                </article>
-            </div>
+                        <a class="btn btn-default btn-xs" th:href="@{/}">back &raquo;</a>
+                    </div>
+                </footer>-->
+            </article>
         </div>
     </div>
-</main>
+</div>

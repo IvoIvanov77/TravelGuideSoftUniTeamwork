@@ -18,11 +18,10 @@ public class DestinationBindingModel {
     private Integer categoryId;
     @NotNull
     private Double price;
-
     @NotNull
     private MultipartFile picture;
-
     private Set<MultipartFile> pictures;
+
 
     public Integer getCategoryId() {
         return categoryId;
