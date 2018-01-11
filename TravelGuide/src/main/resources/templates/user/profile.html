@@ -1,27 +1,25 @@
-<main>
-    <div class="container body-container">
-        <div class="row">
-            <div id="main" class="col-sm-9">
-                <div>
-                    <span th:text="${user.email}"></span>
-                    <br/>
-                    <span th:text="${user.fullName}"></span>
+<div class="container body-container">
+    <div class="row">
+        <div id="main" class="col-sm-9">
+            <div>
+                <span th:text="${user.email}"></span>
+                <br/>
+                <span th:text="${user.fullName}"></span>
 
-                    <footer>
+                <footer>
 
-                        <div class="pull-right">
+                    <div class="pull-right">
 
-                            <th:block sec:authorize="isAuthenticated()">
-                                <a class="btn btn-success btn-xs" th:href="@{/user/edit/{id}(id = ${user.id})}">Edit profile</a>
-                                <!--<a class="btn btn-danger btn-xs" th:href="@{/user/delete/{id}(id = ${user.id})}">Delete profile</a>-->
-                            </th:block>
+                        <th:block sec:authorize="isAuthenticated()">
+                            <a class="btn btn-success btn-xs" th:href="@{/user/edit/{id}(id = ${user.id})}">Edit
+                                profile</a>
+                            <!--<a class="btn btn-danger btn-xs" th:href="@{/user/delete/{id}(id = ${user.id})}">Delete profile</a>-->
+                        </th:block>
 
 
-                        </div>
-                    </footer>
-                </div>
+                    </div>
+                </footer>
             </div>
         </div>
     </div>
-
-</main>
+</div>

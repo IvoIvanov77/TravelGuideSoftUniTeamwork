@@ -1,88 +1,86 @@
-<main>
-    <div class="container body-content span=8 offset=2">
-        <div class="well">
-            <form class="form-horizontal" th:action="@{/destination/edit/{id}(id=${destination.id})}" method="POST" enctype="multipart/form-data">
-                <fieldset>
-                    <legend>Edit Destination</legend>
+<div class="col-md-10 col-md-offset-1">
+    <div class="well">
+        <form class="form-horizontal" th:action="@{/destination/edit/{id}(id=${destination.id})}" method="POST"
+              enctype="multipart/form-data">
+            <fieldset>
+                <legend>Edit Destination</legend>
 
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="destination_name">Destination name</label>
-                        <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="destination_name" placeholder="Destination name"
-                                   name="name" th:value="${destination.name}" required="required"/>
-                        </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="destination_name">Destination name</label>
+                    <div class="col-sm-4 ">
+                        <input type="text" class="form-control" id="destination_name" placeholder="Destination name"
+                               name="name" th:value="${destination.name}" required="required"/>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="destination_review">Review</label>
-                        <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="destination_review">Review</label>
+                    <div class="col-sm-6">
                             <textarea class="form-control" rows="6" id="destination_review" name="review"
                                       th:field="${destination.review}" required="required">
 
                             </textarea>
-                        </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="category_dropdown_menu">Category</label>
-                        <div class="col-sm-4 ">
-                            <select class="selectpicker"  id="category_dropdown_menu" name="categoryId"
-                                    required="required">
-                                <!--<option th:value="${destination.category.id}"-->
-                                        <!--th:text="${destination.category.name}"-->
-                                        <!--selected="selected">-->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="category_dropdown_menu">Category</label>
+                    <div class="col-sm-4 ">
+                        <select class="selectpicker" id="category_dropdown_menu" name="categoryId"
+                                required="required">
+                            <!--<option th:value="${destination.category.id}"-->
+                            <!--th:text="${destination.category.name}"-->
+                            <!--selected="selected">-->
 
-                                <!--</option>-->
-                                <option th:each="category : ${categories}"
-                                        th:value="${category.id}"
-                                        th:text="${category.name}">
-                                </option>
-                            </select>
-                        </div>
+                            <!--</option>-->
+                            <option th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}">
+                            </option>
+                        </select>
                     </div>
+                </div>
 
-                    <!--Images HTML-->
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="image">Base Image</label>
-                        <div class="col-sm-4 ">
-                            <input type="file" name="picture" id="image" accept="image/*"/>
-                        </div>
+                <!--Images HTML-->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="image">Base Image</label>
+                    <div class="col-sm-4 ">
+                        <input type="file" name="picture" id="image" accept="image/*"/>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="image1">Image</label>
-                        <div class="col-sm-4 ">
-                            <input type="file" name="pictures" accept="image/*" id="image1"/>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="image1">Image</label>
+                    <div class="col-sm-4 ">
+                        <input type="file" name="pictures" accept="image/*" id="image1"/>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="image2">Image</label>
-                        <div class="col-sm-4 ">
-                            <input type="file" name="pictures" accept="image/*" id="image2"/>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="image2">Image</label>
+                    <div class="col-sm-4 ">
+                        <input type="file" name="pictures" accept="image/*" id="image2"/>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="image3">Image</label>
-                        <div class="col-sm-4 ">
-                            <input type="file" name="pictures" accept="image/*" id="image3"/>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="image3">Image</label>
+                    <div class="col-sm-4 ">
+                        <input type="file" name="pictures" accept="image/*" id="image3"/>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label" for="image4">Image</label>
-                        <div class="col-sm-4 ">
-                            <input type="file" name="pictures" accept="image/*" id="image4"/>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="image4">Image</label>
+                    <div class="col-sm-4 ">
+                        <input type="file" name="pictures" accept="image/*" id="image4"/>
                     </div>
-                    <!--Images HTML-->
+                </div>
+                <!--Images HTML-->
 
-                    <div class="form-group">
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" th:href="@{/all_destinations}">Cancel</a>
-                            <input type="submit" class="btn btn-success" value="Edit"/>
-                        </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <a class="btn btn-default" th:href="@{/all_destinations}">Cancel</a>
+                        <input type="submit" class="btn btn-success" value="Edit"/>
                     </div>
-
-                </fieldset>
-            </form>
-        </div>
+                </div>
+            </fieldset>
+        </form>
     </div>
-</main>
+</div>
