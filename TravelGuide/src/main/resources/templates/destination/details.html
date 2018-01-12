@@ -66,16 +66,17 @@
     </div>
 
     <h3>Users marks</h3>
-    <div class="col-lg-9">
+    <div class="col-lg-9" th:if="${mark?.getImage()?.getBigImagePath()}">
         <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
             <div class="carousel-inner" role="listbox">
-                <div class="carousel-item active">
-                    <a th:href="@{/destination/{id}(id=${destination.getId()})}">
 
-                    </a>
-                    <img class="d-block img-fluid" th:src="${mark.getImage().getBigImagePath()}"
-                         alt="Second slide"/>
-                </div>
+                 <div class="carousel-item active">
+                     <a th:href="@{/destination/{id}(id=${destination.getId()})}">
+                         <img class="d-block img-fluid" th:src="${mark.getImage().getBigImagePath()}"
+                              alt="Second slide"/>
+                     </a>
+                 </div>
+
             </div>
             <a id="prev-mark-link" class="carousel-control-prev"
                th:href="@{/prev_mark(markId=${mark.getId()})}" role="button"
@@ -93,4 +94,6 @@
             </a>
         </div>
     </div>
+
+
 </div>

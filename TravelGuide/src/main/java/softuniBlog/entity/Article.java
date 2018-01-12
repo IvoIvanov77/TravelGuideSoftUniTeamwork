@@ -35,6 +35,7 @@ public class Article {
         this.author = author;
         this.destination = destination;
         this.comments = comments;
+        this.votes = new HashSet<>();
     }
 
     public Article() {

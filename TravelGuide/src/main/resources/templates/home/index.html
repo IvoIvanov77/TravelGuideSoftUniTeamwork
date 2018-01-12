@@ -14,9 +14,10 @@
         </div>
 
         <div class="col-lg-9">
-
+            <!--th:if="${topDestination != null}"-->
+            <!--slider-->
             <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel"
-                 th:if="${topDestination != null}">
+                 th:if="${topDestination?.getRandomImage()?.getBigImagePath()}">
                 <div class="carousel-inner" role="listbox">
                     <div class="carousel-item active">
                         <a href="#">

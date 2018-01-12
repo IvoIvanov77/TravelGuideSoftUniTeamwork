@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
+import softuniBlog.entity.Image;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +23,9 @@ public class HomeController {
     private static final int TOP_DESTINATIONS_COUNT = 3;
     private static int TOP_DESTINATION_SKIP_INDEXATOR = 0;
 
+    private List<Image> imagesByIdDesc;
+    private int index;
+
     private CategoryRepository categoryRepository;
     private DestinationRepository destinationRepository;
     private Destination currentDestination;
@@ -29,14 +34,16 @@ public class HomeController {
     public HomeController(CategoryRepository categoryRepository, DestinationRepository destinationRepository) {
         this.destinationRepository = destinationRepository;
         this.categoryRepository = categoryRepository;
-        this.currentDestination = null;
+        this.imagesByIdDesc = new ArrayList<>();
     }
 
     @GetMapping("/")
     public String index(Model model) {
         List<Category> categories = this.categoryRepository.findAll();
-        List<Destination> destinations = this.destinationRepository.findAllOrderedByRatingDesc().stream().skip(TOP_DESTINATIONS_COUNT).collect(Collectors.toList());
-        Destination topDestination = this.currentDestination;
+        List<Destination> destinations = this.destinationRepository.findAllByIdDesc().stream().limit(TOP_DESTINATIONS_COUNT).collect(Collectors.toList());
+//        List<Destination> destinations = this.destinationRepository.findAllByIdDesc().stream().skip(TOP_DESTINATIONS_COUNT).collect(Collectors.toList());;
+//        Destination topDestination = this.currentDestination;
+        Destination topDestination = destinations.get(0);
 
         if (topDestination == null)
             topDestination = this.getBestByRating(0);
@@ -49,7 +56,7 @@ public class HomeController {
     }
 
 
-    private Destination getBestByRating(int destinationToSkip) {
+   /* private Destination getBestByRating(int destinationToSkip) {
         //skipping some param n
 //        Optional<Destination> currentBest = this.destinationRepository.findAllOrderedByRatingDesc().stream()
 //                .skip(TOP_DESTINATION_SKIP_INDEXATOR).findFirst();
@@ -57,7 +64,7 @@ public class HomeController {
                 .skip(destinationToSkip)
                 .findFirst();
         return first.orElse(null);
-    }
+    }*/
 
     //TODO: Refactor all repeating logic in final class with static methods
     @RequestMapping(value = "/prev_dest", method = RequestMethod.GET)
@@ -88,5 +95,12 @@ public class HomeController {
         }
 
         return "redirect:/";
+    }
+
+    private Destination getBestByRating(int destinationToSkip) {
+        Optional<Destination> first = this.destinationRepository.findAllByIdDesc().stream()
+                .skip(destinationToSkip)
+                .findFirst();
+        return first.orElse(null);
     }
 }
