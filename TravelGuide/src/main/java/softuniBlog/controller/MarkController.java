@@ -65,7 +65,7 @@ public class MarkController {
         String imagePathBig = UploadImage.upload(Constants.IMG_BIG_WIDTH, Constants.IMG_BIG_HEIGHT, file);
         Image image = new Image(imagePathSmall, imagePathBig, destination);
         User currentUser = this.getCurrentUser();
-        Mark mark = new Mark(destination, image,currentUser);
+        Mark mark = new Mark(destination, image, currentUser);
         this.markRepository.saveAndFlush(mark);
         this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_CREATED_MARK);
         System.out.println(12);
@@ -74,7 +74,7 @@ public class MarkController {
 
     @GetMapping("/mark/listAll")
     @PreAuthorize("isAuthenticated()")
-    public String listAll(Model model){
+    public String listAll(Model model) {
         model.addAttribute("view", "mark/all_marks");
         model.addAttribute("marks", this.markRepository.findAll());
         return "base-layout";
@@ -83,7 +83,7 @@ public class MarkController {
 
     @GetMapping("/mark/delete/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String delete(Model model, @PathVariable Integer id){
+    public String delete(Model model, @PathVariable Integer id) {
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
@@ -100,7 +100,7 @@ public class MarkController {
     }
 
     @PostMapping("/mark/delete/{id}")
-    public String deleteProcess(@PathVariable Integer id){
+    public String deleteProcess(@PathVariable Integer id) {
         if (!this.isCurrentUserAdmin()) {
             this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
             return "redirect:/login";
@@ -114,7 +114,7 @@ public class MarkController {
         this.markRepository.delete(id);
         return "redirect:/";
     }
-/*
+
     @GetMapping("/mark/edit/{id}")
     @PreAuthorize("isAuthenticated()")
     public String edit(Model model, @PathVariable Integer id) {
@@ -133,9 +133,9 @@ public class MarkController {
 
         model.addAttribute("view", "mark/edit")
                 .addAttribute("mark", mark);
-//        model.addAttribute("destinations", this.destinationRepository.findAll());
         return "base-layout";
     }
+/*
 
     @PostMapping("/mark/edit/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -163,47 +163,8 @@ public class MarkController {
 
     }
 
-    @GetMapping("/mark/delete/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public String delete(Model model, @PathVariable Integer id) {
+  */
 
-        if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
-            return "redirect:/login";
-        }
-
-        if (!this.markRepository.exists(id)) {
-            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
-            return "redirect:/";
-        }
-
-        mark mark = this.markRepository.findOne(id);
-
-        model.addAttribute("view", "mark/delete")
-                .addAttribute("mark", mark);
-        return "admin/admin_panel-layout";
-    }
-
-    @PostMapping("/mark/delete/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public String deleteAction(@PathVariable Integer id) {
-
-        if (!this.isCurrentUserAdmin()) {
-            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
-            return "redirect:/login";
-        }
-
-        if (!this.markRepository.exists(id)) {
-            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
-            return "redirect:/";       }
-
-
-        this.markRepository.delete(id);
-        this.notifyService.addInfoMessage(Messages.SUCCESSFULLY_DELETED_mark);
-        return "redirect:/all_marks";
-
-    }*/
-    
     private User getCurrentUser() {
         if (!(SecurityContextHolder.getContext().getAuthentication()
                 instanceof AnonymousAuthenticationToken)) {

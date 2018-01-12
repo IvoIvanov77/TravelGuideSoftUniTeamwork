@@ -51,6 +51,7 @@ public final class Messages {
     public static final String THANKS_FOR_VOTE = "Thank you!\nYour opinion means a lot for Us!";
 
     public static final String ALREADY_VOTED = "You already voted!";
+    public static String SUCCESSFULLY_EDITED_MARK = "Successfully edited mark";
 
     private Messages() {
     }
