@@ -18,4 +18,6 @@ public interface DestinationRepository extends JpaRepository<Destination, Intege
 
     @Query("select max(d.id) from Destination d")
     int getMaxId();
+
+
 }

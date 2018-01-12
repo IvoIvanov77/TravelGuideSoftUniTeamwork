@@ -34,7 +34,9 @@ public class DestinationController {
     private final NotificationService notifyService;
 
     private MarkRepository markRepository;
-    private Mark currentMark = null;
+
+    private int INDEX;
+//    private Mark currentMark = null;
 
     @Autowired
     public DestinationController(DestinationRepository destinationRepository, UserRepository userRepository,
@@ -106,41 +108,56 @@ public class DestinationController {
         }
 
         Destination destination = this.destinationRepository.findOne(id);
+        List<Mark> marks = this.markRepository.findAllMarksOrderByIdDesc(id);
 
-        if (this.currentMark == null) {
+        Mark currentMark = null;
+        try {
+            if (INDEX < 0) INDEX = 0;
+            if (INDEX >= marks.size()) INDEX = marks.size() - 1;
+
+            currentMark = marks.get(INDEX);
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+       /* if (this.currentMark == null) {
             Set<Mark> marks = destination.getMarks();
             if (marks.size() > 0) {
                 this.currentMark = marks.stream().collect(Collectors.toList()).get(0);
             }
-        }
+        }*/
 
         model.addAttribute("view", "destination/details")
                 .addAttribute("destination", destination)
-                .addAttribute("mark", this.currentMark)
+                .addAttribute("mark", currentMark)
                 .addAttribute("articles", destination.getArticles());
 
         return "base-layout";
     }
 
     @RequestMapping(value = "/prev_mark", method = RequestMethod.GET)
-    public String handlePrevMark(@RequestParam(name = "markId") String markId) {
-        int markIdInt = Integer.parseInt(markId) - 1;//previous
+    public String handlePrevMark(@RequestParam(name = "destId") String destId) {
+       /* int markIdInt = Integer.parseInt(markId) - 1;//previous
         int minId = this.markRepository.getMinId();
 
         if (markIdInt < minId) {
             markIdInt = minId;
-        }
+        }*/
+        INDEX--;
+/*
+        if (INDEX < 0) {
+            INDEX = 0;
+        }*/
 
-        Mark prevMark = this.markRepository.findOne(markIdInt);
-        this.currentMark = prevMark;
+        /*Mark prevMark = this.markRepository.findOne(markIdInt);
+        this.currentMark = prevMark;*/
 
-        Integer destinationId = prevMark.getDestination().getId();
+//        Integer destinationId = prevMark.getDestination().getId();
+        Integer destinationId = this.destinationRepository.findOne(Integer.valueOf(destId)).getId();
         return "redirect:/destination/" + destinationId;
     }
 
     @RequestMapping(value = "/next_mark", method = RequestMethod.GET)
-    public String handleNextMark(@RequestParam(name = "markId") String markId) {
-        int markIdInt = Integer.parseInt(markId) + 1;//next
+    public String handleNextMark(@RequestParam(name = "destId") String destId) {
+      /*  int markIdInt = Integer.parseInt(markId) + 1;//next
         int maxId = this.markRepository.getMaxId();
 
         if (markIdInt > maxId) {
@@ -150,7 +167,14 @@ public class DestinationController {
         Mark prevMark = this.markRepository.findOne(markIdInt);
         this.currentMark = prevMark;
 
-        Integer destinationId = prevMark.getDestination().getId();
+        Integer destinationId = prevMark.getDestination().getId();*/
+        INDEX++;
+
+      /*  if (INDEX > TOP_DESTINATIONS_COUNT) {
+            INDEX = TOP_DESTINATIONS_COUNT;
+        }*/
+
+        Integer destinationId = this.destinationRepository.findOne(Integer.valueOf(destId)).getId();
         return "redirect:/destination/" + destinationId;
     }
 

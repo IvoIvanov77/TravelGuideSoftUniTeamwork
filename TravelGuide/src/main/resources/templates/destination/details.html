@@ -79,14 +79,14 @@
 
             </div>
             <a id="prev-mark-link" class="carousel-control-prev"
-               th:href="@{/prev_mark(markId=${mark.getId()})}" role="button"
+               th:href="@{/prev_mark(destId=${destination.getId()})}" role="button"
                data-slide="prev">
 
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="sr-only">Previous</span>
             </a>
             <a id="next-mark-link" class="carousel-control-next"
-               th:href="@{/next_mark(markId=${mark.getId()})}" role="button"
+               th:href="@{/next_mark(destId=${destination.getId()})}" role="button"
                data-slide="next">
 
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
