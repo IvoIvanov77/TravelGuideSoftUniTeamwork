@@ -26,39 +26,43 @@
             <input id="pac-input" type="text" placeholder="Enter a location"/>
         </div>
     </div>
-    <div id="map" height="460px" width="100%"></div>
+    <div id="map"></div>
     <div id="mapForm">
         <table>
             <tr>
-                <td>Name:</td>
+                <td><label for="event">Event: </label></td>
                 <td>
-                    <input type='text' id='name'/>
+                    <input type='text' id='event'/>
                 </td>
             </tr>
             <tr>
-                <td>Address:</td>
-                <td><input type='text' id='address'/></td>
+                <td><label for="comment">Comment: </label></td>
+                <td>
+                    <input type='text' id='comment'/>
+                </td>
             </tr>
             <tr>
-                <td>Type:</td>
-                <td><select id='type'> +
-                    <option value='bar'>bar</option>
-                    <option value='restaurant'>restaurant</option>
-                </select></td>
+                <td><label for="image">Upload image: </label></td>
+                <td>
+                    <input type="file" name="picture" id="image" accept="image/*"/>
+                </td>
             </tr>
             <tr>
                 <td></td>
-                <td><input type='button' value='Save' onclick='saveData()'/></td>
+                <td>
+                    <input id="infoSubmit" type='button' value='Save' th:attr="data-dest_id=${destination.id}"
+                           onclick='saveData()'/>
+                </td>
             </tr>
         </table>
     </div>
-
     <div id="message"></div>
 
     <span class="stars" th:value="${destination.starRating}"></span>
     <span class="small rating_text"
           th:text="${destination.starRating} + '&nbsp;&nbsp;&#183;&nbsp;&nbsp;' + ${destination.votesCount} + ' votes.'"></span>
 
+    <!--Display articles-->
     <h3>Articles</h3>
     <div class="row">
         <th:block th:each="article : ${articles}">
@@ -92,12 +96,12 @@
         <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
             <div class="carousel-inner" role="listbox">
 
-                 <div class="carousel-item active">
-                     <a th:href="@{/destination/{id}(id=${destination.getId()})}">
-                         <img class="d-block img-fluid" th:src="${mark.getImage().getBigImagePath()}"
-                              alt="Second slide"/>
-                     </a>
-                 </div>
+                <div class="carousel-item active">
+                    <a th:href="@{/destination/{id}(id=${destination.getId()})}">
+                        <img class="d-block img-fluid" th:src="${mark.getImage().getBigImagePath()}"
+                             alt="Second slide"/>
+                    </a>
+                </div>
 
             </div>
             <a id="prev-mark-link" class="carousel-control-prev"

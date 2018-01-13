@@ -133,17 +133,19 @@ function initAutocomplete() {
 }
 //Send the data retrieved from the user to the DB
 function saveData() {
-    let name = document.getElementById('name').value;
-    let address = document.getElementById('address').value;
-    let type = document.getElementById('type').value;
+    let name = document.getElementById('event').value;
+    let comments = document.getElementById('comment').value;
+    let image = document.getElementById('image').value;
     let latlng = marker.getPosition();
+    let destId = $('#infoSubmit').attr("data-dest_id");
 
     let request = {};
-    request["name"] = name;
-    request["address"] = address;
-    request["type"] = type;
+    request["event"] = name;
+    request["comments"] = comments;
+    request["image"] = image;
     request["lat"] = latlng.lat();
     request["lon"] = latlng.lng();
+    request["dest_id"] = destId;
 
     postCoordinates(request)
 }
