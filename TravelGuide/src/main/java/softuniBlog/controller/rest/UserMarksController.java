@@ -18,8 +18,11 @@ import softuniBlog.entity.User;
 import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.MarkRepository;
 import softuniBlog.repository.UserRepository;
+import softuniBlog.utils.Constants;
+import softuniBlog.utils.UploadImage;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +44,10 @@ public class UserMarksController {
     public ResponseEntity setUserMark(
             @Valid @RequestBody PointRequest pointRequest, Errors errors) {
         TextResponse result = new TextResponse();
+
+        File file = new File(pointRequest.getImage());
+        UploadImage.resizeAndWriteImage(System.getProperty("user.dir") + Constants.IMAGE_PATH, file,
+                Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT);
 
         //If error, just return a 400 bad request, along with the error message
         if (errors.hasErrors()) {

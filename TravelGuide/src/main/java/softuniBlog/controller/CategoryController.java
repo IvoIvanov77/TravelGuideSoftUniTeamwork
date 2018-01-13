@@ -54,10 +54,10 @@ public class CategoryController {
             this.notifyService.addErrorMessage(Messages.NOT_FOUND);
             return "redirect:/";
         }
-        Category category = this.categoryRepository.findOne(id);
+//        Category category = this.categoryRepository.findOne(id);
         List<Category> categories = this.categoryRepository.findAll();
         model.addAttribute("categories", categories);
-        List<Destination> destinations = this.categoryRepository.findCategoryDestinationsByRatingDescThenIdDesc(id);
+        List<Destination> destinations = this.destinationRepository.findCategoryDestinationsByRatingDescThenIdDesc(id);
         model.addAttribute("destinations", destinations);
 
         model.addAttribute("view", "home/index");

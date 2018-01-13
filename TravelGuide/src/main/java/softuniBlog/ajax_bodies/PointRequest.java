@@ -4,7 +4,6 @@ public class PointRequest {
     private String event;
     private String comment;
     private String image;
-    //    private MultipartFile image;
     private Double lat;
     private Double lon;
     private Integer dest_id;
