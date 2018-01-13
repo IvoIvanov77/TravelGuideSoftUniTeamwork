@@ -52,9 +52,9 @@ public class UserMarksController {
 
         userMark.setEvent(pointRequest.getEvent());
         userMark.setComment(pointRequest.getComment());
-        if (pointRequest.getImage()!= null){
+        /*if (pointRequest.getImage()!= null){
             userMark.setImage(pointRequest.getImage());
-        }
+        }*/
         userMark.setLat(pointRequest.getLat());
         userMark.setLng(pointRequest.getLon());
         userMark.setApproved(false);
