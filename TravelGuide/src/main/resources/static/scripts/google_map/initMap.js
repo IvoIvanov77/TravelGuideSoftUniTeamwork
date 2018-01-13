@@ -139,6 +139,8 @@ function saveData() {
     let latlng = marker.getPosition();
     let destId = $('#infoSubmit').attr("data-dest_id");
 
+    console.log(image);
+
     let request = {};
     request["event"] = name;
     request["comment"] = comment;
@@ -156,7 +158,6 @@ function postCoordinates(request) {
 
     $.ajax({
         type: "POST",
-        enctype: 'multipart/form-data',
         contentType: "application/json",
         url: "/mark/request",
         headers: headers,

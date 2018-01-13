@@ -7,7 +7,10 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import softuniBlog.ajax_bodies.PointRequest;
 import softuniBlog.ajax_bodies.TextResponse;
 import softuniBlog.entity.Mark;
@@ -34,9 +37,9 @@ public class UserMarksController {
         this.destinationRepository = destinationRepository;
     }
 
-    @PostMapping(value="/request")
+    @PostMapping(value = "/request")
     public ResponseEntity setUserMark(
-            @Valid @RequestBody PointRequest pointRequest, Errors errors){
+            @Valid @RequestBody PointRequest pointRequest, Errors errors) {
         TextResponse result = new TextResponse();
 
         //If error, just return a 400 bad request, along with the error message
