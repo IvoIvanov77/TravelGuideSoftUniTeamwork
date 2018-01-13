@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 public class Mark {
     private Integer id;
     private String event;
+    private String comment;
     private Destination destination;
     private Image image;
     private User author;
@@ -102,5 +103,13 @@ public class Mark {
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
+    }
+
+    public String getComment() {
+        return this.comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
