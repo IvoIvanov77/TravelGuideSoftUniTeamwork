@@ -79,7 +79,7 @@ public class SearchController {
         model.addAttribute("destinations", destinations);
         model.addAttribute("categories", categories);
         model.addAttribute("authors", authors);
-        model.addAttribute("view", "search/category_filter");
+        model.addAttribute("view", "search/destination_filter");
 
         return "base-layout";
     }
