@@ -1,12 +1,14 @@
 function initAutocomplete() {
     let map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: -33.8688, lng: 151.2195},
+        center: {lat: 42, lng: 23},
         zoom: 13,
         mapTypeId: 'roadmap'
     });
 
     // Create the search box and link it to the UI element.
     let input = document.getElementById('pac-input');
+    input.value = "Plovdiv";
+
     let searchBox = new google.maps.places.SearchBox(input);
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
@@ -16,8 +18,10 @@ function initAutocomplete() {
     });
 
     let markers = [];
+
     // Listen for the event fired when the user selects a prediction and retrieve
     // more details for that place.
+
     searchBox.addListener('places_changed', function () {
         let places = searchBox.getPlaces();
 
@@ -33,6 +37,7 @@ function initAutocomplete() {
 
         // For each place, get the icon, name and location.
         let bounds = new google.maps.LatLngBounds();
+
         places.forEach(function (place) {
             if (!place.geometry) {
                 console.log("Returned place contains no geometry");
@@ -46,13 +51,18 @@ function initAutocomplete() {
                 scaledSize: new google.maps.Size(25, 25)
             };
 
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
+            // var latLng = new google.maps.LatLng(42, 24);
+
+            var marker = new google.maps.Marker({
                 map: map,
                 icon: icon,
                 title: place.name,
+                // position: latLng
                 position: place.geometry.location
-            }));
+            });
+
+            // Create a marker for each place.
+            markers.push(marker);
 
             if (place.geometry.viewport) {
                 // Only geocodes have viewport.

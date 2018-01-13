@@ -20,7 +20,7 @@
                  th:if="${topDestination?.getRandomImage()?.getBigImagePath()}">
                 <div class="carousel-inner" role="listbox">
                     <div class="carousel-item active">
-                        <a th:href="${topDestination.getId()}">
+                        <a th:href="@{/destination/{id}(id=${topDestination.id})}">
                             <img class="d-block img-fluid"
                                  th:src="${topDestination.getRandomImage().getBigImagePath()}"
                                  alt="Second slide"/>
