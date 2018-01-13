@@ -16,7 +16,7 @@ public class Mark {
     private User author;
     private Double lat;
     private Double lng;
-    private Boolean approved;
+    private Boolean approved = false;
 
     public Mark() {
     }
