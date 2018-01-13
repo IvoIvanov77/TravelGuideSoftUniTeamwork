@@ -132,9 +132,37 @@ public class MarkController {
         Mark mark = this.markRepository.findOne(id);
 
         model.addAttribute("view", "mark/edit")
-                .addAttribute("mark", mark);
+                .addAttribute("mark", mark)
+                .addAttribute("destinations", this.destinationRepository.findAll());
         return "base-layout";
     }
+
+    @PostMapping("/mark/edit/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String editProcess(@PathVariable Integer id, MarkBindingModel bindingModel){
+        if (!this.isCurrentUserAdmin()) {
+            this.notifyService.addErrorMessage(Messages.YOU_HAVE_NO_PERMISSION);
+            return "redirect:/login";
+        }
+
+        if (!this.markRepository.exists(id)) {
+            this.notifyService.addErrorMessage(Messages.NOT_FOUND);
+            return "redirect:/";
+        }
+
+        Mark mark = this.markRepository.findOne(id);
+
+        mark.setDestination(this.destinationRepository.findOne(bindingModel.getDestinationId()));
+        MultipartFile file = bindingModel.getMarkPicture();
+        String imagePathSmall = UploadImage.upload(Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT, file);
+        String imagePathBig = UploadImage.upload(Constants.IMG_BIG_WIDTH, Constants.IMG_BIG_HEIGHT, file);
+        Image image = new Image(imagePathSmall, imagePathBig, this.destinationRepository.findOne(bindingModel.getDestinationId()));
+        mark.setImage(image);
+        this.markRepository.saveAndFlush(mark);
+        this.notifyService.addInfoMessage(Messages.SUCCESS);
+        return  "redirect:/";
+    }
+
 /*
 
     @PostMapping("/mark/edit/{id}")

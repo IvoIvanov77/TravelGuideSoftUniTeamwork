@@ -1,0 +1,38 @@
+<div class="container body-content span=8 offset=2">
+    <div class="well">
+        <form class="form-horizontal" th:action="@{/mark/edit/{id}(id=${mark.id})}" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Edit Mark</legend>
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="image">Picture</label>
+                    <div class="col-sm-4 ">
+                        <input type="file" name="markPicture" id="image" accept="image/*" required="required"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="destination_dropdown_menu">Destination</label>
+                    <div class="col-sm-4">
+                        <select class="selectpicker" id="destination_dropdown_menu" name="destinationId"
+                                required="required">
+                            <option value="" selected="selected">----------------------</option>
+                            <option
+                                    th:each="destination : ${destinations}"
+                                    th:value="${destination.id}"
+                                    th:text="${destination.name}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <a class="btn btn-default" th:href="@{/}">Cancel</a>
+                        <input type="submit" class="btn btn-primary" value="Submit"/>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
