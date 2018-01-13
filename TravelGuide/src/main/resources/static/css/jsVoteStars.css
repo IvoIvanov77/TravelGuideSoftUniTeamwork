@@ -5,7 +5,7 @@
     height: 16px;
     display: inline-block;
     text-indent: -9999px; /* hide the label text off screen */
-    background: url(/images/vote_rating_stars.png) -155px -32px;
+    background: url(/images/rating/vote_rating_stars.png) -155px -32px;
 }
 
 .starRating label.on {
