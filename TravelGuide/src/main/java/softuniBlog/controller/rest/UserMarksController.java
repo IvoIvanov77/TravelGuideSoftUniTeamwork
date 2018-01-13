@@ -7,7 +7,10 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import softuniBlog.ajax_bodies.PointRequest;
 import softuniBlog.ajax_bodies.TextResponse;
 import softuniBlog.entity.Mark;
@@ -15,8 +18,11 @@ import softuniBlog.entity.User;
 import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.MarkRepository;
 import softuniBlog.repository.UserRepository;
+import softuniBlog.utils.Constants;
+import softuniBlog.utils.UploadImage;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,10 +40,14 @@ public class UserMarksController {
         this.destinationRepository = destinationRepository;
     }
 
-    @PostMapping(value="/request")
+    @PostMapping(value = "/request")
     public ResponseEntity setUserMark(
-            @Valid @RequestBody PointRequest pointRequest, Errors errors){
+            @Valid @RequestBody PointRequest pointRequest, Errors errors) {
         TextResponse result = new TextResponse();
+
+        File file = new File(pointRequest.getImage());
+        UploadImage.resizeAndWriteImage(System.getProperty("user.dir") + Constants.IMAGE_PATH, file,
+                Constants.IMG_SMALL_WIDTH, Constants.IMG_SMALL_HEIGHT);
 
         //If error, just return a 400 bad request, along with the error message
         if (errors.hasErrors()) {
@@ -52,9 +62,9 @@ public class UserMarksController {
 
         userMark.setEvent(pointRequest.getEvent());
         userMark.setComment(pointRequest.getComment());
-        if (pointRequest.getImage()!= null){
+        /*if (pointRequest.getImage()!= null){
             userMark.setImage(pointRequest.getImage());
-        }
+        }*/
         userMark.setLat(pointRequest.getLat());
         userMark.setLng(pointRequest.getLon());
         userMark.setApproved(false);

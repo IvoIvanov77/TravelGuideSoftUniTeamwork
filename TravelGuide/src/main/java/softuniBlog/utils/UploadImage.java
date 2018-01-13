@@ -18,6 +18,7 @@ public final class UploadImage {
 
     /**
      * Resize and uplaod image of type MultipartFile on hdd and return path to it.
+     *
      * @param width
      * @param height
      * @param file
@@ -55,10 +56,11 @@ public final class UploadImage {
         }
     }
 
-    private static String resizeAndWriteImage(String imageDirectoryParam, File imageFile, int widthParam, int heightParam) {
+    public static String resizeAndWriteImage(String imageDirectoryParam, File imageFile, int widthParam, int heightParam) {
         BufferedImage originalImage;
         String dest = null;
         try {
+            System.out.println(imageFile.getCanonicalPath());
             originalImage = ImageIO.read(imageFile);
             BufferedImage resizeImagePng = Scalr.resize(originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_EXACT, widthParam, heightParam);
             String name;

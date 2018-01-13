@@ -39,7 +39,7 @@ function initAutocomplete() {
             currentMarker = this;
         });
 
-        google.maps.event.addListener(messagewindow,'closeclick',function () {
+        google.maps.event.addListener(messagewindow, 'closeclick', function () {
             currentMarker.setMap(null);
         })
     });
@@ -133,15 +133,17 @@ function initAutocomplete() {
 }
 //Send the data retrieved from the user to the DB
 function saveData() {
+    let comment = document.getElementById('comment').value;
     let name = document.getElementById('event').value;
-    let comments = document.getElementById('comment').value;
     let image = document.getElementById('image').value;
     let latlng = marker.getPosition();
     let destId = $('#infoSubmit').attr("data-dest_id");
 
+    console.log(image);
+
     let request = {};
     request["event"] = name;
-    request["comments"] = comments;
+    request["comment"] = comment;
     request["image"] = image;
     request["lat"] = latlng.lat();
     request["lon"] = latlng.lng();
@@ -164,9 +166,9 @@ function postCoordinates(request) {
         cache: false,
         timeout: 600000,
         success: function (data) {
-                infowindow.close();
-                $('#message').append("<p></p>").text(data.message);
-                messagewindow.open(map, marker);
+            infowindow.close();
+            $('#message').append("<p></p>").text(data.message);
+            messagewindow.open(map, marker);
         },
         error: function (e) {
 

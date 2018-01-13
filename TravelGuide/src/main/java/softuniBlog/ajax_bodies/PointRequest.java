@@ -1,11 +1,9 @@
 package softuniBlog.ajax_bodies;
 
-import softuniBlog.entity.Image;
-
 public class PointRequest {
     private String event;
     private String comment;
-    private Image image;
+    private String image;
     private Double lat;
     private Double lon;
     private Integer dest_id;
@@ -26,11 +24,11 @@ public class PointRequest {
         this.comment = comment;
     }
 
-    public Image getImage() {
-        return this.image;
+    public String getImage() {
+        return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

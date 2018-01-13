@@ -105,6 +105,7 @@ public class Mark {
         this.approved = approved;
     }
 
+    @Column(name = "comment", nullable = false)
     public String getComment() {
         return this.comment;
     }
