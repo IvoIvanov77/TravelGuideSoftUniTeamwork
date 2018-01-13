@@ -44,6 +44,12 @@ public class UserMarksController {
     public ResponseEntity setUserMark(
             @Valid @RequestBody PointRequest pointRequest, Errors errors) {
         TextResponse result = new TextResponse();
+        User currentUser = this.getCurrentUser();
+
+        if (currentUser == null){
+            result.setMessage("You must log in to create point on the map!");
+            return ResponseEntity.badRequest().body(result);
+        }
 
         File file = new File(pointRequest.getImage());
         UploadImage.resizeAndWriteImage(System.getProperty("user.dir") + Constants.IMAGE_PATH, file,
@@ -62,13 +68,10 @@ public class UserMarksController {
 
         userMark.setEvent(pointRequest.getEvent());
         userMark.setComment(pointRequest.getComment());
-        /*if (pointRequest.getImage()!= null){
-            userMark.setImage(pointRequest.getImage());
-        }*/
         userMark.setLat(pointRequest.getLat());
         userMark.setLng(pointRequest.getLon());
         userMark.setApproved(false);
-        userMark.setAuthor(this.getCurrentUser());
+        userMark.setAuthor(currentUser);
         userMark.setDestination(
                 this.destinationRepository.findOne(pointRequest.getDest_id()));
         this.markRepository.saveAndFlush(userMark);
