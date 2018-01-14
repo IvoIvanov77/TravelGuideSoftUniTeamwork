@@ -2,20 +2,16 @@ package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import softuniBlog.bindingModel.CategoryBindingModel;
-import softuniBlog.entity.Category;
 import softuniBlog.entity.User;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.UserRepository;
 import softuniBlog.service.NotificationService;
+import softuniBlog.utils.UserSession;
 import softuniBlog.utils.Messages;
 
 import java.util.List;
@@ -46,6 +42,10 @@ public class AdminController {
         model.addAttribute("user", user);
         if (user.isAdmin()) {
             List<User> allUsers = this.userRepository.findAll();
+            UserDetails userDetails = UserSession.getCurrentUser();
+            User currUser = this.userRepository.findByEmail(userDetails.getUsername());
+
+            model.addAttribute("user",currUser);
             model.addAttribute("view", "user/all_users");
             model.addAttribute("users", allUsers);
             return "admin/admin_panel-layout";

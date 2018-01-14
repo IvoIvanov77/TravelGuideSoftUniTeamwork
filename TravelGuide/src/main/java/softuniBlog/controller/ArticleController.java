@@ -21,6 +21,7 @@ import softuniBlog.repository.DestinationRepository;
 import softuniBlog.repository.UserRepository;
 import softuniBlog.repository.UsersVotesRepository;
 import softuniBlog.service.NotificationService;
+import softuniBlog.utils.UserSession;
 import softuniBlog.utils.Messages;
 
 import java.util.Arrays;
@@ -60,6 +61,10 @@ public class ArticleController {
         if(this.destinationRepository.findAll().isEmpty()){
             this.notifyService.addErrorMessage(Messages.THERE_ARE_NO_DESTINATIONS_AVAILABLE);
         }
+        UserDetails userDetails = UserSession.getCurrentUser();
+        User currUser = this.userRepository.findByEmail(userDetails.getUsername());
+
+        model.addAttribute("user",currUser);
         model.addAttribute("view", "article/create");
         model.addAttribute("destinations", this.destinationRepository.findAll());
         return "admin/admin_panel-layout";
@@ -94,6 +99,10 @@ public class ArticleController {
             return "redirect:/";
         }
 
+        UserDetails userDetails = UserSession.getCurrentUser();
+        User currUser = this.userRepository.findByEmail(userDetails.getUsername());
+
+        model.addAttribute("user",currUser);
         Article article = this.articleRepository.findOne(id);
 //        article.setStarRating(this.ratingService.getArticleRating(id));
         model.addAttribute("view", "article/details")
@@ -248,6 +257,7 @@ public class ArticleController {
 
     //
     private User getCurrentUser() {
+
         if (!(SecurityContextHolder.getContext().getAuthentication()
                 instanceof AnonymousAuthenticationToken)) {
             UserDetails principal = (UserDetails) SecurityContextHolder.getContext()

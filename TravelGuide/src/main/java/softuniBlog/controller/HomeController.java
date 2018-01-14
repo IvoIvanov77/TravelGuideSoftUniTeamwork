@@ -1,6 +1,7 @@
 package softuniBlog.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import softuniBlog.entity.Category;
 import softuniBlog.entity.Destination;
 import softuniBlog.entity.Image;
+import softuniBlog.entity.User;
 import softuniBlog.repository.CategoryRepository;
 import softuniBlog.repository.DestinationRepository;
+import softuniBlog.repository.UserRepository;
+import softuniBlog.utils.UserSession;
 
 import java.util.List;
 import java.util.Set;
@@ -24,18 +28,13 @@ public class HomeController {
 
     private CategoryRepository categoryRepository;
     private DestinationRepository destinationRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public HomeController(CategoryRepository categoryRepository, DestinationRepository destinationRepository) {
+    public HomeController(CategoryRepository categoryRepository, DestinationRepository destinationRepository, UserRepository userRepository) {
         this.destinationRepository = destinationRepository;
         this.categoryRepository = categoryRepository;
-    }
-
-    //to be deleted
-    @GetMapping("/map")
-    public String test(Model model) {
-        model.addAttribute("view", "test/test");
-        return "base-layout";
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/")
