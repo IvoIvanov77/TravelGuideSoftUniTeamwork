@@ -35,11 +35,15 @@
                         <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                             <a class="btn btn-success btn-xs"
                                th:href="@{/article/edit/{id}(id = ${article.id})}">Edit</a>
-                            <a class="btn btn-danger btn-xs" th:href="@{/article/delete/{id}(id = ${article.id})}">Delete</a>
+                            <a class="btn btn-danger btn-xs" th:href="@{/article/delete/{id}(id = ${article.id})}">
+                                Delete</a>
                         </th:block>
 
                         <a class="btn btn-default btn-xs"
                            th:href="@{/destination/{id}(id = ${article.destination.id})}">back &raquo;</a>
+
+                        <a class="btn btn-success btn-xs"
+                           th:href="@{/comment/create}">Add Comment</a>
                     </div>
                 </footer>
 

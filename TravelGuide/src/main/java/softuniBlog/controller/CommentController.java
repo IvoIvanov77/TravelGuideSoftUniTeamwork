@@ -45,6 +45,9 @@ public class CommentController {
         }
         model.addAttribute("view", "comment/create");
         model.addAttribute("articles", this.articleRepository.findAll());
+        if (this.isCurrentUserAdmin()) {
+            return "admin/admin_panel-layout";
+        }
         return "base-layout";
     }
 
@@ -112,6 +115,9 @@ public class CommentController {
     public String listAll(Model model){
         model.addAttribute("view", "comment/all_comments");
         model.addAttribute("comments", this.commentRepository.findAll());
+        if (this.isCurrentUserAdmin()) {
+            return "admin/admin_panel-layout";
+        }
         return "base-layout";
     }
 

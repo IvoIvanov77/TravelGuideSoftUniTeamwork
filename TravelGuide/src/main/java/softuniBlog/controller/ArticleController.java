@@ -99,10 +99,10 @@ public class ArticleController {
             return "redirect:/";
         }
 
-        UserDetails userDetails = UserSession.getCurrentUser();
-        User currUser = this.userRepository.findByEmail(userDetails.getUsername());
-
-        model.addAttribute("user",currUser);
+//        UserDetails userDetails = UserSession.getCurrentUser();
+//        User currUser = this.userRepository.findByEmail(userDetails.getUsername());
+//
+//        model.addAttribute("user",currUser);
         Article article = this.articleRepository.findOne(id);
 //        article.setStarRating(this.ratingService.getArticleRating(id));
         model.addAttribute("view", "article/details")
